@@ -3,13 +3,15 @@
 // mouvement, visibles seulement autour de leur étape. Elles sont étiquetées « schématique »
 // dans le texte de l'étape.
 
-import { ConeGeometry, CurvePath, Group, LineCurve3, Mesh, MeshBasicMaterial, TubeGeometry, Vector3 } from 'three';
+import { ConeGeometry, CurvePath, Group, LineCurve3, Mesh, MeshBasicMaterial, TorusGeometry, TubeGeometry, Vector3 } from 'three';
 import { opaciteEtape, reperesDesEtapes, type Timeline } from '@/animation/assemblyTimeline';
 import type { PieceMontee } from './MovementPart';
 
 const COULEUR_CHEMIN = '#e2b46a';
 const COULEUR_FLECHE = '#f1e8d6';
 const EPAISSEUR = 0.07;
+/** Cadre schématique du guichet de la grande date (mm, repère glTF, côté cadran). */
+const GUICHET = { x: -10.7, y: -0.8, demiLargeur: 3.4, demiHauteur: 1.9 };
 const DEG = Math.PI / 180;
 
 function materiau(couleur: string) {
@@ -78,6 +80,54 @@ export function construireReperes(tl: Timeline, pieces: Map<string, PieceMontee>
     parEtape.push({ k: r.k, groupe: g, materiaux: [matChemin, matFleche] });
   }
 
+  // ── Grande date : cadre du guichet (fixe) et repère de la dent tronquée (tourne avec le disque) ──
+  const disque = pieces.get('GD-7 Disque des dizaines');
+  const etoile = pieces.get('GD-9 Étoile intermédiaire des unités');
+  tl.etats.forEach((e, k) => {
+    const marqueurs = e.marqueurs ?? [];
+    if (!marqueurs.length) return;
+    const g = new Group();
+    const mats: MeshBasicMaterial[] = [];
+    if (marqueurs.includes('guichet')) {
+      const mat = materiau(COULEUR_FLECHE);
+      mats.push(mat);
+      // Guichet à 6 h (axe −X), repère schématique : les chiffres visibles sont dans ce cadre.
+      const { x, y, demiLargeur, demiHauteur } = GUICHET;
+      const coins = [
+        new Vector3(x - demiHauteur, y, -demiLargeur),
+        new Vector3(x - demiHauteur, y, demiLargeur),
+        new Vector3(x + demiHauteur, y, demiLargeur),
+        new Vector3(x + demiHauteur, y, -demiLargeur),
+        new Vector3(x - demiHauteur, y, -demiLargeur),
+      ];
+      g.add(tube(coins, mat));
+    }
+    if (marqueurs.includes('dent-tronquee') && disque && etoile) {
+      const mat = materiau(COULEUR_CHEMIN);
+      mats.push(mat);
+      // La dent tronquée est face à l'étoile 9 au milieu du saut du 31 au 1er ; le modèle est en
+      // pose « 01 » : elle est donc un demi-pas (180/31°) plus loin dans le sens de rotation.
+      const [ex, , ez] = etoile.piece.positionAssemblee;
+      const dir = new Vector3(ex, 0, ez).normalize().multiplyScalar(8.75);
+      dir.applyAxisAngle(new Vector3(0, 1, 0), (180 / 31) * DEG);
+      const anneau = new Mesh(new TorusGeometry(0.55, 0.09, 10, 32), mat);
+      anneau.position.set(dir.x, -0.42, dir.z);
+      anneau.rotation.x = Math.PI / 2;
+      anneau.renderOrder = 20;
+      const support = new Group();
+      support.add(anneau);
+      support.visible = false;
+      // Attaché au groupe mécanique du disque des dizaines : il tourne avec la couronne.
+      disque.mecanique.add(support);
+      parEtape.push({ k, groupe: support, materiaux: [mat] });
+    }
+    if (g.children.length) {
+      g.visible = false;
+      groupe.add(g);
+      parEtape.push({ k, groupe: g, materiaux: mats.filter((m) => g.children.some((c) => (c as Mesh).material === m)) });
+    }
+  });
+
   return {
     groupe,
     maj(p: number) {
@@ -88,12 +138,15 @@ export function construireReperes(tl: Timeline, pieces: Map<string, PieceMontee>
       }
     },
     liberer() {
-      groupe.traverse((o) => {
-        if (o instanceof Mesh) {
-          o.geometry.dispose();
-          (o.material as MeshBasicMaterial).dispose();
-        }
-      });
+      for (const e of parEtape) {
+        e.groupe.traverse((o) => {
+          if (o instanceof Mesh) {
+            o.geometry.dispose();
+            (o.material as MeshBasicMaterial).dispose();
+          }
+        });
+        e.groupe.removeFromParent();
+      }
     },
   };
 }

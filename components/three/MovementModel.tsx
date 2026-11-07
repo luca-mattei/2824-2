@@ -5,7 +5,9 @@
 // Un seul écrivain par transformation : la narration écrit la caméra et les groupes d'assemblage.
 
 import { useGLTF } from '@react-three/drei';
-import { useFrame, useThree } from '@react-three/fiber';
+import { useFrame, useThree, type ThreeEvent } from '@react-three/fiber';
+import { evaluerExploration, selectionnerObjet } from '@/animation/explorationState';
+import { avancerMecanique, mecanique, type Angles } from '@/animation/mechanicalMotion';
 import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { Box3, Group, PerspectiveCamera, Vector3, type Object3D } from 'three';
 import {
@@ -48,6 +50,9 @@ interface Montage {
   decalagesEnfants: Vec3[];
   ancres: Map<string, AncreLegende>;
   reperes: Reperes;
+  /** Nœuds enfants tournés par la simulation mécanique, avec leur rotation de repos. */
+  enfantsTournants: Map<string, { objet: Object3D; repos: number }>;
+  angles: Angles;
 }
 
 // Le GLB mis en cache par useGLTF n'est monté qu'une fois (double rendu du mode strict compris).
@@ -92,6 +97,9 @@ function monter(scene: Object3D, timeline: Timeline, ombres: boolean): Montage {
   const reperes = construireReperes(timeline, parId);
   conteneur.add(reperes.groupe);
 
+  const enfantsTournants = new Map<string, { objet: Object3D; repos: number }>();
+  for (const m of pieces) for (const [id, objet] of m.enfants) enfantsTournants.set(id, { objet, repos: objet.rotation.y });
+
   const montage: Montage = {
     conteneur,
     pieces,
@@ -101,6 +109,8 @@ function monter(scene: Object3D, timeline: Timeline, ombres: boolean): Montage {
     decalagesEnfants: enfants.map(() => [0, 0, 0] as Vec3),
     ancres,
     reperes,
+    enfantsTournants,
+    angles: { pieces: new Map(), enfants: new Map() },
   };
   montages.set(scene, montage);
   return montage;
@@ -111,7 +121,7 @@ const visibles = new Set<string>();
 
 declare global {
   interface Window {
-    __eta?: { appels: number; triangles: number; progression: number; cible: number; empreinte: number; images: number };
+    __eta?: { appels: number; triangles: number; progression: number; cible: number; empreinte: number; meca: number; images: number };
   }
 }
 
@@ -121,8 +131,15 @@ export function MovementModel({ url, timeline, ombres }: { url: string; timeline
   const { gl, scene, camera, invalidate } = useThree();
   const pret = useRef(false);
 
-  // Rendu à la demande : la scène se réveille quand la progression voulue change.
+  // Rendu à la demande : la scène se réveille quand la progression voulue change, ou quand la
+  // simulation mécanique est relancée (pause / lecture).
   useEffect(() => narratif.abonnerMoteur(() => invalidate()), [invalidate]);
+  useEffect(() => {
+    mecanique.enregistrerReveil(() => invalidate());
+    return () => mecanique.enregistrerReveil(null);
+  }, [invalidate]);
+  const marches = useMemo(() => timeline.etats.map((e) => e.marche), [timeline]);
+  const dates = useMemo(() => timeline.etats.map((e) => e.date ?? 1), [timeline]);
 
   // Compilation anticipée des shaders (toutes les pièces visibles) : pas d'à-coup au premier
   // changement de chapitre pendant une présentation.
@@ -135,6 +152,22 @@ export function MovementModel({ url, timeline, ombres }: { url: string; timeline
 
   useFrame((state, delta) => {
     const dt = Math.min(delta, 0.1);
+
+    // Mode exploration : pièces pilotées par explorationState, caméra par ExplorerControls.
+    // La narration n'écrit ni la caméra ni les pièces pendant ce mode.
+    if (narratif.instantane().mode === 'exploration') {
+      const encoreX = evaluerExploration(timeline.pieces, montage.etats, dt);
+      montage.pieces.forEach((m, i) => poserPiece(m, montage.etats[i]));
+      montage.enfants.forEach((e) => e.objet.position.copy(e.repos));
+      montage.reperes.maj(-1000);
+      for (const el of elementsLegendes.values()) {
+        el.style.visibility = 'hidden';
+        el.style.opacity = '0';
+      }
+      if (encoreX) invalidate();
+      return;
+    }
+
     const encore = avancerAffichage(dt);
     const p = moteur.affichee;
     const { width, height } = state.size;
@@ -149,6 +182,14 @@ export function MovementModel({ url, timeline, ombres }: { url: string; timeline
       e.objet.position.set(e.repos.x + dx, e.repos.y + dy, e.repos.z + dz);
     });
     montage.reperes.maj(p);
+
+    // Simulation mécanique illustrative : n'écrit que des rotations (groupes mécaniques, enfants).
+    const encoreMeca = avancerMecanique(marches, dates, p, dt, montage.angles);
+    for (const m of montage.pieces) m.mecanique.rotation.y = montage.angles.pieces.get(m.piece.id) ?? 0;
+    for (const [id, e] of montage.enfantsTournants) {
+      const a = montage.angles.enfants.get(id);
+      e.objet.rotation.y = e.repos + (a ?? 0);
+    }
 
     // Légendes : projection des ancres et placement direct des éléments HTML.
     visibles.clear();
@@ -214,7 +255,7 @@ export function MovementModel({ url, timeline, ombres }: { url: string; timeline
       }
     }
 
-    if (encore) invalidate();
+    if (encore || encoreMeca) invalidate();
     if (!pret.current) {
       pret.current = true;
       requestAnimationFrame(() => narratif.signalerPret());
@@ -233,9 +274,20 @@ export function MovementModel({ url, timeline, ombres }: { url: string; timeline
       progression: p,
       cible: moteur.cible,
       empreinte,
+      meca: [...montage.angles.pieces.values()].reduce((x, y) => x + y, 0),
       images: (window.__eta?.images ?? 0) + 1,
     };
   });
 
-  return <primitive object={montage.conteneur} />;
+  return (
+    <primitive
+      object={montage.conteneur}
+      onClick={(e: ThreeEvent<MouseEvent>) => {
+        if (narratif.instantane().mode !== 'exploration') return;
+        e.stopPropagation();
+        selectionnerObjet(e.object);
+        invalidate();
+      }}
+    />
+  );
 }

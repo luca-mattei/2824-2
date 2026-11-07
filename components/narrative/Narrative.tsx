@@ -17,7 +17,7 @@ export function Narrative() {
   useEffect(() => initialiserDefilement(sections.current), []);
 
   return (
-    <div className="recit" aria-hidden={mode === 'presentation'} inert={mode === 'presentation'}>
+    <div className="recit" aria-hidden={mode !== 'defilement'} inert={mode !== 'defilement'}>
       {etapes.map((etape, i) => (
         <section
           key={etape.id}

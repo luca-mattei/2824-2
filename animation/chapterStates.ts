@@ -46,8 +46,32 @@ export interface FlecheRotation {
   sens: 1 | -1;
 }
 
+/**
+ * Marche mécanique ILLUSTRATIVE de l'étape (temps de simulation, voir mechanicalMotion.ts).
+ * - rouage : rouage seul, vitesses des rapports reconstitués (temps réel) ;
+ * - echappement : balancier, ancre, roue d'échappement et rouage, ralentis ;
+ * - automatique : masse oscillante (sens unique, vitesse arbitraire) et chaîne de remontage ;
+ * - date : passage de date du module grande date, de `de` à `a`, ralenti ;
+ * - correction : correction rapide de la grande date, de `de` à `a`.
+ */
+export interface Marche {
+  type: 'rouage' | 'echappement' | 'automatique' | 'date' | 'correction';
+  /** Facteur de ralenti (> 1 = plus lent que la réalité). */
+  ralenti?: number;
+  de?: number;
+  a?: number;
+}
+
+/** Repères schématiques propres à la grande date. */
+export type MarqueurGrandeDate = 'guichet' | 'dent-tronquee';
+
 export interface EtatScene {
   camera: CadrageCamera;
+  /** Marche mécanique illustrative (pause / lecture), active quand l'étape est au repos. */
+  marche?: Marche;
+  /** Date affichée par le module grande date (1 à 31) ; défaut 1. */
+  date?: number;
+  marqueurs?: MarqueurGrandeDate[];
   /** Calibre représenté (défaut : 2824-2). Les pièces de l'autre variante sont masquées. */
   calibre?: Calibre;
   presentes: Selecteur[];
@@ -191,6 +215,7 @@ export const etatsScene: Record<string, EtatScene> = {
     ],
   },
   'rouage-chemin': {
+    marche: { type: 'rouage' },
     camera: { cible: [-1.8, 3, 0.4], rayon: 13, azimut: 0, elevation: 72 },
     presentes: ROUAGE,
     assemblees: ROUAGE,
@@ -214,6 +239,7 @@ export const etatsScene: Record<string, EtatScene> = {
 
   // ── Réguler le temps ──────────────────────────────────────────────────────────────────
   echappement: {
+    marche: { type: 'echappement', ralenti: 8 },
     camera: { cible: [3.6, 3, 2.4], rayon: 10, azimut: 24, elevation: 52 },
     presentes: ANCRE,
     assemblees: ANCRE,
@@ -225,6 +251,7 @@ export const etatsScene: Record<string, EtatScene> = {
     ],
   },
   balancier: {
+    marche: { type: 'echappement', ralenti: 8 },
     camera: { cible: [6.2, 3.4, 0.8], rayon: 10.5, azimut: 30, elevation: 46 },
     presentes: BALANCIER,
     assemblees: BALANCIER,
@@ -329,6 +356,7 @@ export const etatsScene: Record<string, EtatScene> = {
 
   // ── Le remontage automatique ──────────────────────────────────────────────────────────
   'automatique-rouage': {
+    marche: { type: 'automatique' },
     camera: { cible: [0, 4, -2.5], rayon: 13, azimut: 8, elevation: 58 },
     presentes: AUTOMATIQUE,
     assemblees: AUTOMATIQUE,
@@ -342,6 +370,7 @@ export const etatsScene: Record<string, EtatScene> = {
     ],
   },
   'masse-oscillante': {
+    marche: { type: 'automatique' },
     camera: { cible: [0, 3, 0.5], rayon: 15, azimut: 24, elevation: 40 },
     presentes: ['*'],
     assemblees: ['*'],
@@ -364,6 +393,7 @@ export const etatsScene: Record<string, EtatScene> = {
     ],
   },
   'synthese-regulation': {
+    marche: { type: 'echappement', ralenti: 8 },
     camera: { cible: [4.5, 3, 1], rayon: 11.5, azimut: 20, elevation: 52 },
     presentes: ['*'],
     absentes: CACHES,
@@ -389,6 +419,8 @@ export const etatsScene: Record<string, EtatScene> = {
   // ── Mido Commander Big Date (calibre ETA C07651) — en préparation ─────────────────────
   'gd-intro': {
     calibre: 'C07651',
+    date: 1,
+    marqueurs: ['guichet'],
     camera: { cible: [0, -0.3, 0], rayon: 14.5, azimut: 92, elevation: -62 },
     presentes: ['*'],
     assemblees: ['*'],
@@ -410,6 +442,81 @@ export const etatsScene: Record<string, EtatScene> = {
       { id: 'gm-9', piece: 'GD-9 Étoile intermédiaire des unités' },
       { id: 'gm-12', piece: 'GD-12 Disque des unités' },
       { id: 'gm-16', piece: 'GD-16 Mobile de correction rapide' },
+    ],
+  },
+
+  // Les étapes suivantes : passages de date ralentis, verrouillage, correction, comparaison.
+  'gd-quotidien': {
+    calibre: 'C07651',
+    date: 9,
+    marche: { type: 'date', de: 9, a: 10, ralenti: 1 },
+    marqueurs: ['guichet'],
+    camera: { cible: [0.5, -0.3, 1.5], rayon: 12.5, azimut: 92, elevation: -64 },
+    presentes: ['*'],
+    assemblees: ['*'],
+    surlignees: P('GD-3 Roue de quantième', 'GD-9 Étoile intermédiaire des unités', 'GD-11 Étoile des unités'),
+    legendes: [
+      { id: 'gq-3', piece: 'GD-3 Roue de quantième' },
+      { id: 'gq-4', piece: 'GD-4 Doigt escamotable' },
+      { id: 'gq-9', piece: 'GD-9 Étoile intermédiaire des unités' },
+      { id: 'gq-11', piece: 'GD-11 Étoile des unités' },
+      { id: 'gq-guichet', point: [-11.3, -0.6, 0], texte: 'Guichet' },
+    ],
+  },
+  'gd-fin-de-mois': {
+    calibre: 'C07651',
+    date: 31,
+    marche: { type: 'date', de: 31, a: 1, ralenti: 1 },
+    marqueurs: ['guichet', 'dent-tronquee'],
+    camera: { cible: [1.5, -0.3, 2.5], rayon: 11, azimut: 92, elevation: -64 },
+    presentes: ['*'],
+    assemblees: ['*'],
+    surlignees: P('GD-9 Étoile intermédiaire des unités'),
+    legendes: [
+      { id: 'gf-9', piece: 'GD-9 Étoile intermédiaire des unités' },
+      { id: 'gf-8', piece: 'GD-8 Couronne des unités (30 dents, une tronquée)', texte: 'Couronne des unités' },
+      { id: 'gf-guichet', point: [-11.3, -0.6, 0], texte: 'Guichet' },
+    ],
+  },
+  'gd-verrouillage': {
+    calibre: 'C07651',
+    date: 31,
+    camera: { cible: [5, -0.4, 2.6], rayon: 9, azimut: 92, elevation: -62 },
+    presentes: ['*'],
+    assemblees: ['*'],
+    surlignees: P('GD-10 Levier de verrouillage', 'GD-9 Étoile intermédiaire des unités'),
+    legendes: [
+      { id: 'gv-10', piece: 'GD-10 Levier de verrouillage' },
+      { id: 'gv-9', piece: 'GD-9 Étoile intermédiaire des unités' },
+    ],
+  },
+  'gd-correction': {
+    calibre: 'C07651',
+    date: 1,
+    marche: { type: 'correction', de: 1, a: 5 },
+    marqueurs: ['guichet'],
+    camera: { cible: [-2.5, -0.2, -4], rayon: 10, azimut: 100, elevation: -60 },
+    presentes: ['*'],
+    assemblees: ['*'],
+    surlignees: P('GD-16 Mobile de correction rapide', '2 Pignon coulant', '32 Renvoi'),
+    legendes: [
+      { id: 'gc-16', piece: 'GD-16 Mobile de correction rapide' },
+      { id: 'gc-17', piece: 'GD-17 Étoile de mobile de correction rapide' },
+      { id: 'gc-2', piece: '2 Pignon coulant' },
+      { id: 'gc-32', piece: '32 Renvoi' },
+      { id: 'gc-4', piece: '4 Tige de remontoir' },
+    ],
+  },
+  'gd-comparaison': {
+    calibre: 'C07651',
+    date: 8,
+    marqueurs: ['guichet'],
+    camera: { cible: [0, -0.3, 0], rayon: 14.5, azimut: 92, elevation: -62 },
+    presentes: ['*'],
+    assemblees: ['*'],
+    legendes: [
+      { id: 'gx-7', piece: 'GD-7 Disque des dizaines', point: [-10.6, -0.5, 4] },
+      { id: 'gx-12', piece: 'GD-12 Disque des unités', point: [-9, -0.6, -6] },
     ],
   },
 };

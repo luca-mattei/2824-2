@@ -25,6 +25,8 @@ export interface Etape {
   /** Mentions visibles : reconstitution, schéma, animation illustrative, ordre pédagogique. */
   mentions?: Mention[];
   approfondissement?: { titre: string; texte: string[] };
+  /** Contenu complémentaire rendu après les paragraphes (ex. tableau de comparaison). */
+  complement?: 'comparaison-grande-date';
   sources: SourceRef[];
 }
 
@@ -49,6 +51,9 @@ const MODELE: SourceRef = { id: 'modele' };
 const PRINCIPES: SourceRef = { id: 'ciechanowski', ou: 'principes généraux' };
 const LIVRE: SourceRef = { id: 'livre-complications', ou: '3.2.4 « Grande date ETA », p. 166–172' };
 const LIVRE_UN: SourceRef = { id: 'livre-complications', ou: '3.2.3 « Grande date Ulysse Nardin », p. 160–165' };
+const livre = (ou: string): SourceRef => ({ id: 'livre-complications', ou });
+/** Rappel de la commande des animations illustratives (fin de mention). */
+const PAUSE = ' Pause et lecture : bouton Pause, ou touche P en mode présentation.';
 
 export const chapitres: Partial<Record<ChapterId, Chapitre>> = {
   introduction: {
@@ -223,6 +228,12 @@ export const chapitres: Partial<Record<ChapterId, Chapitre>> = {
             type: 'schématique',
             texte: 'Tracé et flèches schématiques : ils indiquent un ordre et un sens de rotation, pas une vitesse.',
           },
+          {
+            type: 'illustratif',
+            texte:
+              'Le rouage tourne seul, aux vitesses des rapports reconstitués du modèle, en temps réel : la roue d’échappement fait 16 tours par minute, la roue de seconde 1 tour par minute, les autres bien moins.' +
+              PAUSE,
+          },
         ],
         sources: [CT_ROUAGE, MODELE, PRINCIPES],
       },
@@ -258,6 +269,12 @@ export const chapitres: Partial<Record<ChapterId, Chapitre>> = {
         mentions: [
           { type: 'reconstitué', texte: 'Angle de l’ancre et forme des dents choisis pour la lisibilité.' },
           {
+            type: 'illustratif',
+            texte:
+              'Ralenti 8 fois : en réalité, le balancier bat à 4 Hz. Amplitude reconstituée (250°, choisie pour la lisibilité) ; l’ancre bascule et la roue d’échappement avance d’une demi-dent à chaque alternance. Le spiral est représenté fixe : il ne « respire » pas.' +
+              PAUSE,
+          },
+          {
             type: 'ordre',
             texte: 'Ordre pédagogique : l’ancre est montrée sans son pont, présenté avec les autres ponts.',
           },
@@ -277,13 +294,18 @@ export const chapitres: Partial<Record<ChapterId, Chapitre>> = {
             type: 'reconstitué',
             texte: 'Amplitude du balancier, position du piton et des goupilles de raquette choisies pour la lisibilité.',
           },
+          {
+            type: 'illustratif',
+            texte:
+              'Ralenti 8 fois : en réalité, le balancier bat à 4 Hz. Amplitude reconstituée (250°, choisie pour la lisibilité) ; l’ancre bascule et la roue d’échappement avance d’une demi-dent à chaque alternance. Le spiral est représenté fixe : il ne « respire » pas.' +
+              PAUSE,
+          },
         ],
         approfondissement: {
           titre: 'Stocker, transmettre, distribuer, réguler',
           texte: [
             '**Stocker** : le ressort moteur, dans le barillet. **Transmettre** : le rouage, du barillet à la roue d’échappement. **Distribuer** : l’échappement libère l’énergie par petites quantités. **Réguler** : le balancier et son spiral imposent le rythme, donc la précision.',
             'La CT indique un angle de levée typique de 50° : l’angle pendant lequel le balancier est en prise avec l’ancre.',
-            'Une démonstration animée et ralentie de l’échappement viendra compléter ce chapitre.',
           ],
         },
         sources: [CT_P1, CT_NOMENCLATURE, CT_ECHAPPEMENT, MODELE, PRINCIPES],
@@ -449,6 +471,12 @@ export const chapitres: Partial<Record<ChapterId, Chapitre>> = {
             texte: 'Positions et engrènements approximatifs. Les cliquets d’inversion, qui redressent le sens de rotation, ne sont pas modélisés.',
           },
           {
+            type: 'illustratif',
+            texte:
+              'La masse tourne dans un seul sens, à une vitesse arbitraire ; la chaîne de remontage suit les rapports reconstitués du modèle. Les cliquets d’inversion n’étant pas modélisés, le redressement du sens de rotation n’est pas montré.' +
+              PAUSE,
+          },
+          {
             type: 'ordre',
             texte: 'Ordre ETA : la masse oscillante est préparée (31-1, 31-2) avant le bâti (p. 16) ; l’exposé montre d’abord le rouage.',
           },
@@ -467,6 +495,12 @@ export const chapitres: Partial<Record<ChapterId, Chapitre>> = {
           {
             type: 'reconstitué',
             texte: 'Chaîne de remontage du modèle reconstituée (positions et rapports approchés) ; cliquets d’inversion absents.',
+          },
+          {
+            type: 'illustratif',
+            texte:
+              'La masse tourne dans un seul sens, à une vitesse arbitraire ; la chaîne de remontage suit les rapports reconstitués du modèle. Les cliquets d’inversion n’étant pas modélisés, le redressement du sens de rotation n’est pas montré.' +
+              PAUSE,
           },
         ],
         sources: [CT_NOMENCLATURE, CT_AUTOMATIQUE, MODELE, PRINCIPES],
@@ -497,7 +531,7 @@ export const chapitres: Partial<Record<ChapterId, Chapitre>> = {
           'Le ressort moteur, dans le barillet, fournit l’énergie ; le rouage la transmet, de roue en roue, jusqu’à la roue d’échappement. La masse oscillante, elle, ne fait que remonter le ressort.',
         ],
         mentions: [
-          { type: 'schématique', texte: 'Masse oscillante et dispositif automatique masqués pour dégager la vue.' },
+          { type: 'schématique', texte: 'Masse oscillante, dispositif automatique et ponts masqués pour dégager la vue.' },
         ],
         sources: [CT_BARILLET, CT_ROUAGE, MODELE],
       },
@@ -507,6 +541,15 @@ export const chapitres: Partial<Record<ChapterId, Chapitre>> = {
         idee: 'L’ancre distribue, le balancier règle.',
         texte: [
           'L’échappement, roue d’échappement (9) et ancre (21), libère l’énergie par petites quantités ; le balancier (23) et son spiral imposent le rythme : 28 800 alternances par heure.',
+        ],
+        mentions: [
+          {
+            type: 'illustratif',
+            texte:
+              'Ralenti 8 fois : en réalité, le balancier bat à 4 Hz. Amplitude reconstituée (250°, choisie pour la lisibilité) ; l’ancre bascule et la roue d’échappement avance d’une demi-dent à chaque alternance. Le spiral est représenté fixe : il ne « respire » pas.' +
+              PAUSE,
+          },
+          { type: 'schématique', texte: 'Masse oscillante, dispositif automatique et ponts masqués pour dégager la vue.' },
         ],
         sources: [CT_P1, CT_ECHAPPEMENT, MODELE],
       },
@@ -533,24 +576,25 @@ export const chapitres: Partial<Record<ChapterId, Chapitre>> = {
         titre: 'Une grande date',
         idee: 'Sur la Mido Commander Big Date, la date s’affiche en deux grands chiffres.',
         texte: [
-          '**Chapitre en préparation.** La **Mido Commander Big Date** utilise le calibre **ETA C07651**, dérivé du 2824-2 d’après des sources secondaires. Le livre de référence lui donne 3 Hz et 80 heures de réserve de marche. Ce chapitre ne montre que ce qui change côté cadran : la date.',
-          'Le quantième simple du 2824-2 est retiré ; à sa place, un **module de grande date** affiche les dizaines et les unités sur deux disques concentriques. La date affichée ici est « 01 ».',
+          'La **Mido Commander Big Date** utilise le calibre **ETA C07651**, dérivé du 2824-2 d’après des sources secondaires (le livre de référence ne cite pas le 2824-2). Le livre lui donne un remontage automatique, 3 Hz et 80 heures de réserve de marche. Ce chapitre montre ce qui change côté cadran : la date.',
+          'Sur un disque de date ordinaire, les chiffres deviennent vite trop petits pour être bien lus ; la **grande date**, composée de deux disques distincts, y remédie (p. 627). Ici, le quantième simple du 2824-2 est retiré : un disque des **dizaines** et un disque des **unités**, concentriques, affichent « 01 » dans le **guichet**, à 6 h.',
         ],
         mentions: [
           {
             type: 'reconstitué',
             texte: 'Module reconstitué d’après la fig. 3-49 du livre : cotes, nombres de dents et positions approchés.',
           },
+          { type: 'schématique', texte: 'Le cadre du guichet est un repère : le cadran n’est pas modélisé.' },
         ],
-        sources: [LIVRE, MODELE],
+        sources: [livre('3.2.4, p. 166'), livre('chapitre 7, p. 627'), MODELE],
       },
       {
         id: 'gd-module',
         titre: 'Le module, pièce par pièce',
-        idee: 'Une fois par jour, un doigt fait sauter le grand disque d’un cran.',
+        idee: 'Une roue, un doigt, deux disques et deux étoiles.',
         texte: [
-          '**Chapitre en préparation.** La roue des heures (pièce 1 du livre, qui correspond à la roue des heures 37 du 2824-2) entraîne la **roue de quantième** (3) par le mobile intermédiaire (2). Son **doigt escamotable** (4) rencontre une fois par jour une dent du **disque inférieur** (6) : il s’efface d’abord, son ressort étant plus faible que le sautoir (6’), puis, arrivé contre sa butée (5), il entraîne la dent. Le disque saute d’un cran vers minuit et le sautoir le positionne.',
-          'Solidaire du disque inférieur, le **disque des dizaines** (7) porte 31 chiffres et saute chaque jour. La **couronne des unités** (8), usinée sur lui, entraîne le **disque des unités** (12) par l’étoile intermédiaire (9) et l’étoile des unités (11). Une dent tronquée laisse les unités sur « 1 » au passage du 31 au 1er. Dans la grande date Ulysse Nardin décrite par le même livre, les dizaines avancent au contraire par leur propre planche, à quatre dents.',
+          'Les pièces sont numérotées comme dans le livre (fig. 3-49) ; à l’écran, ces numéros sont précédés d’un **L** (L3, L7…) pour ne pas les confondre avec les positions ETA du 2824-2. La roue des heures (L1) entraîne la **roue de quantième** (L3) par le **mobile intermédiaire** (L2) ; la roue de quantième porte le **doigt escamotable** (L4) et sa **butée** (L5).',
+          'Le **disque inférieur** (L6), positionné par son sautoir (L6’), est solidaire du **disque des dizaines** (L7), sur lequel est usinée la **couronne des unités** (L8). Celle-ci entraîne l’**étoile intermédiaire** (L9), puis l’**étoile des unités** (L11) et le **disque des unités** (L12). S’y ajoutent le **levier de verrouillage** (L10) et le **mobile de correction rapide** (L16).',
         ],
         mentions: [
           {
@@ -559,10 +603,100 @@ export const chapitres: Partial<Record<ChapterId, Chapitre>> = {
           },
           {
             type: 'schématique',
-            texte: 'Pièces écartées pour la lisibilité. Numéros du livre (fig. 3-49), distincts des positions ETA.',
+            texte: 'Pièces écartées pour la lisibilité. La roue des heures (L1) correspond à la roue des heures 37 du 2824-2 : correspondance établie par le modèle, pas par le livre.',
           },
         ],
-        sources: [LIVRE, LIVRE_UN, MODELE],
+        sources: [livre('3.2.4, fig. 3-49, p. 167'), MODELE],
+      },
+      {
+        id: 'gd-quotidien',
+        titre: 'Du 09 au 10',
+        idee: 'Chaque jour, un seul saut fait changer les deux chiffres.',
+        texte: [
+          'La roue de quantième tourne lentement. Son **doigt escamotable** rencontre une dent du disque inférieur et **s’arme** : son ressort est plus faible que le sautoir, il cède. Arrivé contre sa butée, il entraîne la dent : le disque inférieur et le **disque des dizaines** sautent d’un cran, et le sautoir les positionne (p. 170).',
+          'Dans le même saut, la **couronne des unités** entraîne l’étoile intermédiaire, qui entraîne l’**étoile des unités** : le disque des unités passe de 9 à 0. Le guichet affiche « 10 ». Le livre décrit cet enchaînement sur le passage du 30 au 31 ; il vaut pour les autres jours, sauf du 31 au 1er.',
+        ],
+        mentions: [
+          {
+            type: 'illustratif',
+            texte:
+              'Le vrai passage se fait aux environs de minuit, après des heures de rotation de la roue de quantième : l’animation resserre cette approche et ralentit le saut. Rotations et sens choisis pour le modèle, non donnés par le livre.' +
+              PAUSE,
+          },
+          { type: 'schématique', texte: 'Doigt, sautoirs et levier ne se déforment pas : seuls les disques et les roues tournent.' },
+        ],
+        sources: [livre('3.2.4, fig. 3-52 et 3-53, p. 170'), livre('3.2.4, fig. 3-51, p. 169'), MODELE],
+      },
+      {
+        id: 'gd-fin-de-mois',
+        titre: 'Du 31 au 01',
+        idee: 'Une dent manquante laisse les unités sur « 1 ».',
+        texte: [
+          'La couronne des unités a 31 emplacements mais **30 dents** : l’une est tronquée (p. 169). Au passage du 31 au 1er, cette **dent tronquée** se trouve face à l’étoile intermédiaire : le disque des dizaines tourne, mais l’étoile des unités n’est pas entraînée et le disque des unités reste immobile (p. 171).',
+          'Les dizaines passent ainsi de 3 à 0, les unités restent sur 1 : le guichet affiche « 01 ». Notre calcul : en un mois de 31 jours, le disque des unités avance 30 fois, soit exactement trois tours, et retrouve le « 1 ».',
+        ],
+        mentions: [
+          { type: 'schématique', texte: 'Le repère lumineux sur la couronne indique la dent tronquée : il ne fait pas partie du mécanisme.' },
+          {
+            type: 'illustratif',
+            texte: 'Passage ralenti ; le calcul des trois tours est une déduction, pas une phrase du livre.' + PAUSE,
+          },
+        ],
+        sources: [livre('3.2.4, fig. 3-51, p. 169'), livre('3.2.4, fig. 3-54, p. 171'), MODELE],
+      },
+      {
+        id: 'gd-verrouillage',
+        titre: 'Le levier de verrouillage',
+        idee: 'Pendant la fin de mois, un levier empêche les unités de se décaler.',
+        texte: [
+          'Du 31 au 1er, la dent tronquée ne retient plus l’étoile intermédiaire : un choc pourrait faire tourner le disque des unités. Le livre décrit le « système de verrouillage du disque des unités du 31 au 1er en cas de choc » (p. 171).',
+          'Le disque des unités et son étoile entraînent l’étoile intermédiaire, qui déplace le **levier de verrouillage** (L10). Le talon du levier est bloqué par une dent de la couronne des unités : l’étoile intermédiaire est bloquée dans sa rotation, ce qui garde unités et dizaines synchronisés.',
+        ],
+        mentions: [
+          {
+            type: 'schématique',
+            texte: 'Levier représenté immobile : dans le mécanisme réel, il est déplacé par l’étoile intermédiaire.',
+          },
+          {
+            type: 'reconstitué',
+            texte: 'Forme et position du levier relevées sur la fig. 3-49 ; le lien entre la dent tronquée et le besoin de verrouillage est notre lecture.',
+          },
+        ],
+        sources: [livre('3.2.4, fig. 3-55, p. 171'), MODELE],
+      },
+      {
+        id: 'gd-correction',
+        titre: 'La correction rapide',
+        idee: 'Tige en position 2 : on avance la date sans attendre minuit.',
+        texte: [
+          'Tige de remontoir en **position 2** (p. 166 et 172), la tige entraîne le **mobile de correction rapide** (L16) par le pignon coulant et le renvoi de mise à l’heure. Le ressort du mobile appuie de façon excentrée sur son étoile : le mobile se déplace en ligne droite vers le disque inférieur, puis, en fin de course, se met à tourner et son étoile entraîne le disque.',
+          'Près de minuit, une dent du disque inférieur peut rencontrer le doigt escamotable : le doigt se rétracte et laisse passer la dent (p. 172). Le livre ne précise pas si la correction fonctionne dans un sens ou dans les deux.',
+        ],
+        mentions: [
+          {
+            type: 'schématique',
+            texte: 'L’animation montre seulement la rotation du mobile et l’avance de la date de 01 à 05 ; son déplacement linéaire n’est pas représenté.' + PAUSE,
+          },
+          { type: 'reconstitué', texte: 'Position et dentures du mobile de correction rapide reconstituées.' },
+        ],
+        sources: [livre('3.2.4, p. 166'), livre('3.2.4, fig. 3-56 et 3-57, p. 172'), MODELE],
+      },
+      {
+        id: 'gd-comparaison',
+        titre: 'ETA et Ulysse Nardin',
+        idee: 'Deux façons d’obtenir une grande date.',
+        texte: [
+          'Le même livre décrit la grande date du calibre **Ulysse Nardin UN334** (p. 160–165). Deux disques, une dent tronquée pour le passage du 31 au 1er : le principe est commun. Mais chez Ulysse Nardin, deux **planches** solidaires pilotent chacune leur disque par des renvois, alors que chez ETA le disque des dizaines est lui-même la pièce menée chaque jour et porte la couronne des unités.',
+          'Le livre ne compare pas les deux systèmes : le tableau rapproche ce qu’il dit de chacun, et sépare nos déductions.',
+        ],
+        complement: 'comparaison-grande-date',
+        mentions: [
+          {
+            type: 'schématique',
+            texte: 'Ulysse Nardin n’est pas modélisé : la comparaison repose sur le texte et les figures du livre.',
+          },
+        ],
+        sources: [LIVRE_UN, LIVRE, MODELE],
       },
     ],
   },

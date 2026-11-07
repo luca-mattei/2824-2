@@ -28,6 +28,11 @@ export function Hero({ etape }: { etape: EtapeNarrative }) {
           Mode présentation
         </button>
       </div>
+      <p className="hero-exploration">
+        <button type="button" className="lien-texte" onClick={() => narratif.entrerExploration()}>
+          Ou manipuler librement le modèle 3D
+        </button>
+      </p>
       <dl className="fiche-courte" aria-label="Caractéristiques (communication technique ETA, p. 1)">
         {specifications
           .filter((s) => s.id !== 'designation')

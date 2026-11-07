@@ -1,0 +1,186 @@
+/* Mode exploration libre (components/explorer/*). */
+
+html.en-exploration {
+  overflow: hidden;
+}
+/* Le récit et l'annexe restent en place (mise en page conservée) mais invisibles et inertes :
+   le canvas reçoit les gestes. */
+html.en-exploration main {
+  visibility: hidden;
+  pointer-events: none;
+}
+html.en-exploration .barre-nav {
+  display: none;
+}
+/* Sur écran étroit, la scène occupe d'ordinaire la moitié haute : plein écran en exploration. */
+html.en-exploration .scene {
+  inset: 0;
+  height: auto;
+}
+html.en-exploration .scene::after {
+  background: linear-gradient(90deg, rgb(16 15 13 / 0.7) 0%, rgb(16 15 13 / 0) 34%);
+}
+html.en-exploration .scene-canvas {
+  cursor: grab;
+  touch-action: none;
+}
+html.en-exploration .scene-canvas:active {
+  cursor: grabbing;
+}
+
+.explorateur {
+  position: fixed;
+  z-index: 25;
+  left: var(--marge);
+  top: calc(var(--barre) + 0.75rem);
+  width: min(22rem, 34vw);
+  max-height: calc(100svh - var(--barre) - 1.5rem);
+  overflow-y: auto;
+  padding: 1rem 1.1rem 1.2rem;
+  background: rgb(16 15 13 / 0.88);
+  border: 1px solid var(--color-trait);
+  font-size: 0.9rem;
+}
+.explo-entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.explo-entete h2 {
+  margin: 0;
+  font-family: var(--font-titre);
+  font-weight: 380;
+  font-size: 1.6rem;
+  outline: none;
+}
+.explo-aide,
+.explo-note {
+  margin: 0.6rem 0 0;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: var(--color-ivoire-doux);
+}
+.explo-groupe {
+  margin: 1rem 0 0;
+  padding: 0.75rem 0 0;
+  border: 0;
+  border-top: 1px solid var(--color-trait);
+  display: grid;
+  gap: 0.55rem;
+}
+.explo-groupe legend {
+  padding: 0;
+  font-family: var(--font-technique);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-laiton);
+}
+.explo-boutons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.explorateur .bouton[aria-pressed='true'] {
+  background: var(--color-ivoire);
+  border-color: var(--color-ivoire);
+  color: var(--color-fond);
+}
+.explo-champ {
+  display: grid;
+  gap: 0.3rem;
+  font-size: 0.82rem;
+  color: var(--color-ivoire-doux);
+}
+.explo-champ select {
+  width: 100%;
+  padding: 0.5rem 0.6rem;
+  background: var(--color-fond-2);
+  color: var(--color-ivoire);
+  border: 1px solid rgb(237 230 214 / 0.3);
+  font: inherit;
+  font-size: 0.9rem;
+}
+.explo-fiche {
+  margin-top: 1rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--color-trait);
+}
+.explo-fiche h3 {
+  margin: 0.2rem 0 0.5rem;
+  font-family: var(--font-titre);
+  font-weight: 400;
+  font-size: 1.35rem;
+  line-height: 1.15;
+}
+.explo-fiche p {
+  margin: 0 0 0.6rem;
+  color: rgb(237 230 214 / 0.88);
+  line-height: 1.5;
+}
+.explo-fiche-repere {
+  font-family: var(--font-technique);
+  font-size: 0.72rem !important;
+  letter-spacing: 0.06em;
+  color: var(--color-ivoire-doux) !important;
+}
+.explo-fiche-fonction {
+  font-family: var(--font-titre);
+  font-style: italic;
+  font-size: 1.05rem;
+}
+.explo-fiche-statut {
+  font-size: 0.82rem;
+  color: var(--color-ivoire-doux) !important;
+}
+.explo-fiche-statut .mention-type {
+  margin-right: 0.4rem;
+}
+
+/* Libellés du bouton d'entrée : court sur écran étroit. */
+.libelle-court {
+  display: none;
+}
+
+@media not ((min-width: 900px) and (min-aspect-ratio: 11/10)) {
+  .explorateur {
+    left: 0;
+    right: 0;
+    top: auto;
+    bottom: 0;
+    width: auto;
+    max-height: 42svh;
+    padding: 0.8rem var(--marge) 1rem;
+    border-width: 1px 0 0;
+  }
+  html.en-exploration .scene::after {
+    background: none;
+  }
+  .libelle-long {
+    display: none;
+  }
+  .libelle-court {
+    display: inline;
+  }
+}
+
+/* Lien discret d'entrée dans l'introduction. */
+.hero-exploration {
+  margin: -1rem 0 1.75rem;
+}
+.lien-texte {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-ivoire-doux);
+  font: inherit;
+  font-size: 0.9rem;
+  text-decoration: underline;
+  text-decoration-color: rgb(207 168 107 / 0.6);
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.lien-texte:hover {
+  color: var(--color-ivoire);
+}

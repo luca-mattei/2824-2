@@ -5,6 +5,7 @@ import { Fragment, type ReactNode } from 'react';
 import type { EtapeNarrative, Mention, TypeMention } from '@/data/chapters';
 import { numeroAffiche } from '@/data/chapters';
 import { formatSourceRef } from '@/data/sources';
+import { ComparaisonGrandeDate } from './ComparaisonGrandeDate';
 
 /** `**mot**` → <strong>. Aucun autre balisage. */
 export function texteRiche(texte: string): ReactNode {
@@ -51,6 +52,7 @@ export function StepContent({ etape, titreNiveau = 2 }: { etape: EtapeNarrative;
           {texteRiche(t)}
         </p>
       ))}
+      {etape.complement === 'comparaison-grande-date' && <ComparaisonGrandeDate />}
       {etape.mentions && <Mentions mentions={etape.mentions} />}
       {etape.approfondissement && (
         <details className="approfondissement">

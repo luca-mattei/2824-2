@@ -29,7 +29,7 @@ export function MovementStage() {
   }, []);
 
   return (
-    <div className={`scene ${retiree && mode !== 'presentation' ? 'scene-retiree' : ''}`} aria-hidden={!erreur && webgl !== false}>
+    <div className={`scene ${retiree && mode === 'defilement' ? 'scene-retiree' : ''}`} aria-hidden={!erreur && webgl !== false}>
       {webgl && (
         <div className="scene-canvas">
           <MovementCanvas />

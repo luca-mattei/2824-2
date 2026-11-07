@@ -15,6 +15,8 @@
 
 ## Sources
 
+Le dépôt GitHub est public : les documents de tiers ci-dessous (communications techniques ETA, dessins ETA, page du livre, livre complet) restent **en local seulement**, exclus de git (`.gitignore`). Les copier à la main sur une nouvelle machine.
+
 - `docs/sources/ETA_CT_2824-2_FDE_481688_25_2022.pdf` : communication technique officielle (français, allemand, anglais) : nomenclature, ordre de montage, lubrification. Copie de https://shopb2b.eta.ch/technicaldocuments/index/pdf/id/1883
 - `docs/sources/ETA_CT_2824-2_ESI_481825_25_2022.pdf` : même document en espagnol et italien.
 - `docs/sources/figures-eta/` : pages de vues éclatées rendues en PNG (page 12 : vue de dessus côté ponts ; page 18 : côté cadran).
@@ -89,7 +91,8 @@ Source : `docs/sources/theorie-montres-compliquees.pdf` (942 Mo, exclu de git), 
 
 - 2026-11-07 : modèle (avec les détails de réalisme), animation Blender (assemblage et marche) et export GLB faits ; dossier préparé. Vérifié par des rendus test EEVEE aux images 600, 1110, 1150 et 1300.
 - 2026-11-07 : site web, phases 1 (audit) et 2 (première séquence) faites ; premier commit `292eb0e`.
-- 2026-11-07 : phase 3 (narration complète du 2824-2) faite ; chapitre grande date préparé, pas fini. Phase 4 non commencée.
+- 2026-11-07 : phase 3 (narration complète du 2824-2) faite ; commit `65bbe70`.
+- 2026-11-07 : phase 4 faite (animations illustratives, exploration libre, chapitre grande date terminé) ; en attente de revue. Phase 5 non commencée.
 
 ### Stack et principes (phases 2 et 3)
 
@@ -106,13 +109,24 @@ Source : `docs/sources/theorie-montres-compliquees.pdf` (942 Mo, exclu de git), 
 - **Correction** : les légendes étaient projetées avec la caméra de l'image précédente (faux après un saut direct ou en mouvement réduit) ; `CameraRig` met maintenant à jour les matrices immédiatement.
 - **Contenu** : textes de toutes les étapes, extension du manifeste pour les 95 entrées (`data/partsExtension.ts`), source `livre-complications` (`data/sources.ts`), annexe avec fiche technique CT p. 1 (`components/narrative/SourcesSection.tsx`, `app/annexe.css`). Note de lecture du livre : `docs/notes-grande-date.md`.
 
+### Fait en phase 4
+
+- **Simulation mécanique** (`animation/mechanicalMotion.ts`) : temps de simulation distinct de la narration ; elle n'écrit QUE des rotations (groupes « mécanique » des pièces, nœuds enfants spiral, piton, arbre de barillet, ressort 16''), la narration n'écrit que des positions. Activée au repos sur les étapes dotées d'une `marche` (`animation/chapterStates.ts`), avec la commande « Animation illustrative » (Pause / Lecture / Rejouer, touche P en présentation ; ne démarre pas seule en mouvement réduit) :
+  - rouage (`rouage-chemin`) : vitesses réelles des rapports reconstitués (échappement 16 tr/min, seconde 1 tr/min) ;
+  - échappement (`echappement`, `balancier`, `synthese-regulation`) : ralenti ×8, balancier 4 Hz et 250° (reconstitué), ancre ±5°, roue d'échappement ½ dent (12°) par alternance, rouage entraîné par pas ; fenêtre d'impulsion élargie pour être visible ; spiral et piton fixes (le spiral ne « respire » pas) ;
+  - automatique (`automatique-rouage`, `masse-oscillante`) : masse dans un seul sens, vitesse arbitraire, chaîne pignon de masse → 28 / 27 → 29 → 26 → rochet (+ roue de couronne, arbre de barillet) selon les rapports reconstitués ; l'engrènement exact des roues d'inversion n'est pas documenté (choix du modèle).
+  Les mécanismes continus gardent leur angle quand on quitte l'étape (pas de retour en arrière).
+- **Grande date terminée** (7 étapes : `gd-intro`, `gd-module`, `gd-quotidien`, `gd-fin-de-mois`, `gd-verrouillage`, `gd-correction`, `gd-comparaison`) : chaque étape porte une `date` affichée (vérifiée dans le guichet : 01, 09, 31, 08) ; passages 09 → 10 et 31 → 01 ralentis (approche de la roue de quantième, saut du disque des dizaines, unités entraînées avec un léger retard, sauf du 31 au 1er) ; correction rapide 01 → 05 (rotation du mobile 16 seulement, déplacement linéaire non représenté) ; cadre schématique du guichet à 6 h ; anneau lumineux sur la dent tronquée (attaché au disque des dizaines, placé un demi-pas après l'étoile 9 dans la pose 01) ; levier de verrouillage mis en évidence mais immobile ; tableau de comparaison avec Ulysse Nardin (`components/narrative/ComparaisonGrandeDate.tsx`, d'après `docs/notes-grande-date.md` § 6) avec les déductions étiquetées. Rotations : disque des dizaines +360/31° par jour, étoile 9 +36°, étoile 11 et disque des unités −36°, roue de quantième un tour par passage (sens choisi : schématique).
+- **Exploration libre** (`animation/explorationState.ts`, `components/explorer/*`, `app/explorer.css`) : bouton « Explorer librement » (barre du haut) et lien dans l'introduction ; OrbitControls montés seulement dans ce mode ; vues ponts / cadran / trois quarts, rotation ±45°, zoom, assemblé / éclaté, calibre 2824-2 / C07651, isolation d'un sous-ensemble (platine gardée en repère), sélection au clic ou au clavier avec fiche (nom, repère, fonction, groupe, explication, statut, sources) ; Échap ramène au récit à la même étape.
+- **Vérification** : `npm run check` réorganisé (voir Vérifications).
+
 ### Fichiers et modules importants
 
 - Contenu : `data/chapters.ts`, `data/chapterIds.ts`, `data/sources.ts`, `data/specifications.ts`.
 - Manifeste web : `data/parts.ts` (manifeste d'origine + champs calculés : groupe, variante, rang, positions assemblée et éclatée, repère) et `data/partsExtension.ts` (champs rédigés, liés par `noeud`) ; groupes `data/groups.ts` ; vue éclatée `data/explodeLayout.ts`.
-- Animation : `animation/chapterStates.ts` (état de scène par étape), `assemblyTimeline.ts` (calcul pur), `narrativeController.ts`, `scrollController.ts`, `mechanicalMotion.ts` (contrat de la phase 4, inactif).
-- Scène : `components/three/*` (canvas, modèle, pièce, caméra, éclairage, repères), `components/annotations/*` (légendes).
-- Scripts : `inspect-glb.mjs` (accepte un autre GLB et manifeste en arguments), `prepare-assets.mjs`, `serve-out.mjs`, `check-browser.mjs`. Outil de travail non versionné : `scripts/_apercu.mjs` (captures de toutes les étapes, en mouvement réduit).
+- Animation : `animation/chapterStates.ts` (état de scène par étape, `marche`, `date`, `marqueurs`), `assemblyTimeline.ts` (calcul pur), `narrativeController.ts` (modes défilement / présentation / exploration), `scrollController.ts`, `mechanicalMotion.ts` (simulation illustrative), `explorationState.ts`.
+- Scène : `components/three/*` (canvas, modèle, pièce, caméra, éclairage, repères et marqueurs grande date), `components/annotations/*` (légendes), `components/explorer/*`, `components/narrative/AnimationControls.tsx`, `components/narrative/ComparaisonGrandeDate.tsx`.
+- Scripts : `inspect-glb.mjs` (accepte un autre GLB et manifeste en arguments), `prepare-assets.mjs`, `serve-out.mjs`, `check-browser.mjs`. Outils de travail non versionnés (`scripts/_*.mjs`) : `_apercu.mjs` (captures des étapes en mouvement réduit : `node scripts/_apercu.mjs $PWD 1200 760 [étapes…]`), `_anim.mjs` (fin des scénarios de grande date et pause).
 
 ### Ajouter un chapitre
 
@@ -120,11 +134,16 @@ Identifiant dans `data/chapterIds.ts` → contenu dans `data/chapters.ts` → un
 
 ### Vérifications
 
-Phase 3, 2026-11-07, sur l'export statique (Chromium headless SwiftShader, réseau externe bloqué) :
-- `npm run build` et `tsc --noEmit` réussissent ; `next dev` sert la page et le nouveau GLB.
-- Captures des 27 étapes (`scripts/_apercu.mjs`, mouvement réduit) relues à la main en planches ; aucune erreur ni avertissement console.
-- `npm run check` : 27/27 étapes atteintes au défilement vers le bas, état intermédiaire continu, étape 26 identique au retour ; le script a ensuite cessé d'avancer (machine chargée, environ 1,5 s par image en rendu logiciel) et a été arrêté. Le reste (remontée complète, présentation, mouvement réduit, mobile) n'a PAS été revérifié en phase 3 ; il passait en phase 2.
-- Validation visuelle d'Elfik sur localhost.
+Phase 4, 2026-11-07, sur l'export statique (Chromium headless SwiftShader, réseau externe bloqué, aucune requête vers un autre hôte, console sans erreur ni avertissement) :
+- `tsc --noEmit` et `npm run build` réussissent.
+- `npm run check` partie 1 (mouvement réduit, 1440 × 900) : les 32 étapes atteintes au défilement vers le bas puis vers le haut, empreinte des positions et de la caméra identique à l'aller et au retour (64/64) ; GLB rendu (vue éclatée : 311 082 triangles, 280 appels avec ombres).
+- Partie 2 (mouvement normal) : transition continue ; présentation (étape conservée, appuis rapides → état stable, ← , page immobile) ; animation de l'échappement en lecture puis pause par la touche P, étiquette « Animation illustrative » visible ; sortie de présentation sans saut ; flèches non interceptées hors présentation ; saut direct par le menu ; exploration (récit masqué, panneau affiché, fiche d'une pièce choisie au clavier, Échap → même étape) : 17/17.
+- Partie 3 (mobile 390 × 844, mouvement réduit) : 6 étapes dont la grande date, aucun débordement horizontal.
+- `scripts/_anim.mjs` : fins des scénarios 09 → 10, 31 → 01 et 01 → 05 atteintes, guichet lu sur capture (« 10 », « 01 », « 05 ») ; lecture fait tourner, pause immobilise.
+- Captures relues : 7 étapes de la grande date (dates 01, 09, 31, 08 dans le guichet, anneau de la dent tronquée), exploration (bureau ; mobile vérifié par l'agent exploration).
+- Non vérifié : GPU réel, Safari, Firefox, tactile réel, redimensionnement pendant l'exploration, enchaînement complet en un seul passage du script (les parties ont été lancées séparément : `PARTIES=2,3 npm run check`).
+
+Historique : en phase 3, le script s'était bloqué après la descente des 27 étapes ; il est désormais découpé en parties et la descente se fait en mouvement réduit.
 
 ### Points à confirmer
 
@@ -134,11 +153,11 @@ Phase 3, 2026-11-07, sur l'export statique (Chromium headless SwiftShader, rése
 
 ### Limites connues
 
-- Pas d'animation mécanique (marche du rouage, échappement ralenti, pause/lecture) : phase 4. Pas encore de mode d'exploration libre : phase 4.
-- Chapitre grande date : première version ; le levier de verrouillage et les sautoirs sont immobiles dans le modèle ; pas encore d'animation du passage 30 → 31 → 01 ; comparaison Ulysse Nardin réduite à une phrase.
-- Cadrages réglés sur 1200 × 760 et 1440 × 900 ; mobile contrôlé seulement par le script de vérification.
+- Animations illustratives : rapports et amplitudes reconstitués ; spiral fixe ; impulsion élargie ; automatique en sens unique (cliquets d'inversion non modélisés) ; doigt escamotable, levier de verrouillage, sautoirs et déplacement linéaire du mobile de correction non animés (indiqué dans les textes).
+- Le sens de rotation de la roue de quantième et des étoiles est un choix du modèle (le livre montre des flèches sur ses figures, pas dans le texte).
+- Cadrages réglés sur 1200 × 760 et 1440 × 900 ; mobile contrôlé par le script.
 - Pas de parallaxe. Sans WebGL : un message, pas d'image de repli. Les ombres doublent les appels de rendu.
-- Vérifications en Chromium headless (SwiftShader) : pas encore sur GPU réel, ni Safari ou Firefox.
+- Vérifications en Chromium headless (SwiftShader, environ 1,5 s par image sur cette machine) : pas encore sur GPU réel, ni Safari ou Firefox, ni tactile réel.
 
 ### Demandes d'export
 
@@ -146,6 +165,5 @@ Aucune.
 
 ### Prochaines étapes
 
-- Revue d'Elfik de la phase 3 (textes, cadrages, ordre pédagogique).
-- Finir le chapitre grande date : passages 08 → 09, 30 → 31, 31 → 01 (rotations par jour décrites dans « Modèle 3D de la grande date »), comparaison Ulysse Nardin, correction rapide.
-- Phase 4 : animations mécaniques étiquetées (rouage, échappement ralenti avec pause/lecture, automatique), mode d'exploration libre.
+- Revue d'Elfik de la phase 4 (rythme des animations, lisibilité des passages de date, comparaison).
+- Phase 5 : finition et vérification complète (GPU réel, navigateurs, tactile, redimensionnement, performances, usage hors ligne sur l'ordinateur de présentation).

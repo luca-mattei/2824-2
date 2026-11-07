@@ -4,10 +4,11 @@
 // visibles. Il pilote le MÊME contrôleur narratif que le défilement (aucune logique propre).
 //
 // Clavier (uniquement dans ce mode) : → ↓ Espace PageDown = suivante ; ← ↑ PageUp = précédente ;
-// Début / Fin ; Échap = quitter. Les touches ne sont pas interceptées quand le focus est dans un
+// Début / Fin ; P = pause / lecture de l'animation illustrative ; Échap = quitter. Les touches ne sont pas interceptées quand le focus est dans un
 // champ de saisie, ni Espace / Entrée sur un bouton, un lien ou un résumé (activation native).
 
 import { useEffect, useRef } from 'react';
+import { mecanique } from '@/animation/mechanicalMotion';
 import { narratif } from '@/animation/narrativeController';
 import { etapes, numeroAffiche } from '@/data/chapters';
 import { useNarratif } from '@/components/useNarratif';
@@ -55,6 +56,10 @@ export function PresentationOverlay() {
           break;
         case 'Escape':
           narratif.quitterPresentation();
+          break;
+        case 'p':
+        case 'P':
+          mecanique.basculer();
           break;
         default:
           return;
@@ -133,7 +138,7 @@ export function PresentationOverlay() {
         </button>
       </div>
       <p className="presentation-aide">
-        Flèches ou Espace pour avancer · Échap pour quitter{mouvementReduit ? ' · animations réduites' : ''}
+        Flèches ou Espace pour avancer · P pour l’animation · Échap pour quitter{mouvementReduit ? ' · animations réduites' : ''}
       </p>
     </div>
   );

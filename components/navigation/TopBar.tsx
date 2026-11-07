@@ -92,15 +92,26 @@ export function TopBar() {
         </div>
       </nav>
       <EtatPreparation />
+      {mode === 'exploration' ? (
+        <button type="button" className="bouton bouton-discret" onClick={() => narratif.quitterExploration()}>
+          Quitter l’exploration
+        </button>
+      ) : (
+        <button type="button" className="bouton bouton-discret" onClick={() => narratif.entrerExploration()}>
+          <span className="libelle-long">Explorer librement</span>
+          <span className="libelle-court">Explorer</span>
+        </button>
+      )}
       {mode === 'presentation' ? (
         <button type="button" className="bouton bouton-discret" onClick={() => narratif.quitterPresentation()}>
           Quitter la présentation
         </button>
-      ) : (
+      ) : mode === 'defilement' ? (
         <button type="button" className="bouton bouton-discret" onClick={() => narratif.entrerPresentation()}>
-          Mode présentation
+          <span className="libelle-long">Mode présentation</span>
+          <span className="libelle-court">Présenter</span>
         </button>
-      )}
+      ) : null}
     </header>
   );
 }

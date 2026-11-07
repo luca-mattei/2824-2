@@ -1,0 +1,103 @@
+/* Tableau de comparaison des grandes dates (chapitre Mido). Empilé en cartes sur écran étroit. */
+.comparaison {
+  margin: 1.2rem 0 0;
+}
+.comparaison-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+.comparaison-table caption {
+  caption-side: top;
+  text-align: left;
+  margin-bottom: 0.6rem;
+  font-family: var(--font-technique);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ivoire-doux);
+}
+.comparaison-table th,
+.comparaison-table td {
+  padding: 0.45rem 0.5rem;
+  border-top: 1px solid var(--color-trait);
+  vertical-align: top;
+  text-align: left;
+}
+.comparaison-table thead th {
+  font-family: var(--font-technique);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--color-laiton);
+  border-top: 0;
+}
+.comparaison-table tbody th {
+  font-weight: 600;
+  color: var(--color-ivoire);
+  width: 22%;
+}
+.comparaison-table td {
+  color: rgb(237 230 214 / 0.86);
+}
+.comparaison-titre-deductions {
+  margin: 1rem 0 0.4rem;
+  font-family: var(--font-technique);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ivoire-doux);
+}
+.comparaison-deductions {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.45rem;
+  font-size: 0.86rem;
+  line-height: 1.45;
+  color: rgb(237 230 214 / 0.86);
+}
+.comparaison-etiquette {
+  font-family: var(--font-technique);
+  font-size: 0.64rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-laiton);
+  margin-right: 0.3rem;
+}
+
+/* Écran étroit ou colonne étroite : chaque ligne devient une carte, sans débordement horizontal. */
+@media (max-width: 1100px) {
+  .comparaison-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  .comparaison-table,
+  .comparaison-table tbody,
+  .comparaison-table tr,
+  .comparaison-table th,
+  .comparaison-table td {
+    display: block;
+    width: auto;
+  }
+  .comparaison-table tr {
+    border-top: 1px solid var(--color-trait);
+    padding: 0.4rem 0;
+  }
+  .comparaison-table th,
+  .comparaison-table td {
+    border-top: 0;
+    padding: 0.15rem 0;
+  }
+  .comparaison-table td::before {
+    content: attr(data-calibre) ' : ';
+    font-family: var(--font-technique);
+    font-size: 0.68rem;
+    color: var(--color-laiton);
+  }
+}

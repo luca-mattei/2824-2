@@ -34,4 +34,6 @@ Autres commandes :
 - `npm run inspect:model` : mesures du GLB et correspondance avec le manifeste.
 - `npm run typecheck` : contrôle TypeScript.
 
-Mode présentation (bouton « Mode présentation ») : → ↓ Espace PageDown, étape suivante ; ← ↑ PageUp, étape précédente ; Début / Fin ; Échap pour quitter.
+Mode présentation (bouton « Mode présentation ») : → ↓ Espace PageDown, étape suivante ; ← ↑ PageUp, étape précédente ; Début / Fin ; P, pause / lecture de l'animation illustrative ; Échap pour quitter.
+
+Exploration libre (bouton « Explorer librement ») : rotation et zoom à la souris ou au doigt, vues prédéfinies, assemblé / éclaté, calibre 2824-2 ou C07651, isolation d'un sous-ensemble, fiche de chaque pièce (clic ou liste). Échap pour revenir au récit.

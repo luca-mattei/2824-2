@@ -13,6 +13,7 @@ import { URL_MODELE } from '@/lib/modelMapping';
 import { choisirQualite } from '@/lib/quality';
 import { Lighting } from './Lighting';
 import { MovementModel } from './MovementModel';
+import { ExplorerControls } from '@/components/explorer/ExplorerControls';
 
 async function telecharger(url: string, progression: (f: number) => void): Promise<ArrayBuffer> {
   const reponse = await fetch(url);
@@ -98,6 +99,7 @@ export default function MovementCanvas() {
         <Suspense fallback={null}>
           {url && <MovementModel url={url} timeline={timeline} ombres={qualite.ombres} />}
         </Suspense>
+        <ExplorerControls />
       </LimiteErreur>
     </Canvas>
   );

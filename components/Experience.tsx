@@ -6,6 +6,8 @@ import { Narrative } from '@/components/narrative/Narrative';
 import { SourcesSection } from '@/components/narrative/SourcesSection';
 import { TopBar } from '@/components/navigation/TopBar';
 import { PresentationOverlay } from '@/components/presentation/PresentationOverlay';
+import { AnimationControls } from '@/components/narrative/AnimationControls';
+import { ExplorerPanel } from '@/components/explorer/ExplorerPanel';
 
 export function Experience() {
   return (
@@ -21,6 +23,8 @@ export function Experience() {
         <SourcesSection />
       </main>
       <PresentationOverlay />
+      <AnimationControls />
+      <ExplorerPanel />
     </>
   );
 }

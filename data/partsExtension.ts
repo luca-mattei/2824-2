@@ -868,7 +868,7 @@ export const extensionPieces: Partial<Record<string, ExtensionPiece>> = {
     {
       nom: 'Mobile intermédiaire',
       fonction: 'Transmet la rotation de la roue des heures à la roue de quantième.',
-      explication: 'Numéro 2 de la nomenclature du livre.',
+      explication: 'Numéro 2 de la nomenclature du livre (fig. 3-49), appelé « mobile intermédiaire de quantième » dans le texte (p. 170).',
       statut: 'reconstitué',
       noteModele: MODULE_GD,
       axeRotation: AXE,
@@ -878,8 +878,9 @@ export const extensionPieces: Partial<Record<string, ExtensionPiece>> = {
   'GD-3 Roue de quantième': p(
     {
       nom: 'Roue de quantième',
-      fonction: 'Fait un tour par jour et porte le doigt escamotable.',
-      explication: 'Numéro 3 du livre ; entraînée par la roue des heures via le mobile intermédiaire.',
+      fonction: 'Porte le doigt escamotable, qui entraîne le disque inférieur une fois par jour.',
+      explication:
+        'Numéro 3 du livre ; entraînée par la roue des heures via le mobile intermédiaire (p. 170). Un tour par jour est une déduction : le livre ne donne ni ce rapport ni de nombre de dents.',
       statut: 'reconstitué',
       noteModele: MODULE_GD,
       axeRotation: AXE,
@@ -891,7 +892,7 @@ export const extensionPieces: Partial<Record<string, ExtensionPiece>> = {
       nom: 'Doigt escamotable',
       fonction: 'Fait sauter le disque inférieur d’un cran vers minuit.',
       explication:
-        'Numéro 4 du livre. Il s’arme contre une dent du disque inférieur, puis le fait sauter ; il se rétracte lors d’une correction rapide près de minuit.',
+        'Numéro 4 du livre, appelé aussi « doigt escamotable de la roue de quantième » (p. 172). Son ressort est plus faible que le sautoir : il s’arme d’abord contre une dent du disque inférieur, puis, arrivé contre sa butée, entraîne la dent (p. 170). Lors d’une correction rapide près de minuit, il se rétracte pour laisser passer la dent (p. 172).',
       statut: 'reconstitué',
       noteModele: MODULE_GD,
     },
@@ -900,8 +901,8 @@ export const extensionPieces: Partial<Record<string, ExtensionPiece>> = {
   'GD-5 Butée du doigt escamotable': p(
     {
       nom: 'Butée du doigt escamotable',
-      fonction: 'Limite la course du doigt escamotable.',
-      explication: 'Numéro 5 du livre.',
+      fonction: 'Arrête le doigt escamotable, qui peut alors entraîner la dent du disque inférieur.',
+      explication: 'Numéro 5 du livre (fig. 3-49 ; rôle décrit p. 170).',
       statut: 'reconstitué',
       noteModele: MODULE_GD,
     },
@@ -954,7 +955,7 @@ export const extensionPieces: Partial<Record<string, ExtensionPiece>> = {
     {
       nom: 'Étoile intermédiaire des unités',
       fonction: 'Transmet le mouvement de la couronne des unités à l’étoile des unités.',
-      explication: 'Numéro 9 du livre ; elle déplace aussi le levier de verrouillage.',
+      explication: 'Numéro 9 du livre ; elle déplace aussi le levier de verrouillage (p. 170). Du 31 au 1er, la dent tronquée de la couronne passe devant elle sans l’entraîner (p. 171).',
       statut: 'reconstitué',
       noteModele: MODULE_GD,
       axeRotation: AXE,
@@ -964,8 +965,9 @@ export const extensionPieces: Partial<Record<string, ExtensionPiece>> = {
   'GD-10 Levier de verrouillage': p(
     {
       nom: 'Levier de verrouillage',
-      fonction: 'Empêche le disque des unités de se désynchroniser lors d’un choc.',
-      explication: 'Numéro 10 du livre ; il est bloqué par une dent de la couronne des unités.',
+      fonction: 'Du 31 au 1er, bloque l’étoile intermédiaire en cas de choc.',
+      explication:
+        'Numéro 10 du livre. Déplacé par l’étoile intermédiaire, son talon est bloqué par une dent de la couronne des unités : l’étoile intermédiaire ne peut plus tourner, pour éviter la désynchronisation de l’indicateur des dizaines (p. 171).',
       statut: 'reconstitué',
       noteModele: `${MODULE_GD} Représenté immobile.`,
     },
@@ -1008,7 +1010,7 @@ export const extensionPieces: Partial<Record<string, ExtensionPiece>> = {
       nom: 'Mobile de correction rapide',
       fonction: 'Entraîne le disque inférieur lors de la correction rapide de la date.',
       explication:
-        'Numéro 16 du livre. En position 2 de la tige, la tige, le pignon coulant et le renvoi l’entraînent ; il se déplace alors vers le disque inférieur.',
+        'Numéro 16 du livre. En position 2 de la tige, il est entraîné par le pignon coulant et le renvoi de mise à l’heure ; poussé par son ressort, il se déplace en ligne droite vers le disque inférieur, puis tourne et l’entraîne (p. 172). Le livre ne précise pas le ou les sens de correction.',
       statut: 'reconstitué',
       noteModele: MODULE_GD,
       axeRotation: AXE,
@@ -1028,8 +1030,8 @@ export const extensionPieces: Partial<Record<string, ExtensionPiece>> = {
   'GD-17 Étoile de mobile de correction rapide': p(
     {
       nom: 'Étoile de mobile de correction rapide',
-      fonction: 'Partie du mobile de correction rapide.',
-      explication: 'Numéro 17 du livre.',
+      fonction: 'Étoile du mobile de correction rapide, qui entraîne le disque inférieur.',
+      explication: 'Numéro 17 du livre, appelé « étoile de correction rapide » dans le texte (p. 172) ; le ressort du mobile appuie sur elle de façon excentrée.',
       statut: 'reconstitué',
       noteModele: MODULE_GD,
     },

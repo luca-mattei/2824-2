@@ -10,7 +10,8 @@ import { gsap } from 'gsap';
 import { etapes } from '@/data/chapters';
 import { clamp } from '@/lib/transforms';
 
-export type Mode = 'defilement' | 'presentation';
+/** défilement : récit au scroll ; présentation : clavier ; exploration : caméra libre (hors narration). */
+export type Mode = 'defilement' | 'presentation' | 'exploration';
 
 export interface InstantaneUI {
   mode: Mode;
@@ -104,6 +105,7 @@ export const narratif = {
    */
   allerA(k: number, { direct = false }: { direct?: boolean } = {}) {
     const etape = clamp(Math.round(k), 0, DERNIERE);
+    if (ui.mode === 'exploration') return;
     if (ui.mode === 'presentation') {
       but = etape;
       tween?.kill();
@@ -152,6 +154,25 @@ export const narratif = {
     but = Math.round(moteur.cible);
     majUI({ mode: 'presentation', etapeActive: but });
     narratif.allerA(but); // termine proprement une éventuelle transition entamée au défilement
+  },
+  // — Mode exploration libre (caméra et pièces pilotées par animation/explorationState.ts) —
+  entrerExploration() {
+    if (ui.mode === 'exploration') return;
+    tween?.kill();
+    tween = null;
+    but = Math.round(moteur.cible);
+    moteur.cible = but;
+    moteur.saut = true;
+    majUI({ mode: 'exploration', etapeActive: but, sauts: ui.sauts + 1 });
+    reveillerScene();
+  },
+  quitterExploration() {
+    if (ui.mode !== 'exploration') return;
+    moteur.cible = but;
+    moteur.saut = true;
+    majUI({ mode: 'defilement', etapeActive: but, sauts: ui.sauts + 1 });
+    adaptateur?.allerA(but, false);
+    reveillerScene();
   },
   quitterPresentation() {
     if (ui.mode !== 'presentation') return;
