@@ -180,6 +180,16 @@ export function lerpCirculaire(a: number, b: number, u: number, m: number) {
   return a + d * u;
 }
 
+// Sens vérifiés sur les flèches des fig. 3-52, 3-53 et 3-56 du livre (vue côté cadran, tige à 3 h) :
+// rotation.y positive = sens HORAIRE vu côté cadran.
+// - disque des dizaines (et disque inférieur, couronne des unités) : horaire ;
+// - étoile intermédiaire (9) : horaire, menée par la denture intérieure de la couronne ;
+// - étoile des unités (11) et disque des unités : antihoraire (engrènement extérieur avec 9) ;
+// - roue des heures (1 du livre, 37) et roue de quantième (3) : horaires ; mobile intermédiaire (2) :
+//   antihoraire ;
+// - mobile et étoile de correction rapide (16, 17) : horaires, comme le disque inférieur qu'ils mènent
+//   par sa denture intérieure.
+// Les rapports (tours par jour du mobile 2) sont reconstitués.
 export function anglesDate(p: PositionDate, a: Angles) {
   const diz = p.diz * PAS_DIZAINES * DEG;
   a.pieces.set('GD-7 Disque des dizaines', diz); // entraîne ses enfants 6 (disque inférieur) et 8 (couronne)
@@ -187,7 +197,9 @@ export function anglesDate(p: PositionDate, a: Angles) {
   a.pieces.set('GD-11 Étoile des unités', -p.uni * PAS_UNITES * DEG);
   a.pieces.set('GD-12 Disque des unités', -p.uni * PAS_UNITES * DEG);
   a.pieces.set('GD-3 Roue de quantième', p.roue * 360 * DEG);
-  const c = -p.correction * 360 * DEG;
+  a.pieces.set('GD-2 Mobile intermédiaire', -p.roue * 2 * 360 * DEG);
+  a.pieces.set('37 Roue des heures', p.roue * 2 * 360 * DEG); // deux tours par jour
+  const c = p.correction * 360 * DEG;
   a.pieces.set('GD-16 Mobile de correction rapide', c);
   a.enfants.set("GD-16'' Ressort de mobile de correction rapide", -c);
 }

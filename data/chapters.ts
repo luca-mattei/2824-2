@@ -620,10 +620,10 @@ export const chapitres: Partial<Record<ChapterId, Chapitre>> = {
           {
             type: 'illustratif',
             texte:
-              'Le vrai passage se fait aux environs de minuit, après des heures de rotation de la roue de quantième : l’animation resserre cette approche et ralentit le saut. Rotations et sens choisis pour le modèle, non donnés par le livre.' +
+              'Le vrai passage se fait aux environs de minuit, après des heures de rotation de la roue de quantième : l’animation resserre cette approche et ralentit le saut. Sens de rotation conformes aux flèches des fig. 3-52 et 3-53 du livre ; vitesses et rapports reconstitués.' +
               PAUSE,
           },
-          { type: 'schématique', texte: 'Doigt, sautoirs et levier ne se déforment pas : seuls les disques et les roues tournent.' },
+          { type: 'schématique', texte: 'Le doigt escamotable est représenté immobile sur sa roue : il ne s’efface pas contre la dent. Sautoirs et levier ne bougent pas non plus : seuls les disques et les roues tournent.' },
         ],
         sources: [livre('3.2.4, fig. 3-52 et 3-53, p. 170'), livre('3.2.4, fig. 3-51, p. 169'), MODELE],
       },
