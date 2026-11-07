@@ -19,6 +19,11 @@ export interface PieceMontee {
   mecanique: Group;
   /** Centre de la pièce dans le repère du groupe d'assemblage (pour les légendes). */
   centreLocal: Vector3;
+  /** Rayon horizontal et dessus de la pièce (mm, repère du groupe d'assemblage). */
+  rayon: number;
+  dessus: number;
+  /** Nœuds enfants du GLB, par nom d'origine (ex. couvercle du barillet). */
+  enfants: Map<string, Object3D>;
   materiaux: MeshStandardMaterial[];
   dernierSurlignage: number;
 }
@@ -70,8 +75,15 @@ export function monterPiece(piece: PieceWeb, objet: Object3D, ombres: boolean): 
     o.material = Array.isArray(o.material) ? o.material.map(remplacer) : remplacer(o.material);
   });
 
-  const centreLocal = new Box3().setFromObject(assemblage).getCenter(new Vector3());
-  return { piece, assemblage, mecanique, centreLocal, materiaux, dernierSurlignage: -1 };
+  const boite = new Box3().setFromObject(assemblage);
+  const centreLocal = boite.getCenter(new Vector3());
+  const rayon = Math.max(Math.abs(boite.min.x), Math.abs(boite.max.x), Math.abs(boite.min.z), Math.abs(boite.max.z));
+  const enfants = new Map<string, Object3D>();
+  objet.traverse((o) => {
+    const nom = o.userData?.name;
+    if (o !== objet && typeof nom === 'string') enfants.set(nom, o);
+  });
+  return { piece, assemblage, mecanique, centreLocal, rayon, dessus: boite.max.y, enfants, materiaux, dernierSurlignage: -1 };
 }
 
 /** Pose absolue de la pièce pour un état donné (aucune accumulation). */
@@ -82,7 +94,7 @@ export function poserPiece(m: PieceMontee, e: EtatPiece) {
   const absence = 1 - e.v;
   m.assemblage.position.set(
     p[0] + d[0] * eclatement,
-    p[1] + d[1] * eclatement + sens * DECALAGE_ABSENT * absence * absence,
+    p[1] + d[1] * eclatement + sens * (e.l + DECALAGE_ABSENT * absence * absence),
     p[2] + d[2] * eclatement,
   );
   m.assemblage.visible = e.v > 0.003;

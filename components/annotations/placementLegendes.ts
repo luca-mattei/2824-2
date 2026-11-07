@@ -39,8 +39,10 @@ export function placerLegende(ax: number, ay: number, largeurTexte: number, cadr
   const n = Math.hypot(ux, uy);
   ux /= n;
   uy /= n;
-  // Fin du trait : un peu au-delà du bord du sujet, ou de l'ancre si elle est déjà au bord.
-  const r = Math.max(d + TRAIT_MIN, cadre.rayon * 0.95 + 18);
+  // Fin du trait : un peu au-delà du bord du sujet (sans sortir de la zone libre), ou de l'ancre
+  // si elle est déjà au bord.
+  const rMax = Math.min(cadre.droiteMax - cadre.gaucheMin, cadre.basMax - cadre.hautMin) * 0.46;
+  const r = Math.max(d + TRAIT_MIN, Math.min(cadre.rayon * 0.95 + 18, rMax));
   let ex = cadre.cx + ux * r;
   let ey = cadre.cy + uy * r;
   let gauche = ux < 0;
@@ -60,4 +62,39 @@ export function placerLegende(ax: number, ay: number, largeurTexte: number, cadr
   }
   ey = Math.min(Math.max(ey, cadre.hautMin + MARGE), cadre.basMax - MARGE);
   return { dx: ex - ax, dy: ey - ay, gauche };
+}
+
+export interface LegendePlacee {
+  ax: number;
+  ay: number;
+  placement: Placement;
+  manuel: boolean;
+}
+
+const ESPACE = 26;
+
+/**
+ * Évite les chevauchements : de chaque côté, les étiquettes sont triées par hauteur et
+ * écartées d'au moins ESPACE px, puis ramenées dans la zone si elles en sortent.
+ */
+export function repartirLegendes(liste: LegendePlacee[], cadre: Cadre): void {
+  for (const gauche of [true, false]) {
+    const cote = liste.filter((l) => !l.manuel && l.placement.gauche === gauche);
+    cote.sort((a, b) => a.ay + a.placement.dy - (b.ay + b.placement.dy));
+    let precedent = -Infinity;
+    for (const l of cote) {
+      const y = Math.max(l.ay + l.placement.dy, precedent + ESPACE);
+      l.placement.dy = y - l.ay;
+      precedent = y;
+    }
+    const debord = precedent - (cadre.basMax - MARGE);
+    if (debord > 0) {
+      let suivant = Infinity;
+      for (const l of [...cote].reverse()) {
+        const y = Math.min(l.ay + l.placement.dy - debord, suivant - ESPACE);
+        l.placement.dy = Math.max(cadre.hautMin + MARGE, y) - l.ay;
+        suivant = y;
+      }
+    }
+  }
 }

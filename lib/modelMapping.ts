@@ -7,7 +7,11 @@
 import type { Object3D } from 'three';
 import { piecesParId, type PieceWeb } from '@/data/parts';
 
-export const URL_MODELE = '/models/eta2824-2.glb';
+/**
+ * Modèle utilisé par tout le site : sur-ensemble du 2824-2 avec le module grande date du C07651
+ * (pose assemblée). `model/eta2824-2.glb` reste dans le dépôt comme source historique.
+ */
+export const URL_MODELE = '/models/eta-c07651-grande-date.glb';
 export const NOM_RACINE = 'ETA 2824-2 (racine)';
 
 export function nomOrigine(object: Object3D): string | undefined {

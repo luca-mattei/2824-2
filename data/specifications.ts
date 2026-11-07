@@ -33,4 +33,11 @@ export const specifications: Specification[] = [
     note: 'typique ; 38 h au minimum',
     source: ct1,
   },
+  {
+    id: 'angle-levee',
+    libelle: 'Angle de levée',
+    valeur: '50°',
+    note: 'typique, du balancier',
+    source: ct1,
+  },
 ];

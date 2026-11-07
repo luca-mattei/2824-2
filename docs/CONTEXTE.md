@@ -70,16 +70,17 @@ Choix d'Elfik : tout l'exposé porte sur l'ETA 2824-2 ; le dernier chapitre mont
 
 Source : `docs/sources/theorie-montres-compliquees.pdf` (942 Mo, exclu de git), section 3.2.4 « Grande date ETA », pages imprimées 166 à 172 (index PDF 166 à 172). Comparaison : section 3.2.3 « Grande date Ulysse Nardin », p. 160 à 165.
 
-- Montre : **Mido Commander Big Date**. Calibre : **ETA C07651** (Mido « Calibre 80 »). Le livre donne 3 Hz et 80 h de réserve de marche. Le C07651 dérive du 2824-2 d'après des sources secondaires (revendeurs, WatchBase) : à présenter comme « dérivé du 2824-2 », sans détailler ce qui change hors grande date.
+- Montre : **Mido Commander Big Date**. Calibre : **ETA C07651** (« CALIBER 80 » n'apparaît que gravé sur le rotor, photo fig. 3-48, pas dans le texte). Le livre donne 3 Hz et 80 h de réserve de marche. Le C07651 dérive du 2824-2 d'après des sources secondaires (revendeurs, WatchBase) ; « 2824 » n'apparaît nulle part dans le livre : à présenter comme « dérivé du 2824-2 », sans détailler ce qui change hors grande date.
 - Nomenclature du livre (fig. 3-49) : 1 roue des heures, 2 mobile intermédiaire, 3 roue de quantième, 4 doigt escamotable, 5 butée du doigt escamotable, 6 disque inférieur, 6' sautoir de disque inférieur, 7 disque des dizaines, 8 couronne des unités, 9 étoile intermédiaire des unités, 10 levier de verrouillage, 11 étoile des unités, 11' sautoir de l'étoile des unités, 12 disque des unités, 13 tige de remontoir, 14 pignon coulant, 15 renvoi, 16 mobile de correction rapide, 16'' ressort de mobile de correction rapide, 17 étoile de mobile de correction rapide. Brevet cité : CH 709186 A2.
 - Fonctionnement (p. 169 à 172) : la roue des heures entraîne la roue de quantième (un tour par jour) par le mobile intermédiaire ; son doigt escamotable s'arme contre une dent du disque inférieur puis le fait sauter d'un cran vers minuit, et le sautoir le positionne. Le disque des dizaines, solidaire du disque inférieur, porte 31 chiffres (neuf « 0 », dix « 1 », dix « 2 », deux « 3 ») et saute chaque jour. La couronne des unités, usinée sur lui, a 31 emplacements dont une dent tronquée (30 dents) ; elle entraîne l'étoile des unités par l'étoile intermédiaire, qui déplace aussi le levier de verrouillage. Du 31 au 1er, la dent tronquée est face à l'étoile intermédiaire : le disque des unités reste sur « 1 ». En cas de choc, le levier de verrouillage, bloqué par une dent de la couronne, empêche le disque des unités de se désynchroniser. Correction rapide en position 2 de la tige : tige, pignon coulant, renvoi, puis le mobile de correction rapide se déplace vers le disque inférieur (appui excentré de son ressort) et l'entraîne ; près de minuit, le doigt escamotable se rétracte pour laisser passer la dent.
-- Différences avec la grande date « classique » du livre (Ulysse Nardin UN334) : là, les dizaines sont un petit disque séparé, entraîné par une planche des dizaines à 4 dents (09-10, 19-20, 29-30, 31-01), et les unités par une planche de 30 dents (une tronquée), chacune avec ses renvois, son pignon et son sautoir ; correction bidirectionnelle par une roue de friction, bloquée autour de minuit. Dans l'ETA, l'indicateur des dizaines est le grand disque lui-même (31 positions, saute chaque jour) et une seule couronne pilote les unités. Point commun : la dent tronquée du 31 au 01. Le décompte « moins de pièces » est une lecture des deux nomenclatures, pas une affirmation du livre.
+- **Relecture du livre (2026-11-07, détail dans `docs/notes-grande-date.md`)** : « un tour par jour » pour la roue de quantième est une déduction (le livre dit seulement qu'elle entraîne une dent une fois par jour) ; le doigt escamotable s'efface d'abord (son ressort est plus faible que le sautoir) puis entraîne la dent en arrivant contre sa butée (5) ; le levier de verrouillage n'est décrit que pour le passage du 31 au 1er, où il bloque l'étoile intermédiaire pour éviter la désynchronisation de l'indicateur des dizaines ; le sens de la correction rapide ETA n'est pas précisé ; le dessin du brevet place le guichet à 12 h, la photo de la Mido à 6 h (ne pas s'appuyer sur le brevet pour l'orientation). Ne viennent PAS du livre : « classique », « petit » disque, « moins de pièces », la correspondance avec les numéros ETA (37, 4, 2, 32), l'épaisseur du module, les dents des étoiles, les sens de rotation.
+- Différences avec la grande date Ulysse Nardin du livre (UN334) : là, les dizaines sont un petit disque séparé, entraîné par une planche des dizaines à 4 dents (09-10, 19-20, 29-30, 31-01), et les unités par une planche de 30 dents (une tronquée), chacune avec ses renvois, son pignon et son sautoir ; correction bidirectionnelle par une roue de friction, bloquée autour de minuit. Dans l'ETA, l'indicateur des dizaines est le grand disque lui-même (31 positions, saute chaque jour) et une seule couronne pilote les unités. Point commun : la dent tronquée du 31 au 01. Le décompte « moins de pièces » est une lecture des deux nomenclatures, pas une affirmation du livre.
 
 ### Modèle 3D de la grande date
 
 - Fichier Blender : `eta-c07651-grande-date.blend` (sur le Mac, `/Users/luca/Documents/ETA2824/`, copie de `eta2824.blend` + module ; textes `eta2824_grande_date.py` et `eta2824_grande_date_anim.py`). `eta2824.blend` reste le 2824-2 de base.
 - Export web : `model/eta-c07651-grande-date.glb` (7,6 Mo, 96 nœuds) et `model/manifeste-c07651-grande-date.json`. C'est un **sur-ensemble** du GLB 2824-2 : mêmes pièces communes, plus le quantième simple du 2824-2 et le module grande date. Chaque nœud porte l'extra `variante` : `2824-2` (35, 36, 38, 40, 41 et la vis 900 de la plaque : à masquer en version Mido), `C07651` (16 nœuds `GD-…`, numéros du livre dans l'extra `pos_livre` : à masquer en version 2824-2), absent = commun. Pièces du livre déjà présentes sous leur nom ETA : 1 = « 37 Roue des heures », 13 = « 4 Tige de remontoir », 14 = « 2 Pignon coulant », 15 = « 32 Renvoi ».
-- Ce GLB est exporté **en pose assemblée**, date « 01 » affichée (le GLB `eta2824-2.glb` était sorti en pose éclatée : l'exporteur prend l'image 0 sans l'option « image courante »). Il peut remplacer `eta2824-2.glb` pour tout le site.
+- Ce GLB est exporté **en pose assemblée**, date « 01 » affichée (le GLB `eta2824-2.glb` était sorti en pose éclatée : l'exporteur prend l'image 0 sans l'option « image courante »). **Depuis la phase 3, c'est le seul modèle du site** (`npm run inspect:model` : 7,45 Mio, 184 869 triangles, 163 primitives, 95/95 correspondances, aucune pièce décalée) ; `eta2824-2.glb` et `manifeste-pieces.json` restent dans `model/` comme sources historiques.
 - Repère du module : vu côté cadran, tige à 3 h, guichet à 6 h (axe −X de Blender). Les deux disques sont concentriques (axe du mouvement) ; disque des unités devant, ajouré entre ses dix plots chiffrés. Rotations par jour : disque des dizaines (avec 6 et 8) +360/31° autour de Z (Blender), étoile 9 +36°, étoile 11 et disque des unités −36° (0° au passage du 31 au 01), roue de quantième un tour.
 - Reconstitué (à étiqueter) : cotes, nombres de dents des étoiles (10) et des roues, positions des pièces (relevées sur la fig. 3-49), épaisseur du module (environ 1 mm sous la platine). Le levier de verrouillage et les sautoirs sont statiques. Le cadre « Guichet (repère) » n'est pas une pièce (non exporté).
 - Animation Blender (images 1388 à 2514) : passage côté cadran, retrait du quantième 2824-2, arrivée des pièces du module dans l'ordre du livre, puis 08 → 09, 09 → 10, 30 → 31 et 31 → 01 au ralenti.
@@ -87,62 +88,64 @@ Source : `docs/sources/theorie-montres-compliquees.pdf` (942 Mo, exclu de git), 
 ## État
 
 - 2026-11-07 : modèle (avec les détails de réalisme), animation Blender (assemblage et marche) et export GLB faits ; dossier préparé. Vérifié par des rendus test EEVEE aux images 600, 1110, 1150 et 1300.
-- 2026-11-07 : site web, phases 1 (audit) et 2 (première séquence) faites. Phase 3 non commencée.
+- 2026-11-07 : site web, phases 1 (audit) et 2 (première séquence) faites ; premier commit `292eb0e`.
+- 2026-11-07 : phase 3 (narration complète du 2824-2) faite ; chapitre grande date préparé, pas fini. Phase 4 non commencée.
 
-### Fait (phase 2)
+### Stack et principes (phases 2 et 3)
 
-- Stack : Next.js 16 (App Router, `output: 'export'`), React 19, React Three Fiber 9, drei, GSAP + ScrollTrigger, Tailwind 4, TypeScript. three.js épinglé en 0.182.0 : R3F 9.8 instancie `THREE.Clock`, déprécié (avertissement console) à partir de r183.
-- Séquence de 7 étapes sur le vrai GLB : intro (assemblé) → éclaté → platine → platine côté cadran → rouage (pièces) → rouage monté (ordre CT 9, 10, 11, 12) → pont de rouage (13 + 2 × 901). Chapitres affichés : Introduction, La platine, Transmettre l'énergie.
-- Défilement : progression continue et réversible, fonction pure de la position (aucune accumulation). Mode présentation au clavier sur le même contrôleur narratif. Saut direct par le menu des chapitres.
-- Légendes 3D en HTML, placées automatiquement vers l'extérieur du sujet. Mentions « reconstitué », « schématique », « ordre pédagogique » dans chaque étape ; sources par étape et section Sources et limites.
-- `prefers-reduced-motion` : états fixes par étape, sans transition. Mobile : scène dans la moitié haute, texte dessous.
-- Rendu : environnement PMREM procédural (aucun HDR), rendu à la demande, shaders précompilés. Rubis sans transmission (la transmission imposerait un second rendu complet de la scène). Ombres seulement sur les appareils non modestes.
-- Hors ligne : polices locales (`app/fonts`, licence OFL), aucun CDN. GLB copié octet pour octet dans `public/models/` par `npm run assets` (lancé aussi avant `dev` et `build`), non versionné.
+- Next.js 16 (App Router, `output: 'export'`), React 19, React Three Fiber 9, drei, GSAP + ScrollTrigger, Tailwind 4, TypeScript. three.js épinglé en 0.182.0 : R3F 9.8 instancie `THREE.Clock`, déprécié (avertissement console) à partir de r183.
+- Une seule progression narrative (`animation/narrativeController.ts`) écrite par le défilement OU par le mode présentation ; la scène en est une fonction pure (aucune accumulation, retour arrière exact).
+- Rendu à la demande, environnement PMREM procédural (aucun HDR), rubis sans transmission, polices locales (`app/fonts`, OFL), aucun CDN. Le GLB du site est copié octet pour octet dans `public/models/` par `npm run assets` (lancé avant `dev` et `build`, non versionné).
+
+### Fait en phase 3
+
+- **Modèle** : le site utilise `model/eta-c07651-grande-date.glb` et son manifeste (import tel quel dans `data/parts.ts`). Chaque étape déclare son `calibre` (`2824-2` par défaut, `C07651` pour la grande date) : les pièces de l'autre variante sont masquées (`variante` du manifeste).
+- **Narration** : 11 chapitres, 27 étapes (`data/chapters.ts`, `chapterOrder`) : Introduction (intro, éclaté) ; La platine (platine, côté cadran) ; Stocker l'énergie (barillet ouvert, barillet posé) ; Transmettre l'énergie (pièces, roues posées, chemin de l'énergie, pont de rouage) ; Réguler le temps (échappement, balancier, amortisseur) ; Les ponts (ponts, ponts soulevés) ; Remontage et mise à l'heure ; Le calendrier (minuterie, quantième) ; Le remontage automatique (dispositif, masse) ; Le mouvement complet (ensemble, énergie, régulation, affichage) ; Mido Commander Big Date (en préparation : vue du module, module éclaté).
+- **Moteur** (`animation/chapterStates.ts`, `assemblyTimeline.ts`) : états cumulés par groupes (`data/groups.ts`, 22 groupes dont 4 pour le module grande date), assemblage partiel, pièces soulevées (`souleves`), masquage ciblé (`absentes`), déplacement de nœuds enfants (couvercle du barillet soulevé), repères schématiques (`components/three/ReperesSchematiques.ts` : chemin de l'énergie barillet → 10 → 11 → 12 → 9 et flèches de sens de rotation vus côté ponts, déduits de l'aiguille des secondes qui tourne dans le sens horaire côté cadran).
+- **Légendes** : placement automatique vers l'extérieur du sujet, bornées à la zone libre, sans chevauchement (`components/annotations/placementLegendes.ts`) ; ancres possibles sur les nœuds enfants (ressort moteur, spiral, dard…). Repères du livre affichés « L7 », « L12 »… pour ne pas les confondre avec les positions ETA.
+- **Correction** : les légendes étaient projetées avec la caméra de l'image précédente (faux après un saut direct ou en mouvement réduit) ; `CameraRig` met maintenant à jour les matrices immédiatement.
+- **Contenu** : textes de toutes les étapes, extension du manifeste pour les 95 entrées (`data/partsExtension.ts`), source `livre-complications` (`data/sources.ts`), annexe avec fiche technique CT p. 1 (`components/narrative/SourcesSection.tsx`, `app/annexe.css`). Note de lecture du livre : `docs/notes-grande-date.md`.
 
 ### Fichiers et modules importants
 
-- Contenu : `data/chapters.ts` (textes et `chapterOrder`), `data/chapterIds.ts` (identifiants stables, y compris `grande-date`), `data/sources.ts`, `data/specifications.ts` (valeurs CT p. 1).
-- Manifeste web : `data/parts.ts` (manifeste d'origine importé tel quel + champs calculés : groupe, positions assemblée et éclatée) et `data/partsExtension.ts` (fonction, explication, statut, sources, axe, liés par `noeud`). Groupes : `data/groups.ts` ; vue éclatée : `data/explodeLayout.ts`.
-- Animation : `animation/chapterStates.ts` (état de scène par étape), `assemblyTimeline.ts` (calcul pur), `narrativeController.ts` (état partagé défilement / présentation), `scrollController.ts` (ScrollTrigger), `mechanicalMotion.ts` (contrat de la phase 4, inactif).
-- Scène : `components/three/*` (canvas, modèle, pièce, caméra, éclairage), `components/annotations/*` (légendes).
-- Scripts : `scripts/inspect-glb.mjs`, `prepare-assets.mjs`, `serve-out.mjs`, `check-browser.mjs`.
+- Contenu : `data/chapters.ts`, `data/chapterIds.ts`, `data/sources.ts`, `data/specifications.ts`.
+- Manifeste web : `data/parts.ts` (manifeste d'origine + champs calculés : groupe, variante, rang, positions assemblée et éclatée, repère) et `data/partsExtension.ts` (champs rédigés, liés par `noeud`) ; groupes `data/groups.ts` ; vue éclatée `data/explodeLayout.ts`.
+- Animation : `animation/chapterStates.ts` (état de scène par étape), `assemblyTimeline.ts` (calcul pur), `narrativeController.ts`, `scrollController.ts`, `mechanicalMotion.ts` (contrat de la phase 4, inactif).
+- Scène : `components/three/*` (canvas, modèle, pièce, caméra, éclairage, repères), `components/annotations/*` (légendes).
+- Scripts : `inspect-glb.mjs` (accepte un autre GLB et manifeste en arguments), `prepare-assets.mjs`, `serve-out.mjs`, `check-browser.mjs`. Outil de travail non versionné : `scripts/_apercu.mjs` (captures de toutes les étapes, en mouvement réduit).
 
-### Ajouter un chapitre (par exemple Grande date)
+### Ajouter un chapitre
 
-Identifiant dans `data/chapterIds.ts` (déjà réservé : `grande-date`) → contenu et étapes dans `data/chapters.ts` → un état de scène par étape dans `animation/chapterStates.ts` → nouveaux groupes et pièces dans `data/groups.ts`, `data/partsExtension.ts` (et le manifeste si le GLB change) → insertion à la bonne place dans `chapterOrder`. Les numéros affichés se recalculent. Présenter la grande date comme un module ajouté, pas comme une fonction du 2824-2 standard.
+Identifiant dans `data/chapterIds.ts` → contenu dans `data/chapters.ts` → un état de scène par étape dans `animation/chapterStates.ts` (avec `calibre` si besoin) → groupes dans `data/groups.ts` et bandes dans `data/explodeLayout.ts` → insertion dans `chapterOrder`. Les numéros affichés se recalculent.
 
 ### Vérifications
 
-Le 2026-11-07, sur l'export statique servi en local (`npm run check`, Chromium headless avec SwiftShader). Toute requête vers un autre hôte est bloquée et journalisée : aucune n'a été émise. Résultat : 33/33.
-- GLB réel chargé (progression en octets) et rendu. Vue éclatée : 311 082 triangles et 280 appels de rendu, ombres comprises. Platine seule : 20 appels. Rouage : 36 appels. Pont de rouage : 53 appels.
-- Défilement vers le bas étape par étape, puis vers le haut. L'empreinte des positions des 69 pièces et de la caméra est identique à l'aller et au retour (écart 0). Un état intermédiaire continu existe à mi-transition.
-- Mode présentation :
-  - conserve l'étape active ;
-  - trois appuis rapides pendant une transition donnent un état final stable ;
-  - cet état est identique à celui obtenu au défilement ;
-  - la page ne défile pas ;
-  - en sortant, aucun saut de la scène ;
-  - hors de ce mode, les flèches ne sont pas interceptées.
-- Le menu des chapitres saute directement à l'état exact.
-- `prefers-reduced-motion` : uniquement des états entiers, sans état intermédiaire.
-- Mobile (390 × 844) : 5 étapes contrôlées, aucun débordement horizontal.
-- Console sans erreur ni avertissement.
-- `npm run build` réussit, ainsi que `tsc --noEmit`. `next dev` répond 200 sur la page et sur le GLB.
-- Captures relues à la main : bureau (étapes 0 à 6, présentation), mobile. Elles sont produites dans `verification/`, qui n'est pas versionné.
-- Non vérifié : GPU réel, Safari et Firefox, tactile réel, projection sur vidéoprojecteur, mode hors ligne du système d'exploitation (seul le blocage réseau du navigateur a été testé).
+Phase 3, 2026-11-07, sur l'export statique (Chromium headless SwiftShader, réseau externe bloqué) :
+- `npm run build` et `tsc --noEmit` réussissent ; `next dev` sert la page et le nouveau GLB.
+- Captures des 27 étapes (`scripts/_apercu.mjs`, mouvement réduit) relues à la main en planches ; aucune erreur ni avertissement console.
+- `npm run check` : 27/27 étapes atteintes au défilement vers le bas, état intermédiaire continu, étape 26 identique au retour ; le script a ensuite cessé d'avancer (machine chargée, environ 1,5 s par image en rendu logiciel) et a été arrêté. Le reste (remontée complète, présentation, mouvement réduit, mobile) n'a PAS été revérifié en phase 3 ; il passait en phase 2.
+- Validation visuelle d'Elfik sur localhost.
+
+### Points à confirmer
+
+- Vis 902 « filetage gauche » : **confirmé** (2026-11-07). Sur le dessin de la CT p. 12, le pictogramme bleu de filetage est accolé à « 902 Var » ; la légende « Filetage gauche » est p. 13.
+- Engrènement roue des heures (37) / roue entraîneuse de quantième (38) : déduit de la géométrie du modèle et du principe général, pas de la CT (étiqueté reconstitué).
+- Sens de rotation des flèches : déduction (aiguille des secondes horaire côté cadran, sens alternés), pas une donnée ETA ; étiqueté schématique.
 
 ### Limites connues
 
-- Pas de parallaxe. Animations mécaniques (marche du rouage, échappement) non implémentées.
-- Extension du manifeste rédigée seulement pour les pièces de la séquence (platine, 1-1, 1-2, 9 à 13, vis 901 du pont de rouage, gravures).
-- Vérifications faites dans Chromium headless (SwiftShader) : pas encore sur GPU réel, ni sur Safari ou Firefox.
-- Les ombres doublent les appels de rendu (≈ 280 en vue éclatée).
-- Sans WebGL : un message, pas d'image de repli.
+- Pas d'animation mécanique (marche du rouage, échappement ralenti, pause/lecture) : phase 4. Pas encore de mode d'exploration libre : phase 4.
+- Chapitre grande date : première version ; le levier de verrouillage et les sautoirs sont immobiles dans le modèle ; pas encore d'animation du passage 30 → 31 → 01 ; comparaison Ulysse Nardin réduite à une phrase.
+- Cadrages réglés sur 1200 × 760 et 1440 × 900 ; mobile contrôlé seulement par le script de vérification.
+- Pas de parallaxe. Sans WebGL : un message, pas d'image de repli. Les ombres doublent les appels de rendu.
+- Vérifications en Chromium headless (SwiftShader) : pas encore sur GPU réel, ni Safari ou Firefox.
 
 ### Demandes d'export
 
-Aucune bloquante. Optionnel : réexporter le GLB à l'image 1067 pour qu'il corresponde au README. Fait le 2026-11-07 sous la forme de `model/eta-c07651-grande-date.glb` (pose assemblée, avec les deux variantes de quantième) : voir Grande date Mido > Modèle 3D.
+Aucune.
 
-### Prochaines étapes (phase 3)
+### Prochaines étapes
 
-Chapitres énergie, régulation, ponts, remontage et mise à l'heure, calendrier, automatique, synthèse ; flèches de sens de rotation et chemin de l'énergie ; compléter `data/partsExtension.ts` ; fiche technique complète.
+- Revue d'Elfik de la phase 3 (textes, cadrages, ordre pédagogique).
+- Finir le chapitre grande date : passages 08 → 09, 30 → 31, 31 → 01 (rotations par jour décrites dans « Modèle 3D de la grande date »), comparaison Ulysse Nardin, correction rapide.
+- Phase 4 : animations mécaniques étiquetées (rouage, échappement ralenti avec pause/lecture, automatique), mode d'exploration libre.

@@ -1,11 +1,12 @@
 // Audit du GLB fourni : structure, mesures, correspondance avec le manifeste.
-// Usage : npm run inspect:model  (lecture seule, ne modifie aucun fichier)
+// Usage : npm run inspect:model [glb] [manifeste]  (lecture seule, ne modifie aucun fichier)
+// Par défaut : le modèle utilisé par le site (grande date C07651, sur-ensemble du 2824-2).
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
-const glbPath = `${root}model/eta2824-2.glb`;
-const manifestPath = `${root}model/manifeste-pieces.json`;
+const glbPath = process.argv[2] ?? `${root}model/eta-c07651-grande-date.glb`;
+const manifestPath = process.argv[3] ?? `${root}model/manifeste-c07651-grande-date.json`;
 
 const buf = readFileSync(glbPath);
 if (buf.toString('ascii', 0, 4) !== 'glTF') throw new Error('Pas un fichier GLB');
@@ -49,7 +50,10 @@ const extra = nodes.filter((n, i) => i !== rootIndex && !manifestNames.has(n.nam
 console.log('— Correspondance GLB ↔ manifeste');
 console.log(`  entrées du manifeste : ${manifest.pieces.length} ; absentes du GLB : ${missing.length ? missing.join(', ') : 'aucune'}`);
 console.log(`  nœuds du GLB absents du manifeste : ${extra.length ? extra.join(', ') : 'aucun'}`);
-const positions = new Set(manifest.pieces.map((p) => p.pos_eta));
+const parVariante = {};
+for (const p of manifest.pieces) parVariante[p.variante ?? 'commun'] = (parVariante[p.variante ?? 'commun'] ?? 0) + 1;
+console.log(`  variantes : ${Object.entries(parVariante).map(([k, v]) => `${k} ${v}`).join(', ')}`);
+const positions = new Set(manifest.pieces.map((p) => p.pos_eta).filter(Boolean));
 const nomenclature = [...positions].filter((p) => Number.parseInt(p, 10) < 900);
 const vis = [...positions].filter((p) => Number.parseInt(p, 10) >= 900);
 console.log(`  positions ETA distinctes : ${nomenclature.length} (nomenclature) + ${vis.length} (vis) — ${[...positions].sort((a, b) => parseFloat(a) - parseFloat(b) || a.localeCompare(b)).join(' ')}`);

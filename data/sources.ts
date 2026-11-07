@@ -1,6 +1,6 @@
 // Sources citées par l'exposé. Identifiants stables : les chapitres et les pièces s'y réfèrent.
 
-export type SourceId = 'ct-eta' | 'modele' | 'ciechanowski';
+export type SourceId = 'ct-eta' | 'modele' | 'livre-complications' | 'ciechanowski';
 
 export interface Source {
   id: SourceId;
@@ -27,9 +27,19 @@ export const sources: Record<SourceId, Source> = {
     id: 'modele',
     titre: 'Modèle 3D du projet et notes de reconstitution',
     auteur: 'Projet « Exposé ETA 2824-2 »',
-    detail: 'Modèle Blender eta2824.blend, export eta2824-2.glb, manifeste des pièces, notes docs/CONTEXTE.md',
+    detail:
+      'Modèles Blender eta2824.blend et eta-c07651-grande-date.blend, export eta-c07651-grande-date.glb, manifestes des pièces, notes docs/CONTEXTE.md',
     portee:
-      'Représentation : positions des axes relevées sur les vues ETA ; contours, nombres de dents, hauteurs d’étages et amplitudes reconstitués.',
+      'Représentation : positions des axes relevées sur les vues ETA (et sur la fig. 3-49 du livre pour le module grande date) ; contours, nombres de dents, hauteurs d’étages et amplitudes reconstitués.',
+  },
+  'livre-complications': {
+    id: 'livre-complications',
+    titre: 'Théorie des montres compliquées',
+    auteur: 'Ouvrage du dossier d’Elfik',
+    detail:
+      'Section 3.2.4 « Grande date ETA », p. 166–172 (fig. 3-49 à 3-57, brevet cité CH 709186 A2) ; section 3.2.3 « Grande date Ulysse Nardin », p. 160–165',
+    portee:
+      'Grande date du calibre ETA C07651 (Mido Commander Big Date) : nomenclature du module, fonctionnement, correction rapide. Ne décrit pas le 2824-2.',
   },
   ciechanowski: {
     id: 'ciechanowski',

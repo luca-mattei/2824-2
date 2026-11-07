@@ -1,0 +1,61 @@
+/* Annexe : fiche technique (styles propres à SourcesSection.tsx). */
+
+.fiche-technique {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+.fiche-technique caption {
+  caption-side: bottom;
+  text-align: left;
+  padding-top: 0.6rem;
+  font-family: var(--font-technique);
+  font-size: 0.72rem;
+  color: var(--color-ivoire-doux);
+}
+.fiche-technique th,
+.fiche-technique td {
+  padding: 0.65rem 0.75rem 0.65rem 0;
+  border-bottom: 1px solid var(--color-trait);
+  text-align: left;
+  vertical-align: baseline;
+}
+.fiche-technique th {
+  width: 30%;
+  font-family: var(--font-technique);
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-ivoire-doux);
+}
+.fiche-technique td {
+  font-family: var(--font-titre);
+  font-size: 1.1rem;
+  color: var(--color-ivoire);
+}
+.fiche-note {
+  font-family: var(--font-texte);
+  font-size: 0.82rem;
+  color: var(--color-ivoire-doux);
+}
+.fiche-technique .fiche-source {
+  width: 28%;
+  font-family: var(--font-technique);
+  font-size: 0.68rem;
+  color: var(--color-ivoire-doux);
+}
+.fiche-remarque {
+  margin-top: 1rem;
+  font-size: 0.9rem !important;
+  color: var(--color-ivoire-doux) !important;
+}
+
+@media (max-width: 640px) {
+  .fiche-technique .fiche-source {
+    display: none;
+  }
+  .fiche-technique th {
+    width: 40%;
+  }
+}

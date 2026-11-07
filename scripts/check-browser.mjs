@@ -50,7 +50,7 @@ async function nouvellePage(options) {
 }
 
 /** Attend que la progression affichée se stabilise ; renvoie l'état final. */
-async function attendreRepos(page, attendu = null, delai = 30_000) {
+async function attendreRepos(page, attendu = null, delai = 240_000) {
   await page.evaluate(() => (window.__repos = { n: 0, p: -1 }));
   await page.waitForFunction(
     (attendu) => {

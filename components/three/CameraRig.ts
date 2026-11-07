@@ -29,6 +29,9 @@ export function appliquerCadrage(camera: PerspectiveCamera, c: EtatCamera, large
   camera.far = distance + 200;
   camera.setViewOffset(largeur, hauteur, -(zone.cx - 0.5) * largeur, (0.5 - zone.cy) * hauteur, largeur, hauteur);
   camera.updateProjectionMatrix();
+  // Matrices à jour tout de suite : les légendes sont projetées dans la même image (sinon elles
+  // utiliseraient la caméra de l'image précédente, faux après un saut direct).
+  camera.updateMatrixWorld();
   // Rayon apparent du sujet (px) et zone libre, pour le placement des légendes.
   return {
     zone,

@@ -7,26 +7,47 @@
 import { useGLTF } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
-import { Group, PerspectiveCamera, Vector3, type Object3D } from 'three';
+import { Box3, Group, PerspectiveCamera, Vector3, type Object3D } from 'three';
 import {
   evaluerCamera,
+  evaluerEnfants,
   evaluerLegendes,
   evaluerPieces,
   type EtatPiece,
   type Timeline,
 } from '@/animation/assemblyTimeline';
+import type { Vec3 } from '@/lib/transforms';
 import { avancerAffichage, moteur, narratif } from '@/animation/narrativeController';
 import { elementsLegendes } from '@/components/annotations/labelRegistry';
-import { placerLegende, type Cadre } from '@/components/annotations/placementLegendes';
+import { placerLegende, repartirLegendes, type Cadre, type LegendePlacee } from '@/components/annotations/placementLegendes';
 import { associerPieces, trouverRacine } from '@/lib/modelMapping';
 import { appliquerCadrage } from './CameraRig';
 import { monterPiece, poserPiece, type PieceMontee } from './MovementPart';
+import { construireReperes, type Reperes } from './ReperesSchematiques';
+
+/** Nœud enfant déplacé par la narration (ex. couvercle du barillet). */
+interface EnfantMobile {
+  objet: Object3D;
+  repos: Vector3;
+  piece: PieceMontee;
+}
+
+/** Ancre de légende : centre d'une pièce mobile ou d'un nœud enfant, dans le repère d'assemblage. */
+interface AncreLegende {
+  piece: PieceMontee;
+  centre: Vector3;
+  enfant?: EnfantMobile;
+}
 
 interface Montage {
   conteneur: Group;
   pieces: PieceMontee[];
   etats: EtatPiece[];
   parId: Map<string, PieceMontee>;
+  enfants: EnfantMobile[];
+  decalagesEnfants: Vec3[];
+  ancres: Map<string, AncreLegende>;
+  reperes: Reperes;
 }
 
 // Le GLB mis en cache par useGLTF n'est monté qu'une fois (double rendu du mode strict compris).
@@ -46,11 +67,40 @@ function monter(scene: Object3D, timeline: Timeline, ombres: boolean): Montage {
     conteneur.add(m.assemblage);
     return m;
   });
+  const parId = new Map(pieces.map((m) => [m.piece.id, m]));
+
+  // Nœuds enfants déplacés par une étape : leur position de repos est conservée.
+  const enfants = timeline.enfants.map((id) => {
+    const piece = pieces.find((m) => m.enfants.has(id));
+    if (!piece) throw new Error(`Nœud enfant introuvable : ${id}`);
+    const objet = piece.enfants.get(id)!;
+    return { objet, repos: objet.position.clone(), piece };
+  });
+
+  // Ancres des légendes : pièces mobiles et tous leurs nœuds enfants nommés.
+  const ancres = new Map<string, AncreLegende>();
+  for (const m of pieces) {
+    ancres.set(m.piece.id, { piece: m, centre: m.centreLocal });
+    m.assemblage.updateMatrixWorld(true);
+    for (const [id, objet] of m.enfants) {
+      const boite = new Box3().setFromObject(objet);
+      const centre = boite.getCenter(new Vector3()).sub(m.assemblage.position);
+      ancres.set(id, { piece: m, centre, enfant: enfants.find((e) => e.objet === objet) });
+    }
+  }
+
+  const reperes = construireReperes(timeline, parId);
+  conteneur.add(reperes.groupe);
+
   const montage: Montage = {
     conteneur,
     pieces,
-    etats: pieces.map(() => ({ a: 1, v: 1, h: 0 })),
-    parId: new Map(pieces.map((m) => [m.piece.id, m])),
+    etats: pieces.map(() => ({ a: 1, v: 1, l: 0, h: 0 })),
+    parId,
+    enfants,
+    decalagesEnfants: enfants.map(() => [0, 0, 0] as Vec3),
+    ancres,
+    reperes,
   };
   montages.set(scene, montage);
   return montage;
@@ -93,6 +143,12 @@ export function MovementModel({ url, timeline, ombres }: { url: string; timeline
 
     evaluerPieces(timeline, p, montage.etats);
     montage.pieces.forEach((m, i) => poserPiece(m, montage.etats[i]));
+    evaluerEnfants(timeline, p, montage.decalagesEnfants);
+    montage.enfants.forEach((e, i) => {
+      const [dx, dy, dz] = montage.decalagesEnfants[i];
+      e.objet.position.set(e.repos.x + dx, e.repos.y + dy, e.repos.z + dz);
+    });
+    montage.reperes.maj(p);
 
     // Légendes : projection des ancres et placement direct des éléments HTML.
     visibles.clear();
@@ -107,16 +163,19 @@ export function MovementModel({ url, timeline, ombres }: { url: string; timeline
       hautMin: Math.max(56, (zone.cy - zone.hauteur / 2) * height),
       basMax: Math.min(height, (zone.cy + zone.hauteur / 2) * height),
     };
+    const placees: (LegendePlacee & { el: HTMLElement; texte: HTMLElement; opacite: number; id: string })[] = [];
     for (const { legende, opacite } of evaluerLegendes(timeline, p)) {
       const el = elementsLegendes.get(legende.id);
       if (!el) continue;
       if (legende.point) ancre.set(...legende.point);
       else if (legende.piece) {
-        const m = montage.parId.get(legende.piece);
-        if (!m || !m.assemblage.visible) continue;
-        ancre.copy(m.centreLocal).add(m.assemblage.position);
+        const a = montage.ancres.get(legende.piece);
+        if (!a || !a.piece.assemblage.visible) continue;
+        ancre.copy(a.centre).add(a.piece.assemblage.position);
+        if (a.enfant) ancre.add(a.enfant.objet.position).sub(a.enfant.repos);
       } else continue;
       ancre.project(state.camera);
+      if (ancre.z > 1) continue; // derrière la caméra
       const x = ((ancre.x + 1) / 2) * width;
       const y = ((1 - ancre.y) / 2) * height;
       const texte = el.lastElementChild as HTMLElement;
@@ -124,16 +183,29 @@ export function MovementModel({ url, timeline, ombres }: { url: string; timeline
       const manuel = legende.decalage
         ? ([legende.decalage[0] * (etroit ? 0.55 : 1), legende.decalage[1] * (etroit ? 0.55 : 1)] as [number, number])
         : undefined;
-      const { dx, dy, gauche } = placerLegende(x, y, largeurTexte, cadre, manuel);
-      el.style.setProperty('--dx', `${dx.toFixed(1)}px`);
-      el.style.setProperty('--dy', `${dy.toFixed(1)}px`);
-      el.style.setProperty('--long', `${Math.hypot(dx, dy).toFixed(1)}px`);
-      el.style.setProperty('--angle', `${Math.atan2(dy, dx).toFixed(4)}rad`);
-      texte.classList.toggle('vers-gauche', gauche);
-      el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
-      el.style.opacity = String(opacite);
-      el.style.visibility = 'visible';
-      visibles.add(legende.id);
+      placees.push({
+        ax: x,
+        ay: y,
+        placement: placerLegende(x, y, largeurTexte, cadre, manuel),
+        manuel: !!manuel,
+        el,
+        texte,
+        opacite,
+        id: legende.id,
+      });
+    }
+    repartirLegendes(placees, cadre);
+    for (const l of placees) {
+      const { dx, dy, gauche } = l.placement;
+      l.el.style.setProperty('--dx', `${dx.toFixed(1)}px`);
+      l.el.style.setProperty('--dy', `${dy.toFixed(1)}px`);
+      l.el.style.setProperty('--long', `${Math.hypot(dx, dy).toFixed(1)}px`);
+      l.el.style.setProperty('--angle', `${Math.atan2(dy, dx).toFixed(4)}rad`);
+      l.texte.classList.toggle('vers-gauche', gauche);
+      l.el.style.transform = `translate3d(${l.ax.toFixed(1)}px, ${l.ay.toFixed(1)}px, 0)`;
+      l.el.style.opacity = String(l.opacite);
+      l.el.style.visibility = 'visible';
+      visibles.add(l.id);
     }
     for (const [id, el] of elementsLegendes) {
       if (!visibles.has(id) && el.style.visibility !== 'hidden') {
