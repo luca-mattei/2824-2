@@ -14,7 +14,9 @@ export function appliquerCadrage(camera: PerspectiveCamera, c: EtatCamera, large
   const tanV = Math.tan((camera.fov * DEG) / 2);
   const demiV = Math.atan(tanV * zone.hauteur);
   const demiH = Math.atan(tanV * aspect * zone.largeur);
-  const distance = c.rayon / Math.sin(Math.min(demiV, demiH));
+  // Écran étroit (portrait) : marge plus large, le sujet est sinon rogné sur les côtés.
+  const marge = zone.largeur > 0.9 ? 1.16 : 1;
+  const distance = (c.rayon * marge) / Math.sin(Math.min(demiV, demiH));
 
   const az = c.azimut * DEG;
   const el = c.elevation * DEG;
@@ -35,6 +37,6 @@ export function appliquerCadrage(camera: PerspectiveCamera, c: EtatCamera, large
   // Rayon apparent du sujet (px) et zone libre, pour le placement des légendes.
   return {
     zone,
-    rayonPx: (c.rayon / (distance * tanV)) * (hauteur / 2),
+    rayonPx: ((c.rayon * marge) / (distance * tanV)) * (hauteur / 2),
   };
 }

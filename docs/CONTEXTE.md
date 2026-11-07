@@ -94,7 +94,8 @@ Source : `docs/sources/theorie-montres-compliquees.pdf` (942 Mo, exclu de git), 
 - 2026-11-07 : modèle (avec les détails de réalisme), animation Blender (assemblage et marche) et export GLB faits ; dossier préparé. Vérifié par des rendus test EEVEE aux images 600, 1110, 1150 et 1300.
 - 2026-11-07 : site web, phases 1 (audit) et 2 (première séquence) faites ; premier commit `292eb0e`.
 - 2026-11-07 : phase 3 (narration complète du 2824-2) faite ; commit `65bbe70`.
-- 2026-11-07 : phase 4 faite (animations illustratives, exploration libre, chapitre grande date terminé) ; en attente de revue. Phase 5 non commencée.
+- 2026-11-07 : phase 4 faite et validée (commit `c188ea8`) ; sens de rotation de la grande date vérifiés sur le livre (`4404802`).
+- 2026-11-07 : phase 5 faite (finition et vérification) ; reste les essais sur l'ordinateur de présentation (README > À vérifier soi-même).
 
 ### Stack et principes (phases 2 et 3)
 
@@ -122,6 +123,21 @@ Source : `docs/sources/theorie-montres-compliquees.pdf` (942 Mo, exclu de git), 
 - **Exploration libre** (`animation/explorationState.ts`, `components/explorer/*`, `app/explorer.css`) : bouton « Explorer librement » (barre du haut) et lien dans l'introduction ; OrbitControls montés seulement dans ce mode ; vues ponts / cadran / trois quarts, rotation ±45°, zoom, assemblé / éclaté, calibre 2824-2 / C07651, isolation d'un sous-ensemble (platine gardée en repère), sélection au clic ou au clavier avec fiche (nom, repère, fonction, groupe, explication, statut, sources) ; Échap ramène au récit à la même étape.
 - **Vérification** : `npm run check` réorganisé (voir Vérifications).
 
+### Fait en phase 5
+
+- **Relecture de cohérence** (agent relecture) : noms alignés sur la CT (ex. « Chaussée avec roue entraîneuse », « Plaque de maintien du sautoir de quantième », « roue auxiliaire d'inversion ») ; déductions étiquetées comme telles ; « Animation illustrative » sur toutes les étapes animées (dont la correction rapide) ; fonctions sorties de la fiche technique (CT p. 1 seulement) ; mentions « à venir » obsolètes retirées ; matériau du ressort non affirmé (« lame métallique »).
+- **Cadrages** relus sur toutes les étapes en 1280 × 800 et 390 × 844 (planches de captures) : gros plans élargis (amortisseur, échappement, balancier, levier de verrouillage, correction) ; sur écran étroit, marge de cadrage +16 % ; légendes maintenues sous la barre et la commande d'animation ; commande d'animation en haut à droite (elle masquait le guichet à 6 h).
+- **Robustesse** (`lib/quality.ts`, `components/MovementStage.tsx`, `components/three/MovementCanvas.tsx`, `Lighting.tsx`) :
+  - rendu logiciel détecté (nom du renderer contenant SwiftShader, llvmpipe, softpipe, Software, Basic Render Driver) → demi-résolution, sans ombres ni anticrénelage ;
+  - petit écran (< 600 px) : rapport de pixels limité à 1 (Safari iOS) ; appareil modeste : ≤ 1,5, sans ombres ;
+  - perte de contexte WebGL : message « Affichage 3D interrompu », reprise automatique à la restauration (même renderer, carte d'environnement recalculée, pas de suppression des ressources périmées), bouton « Relancer la 3D » sinon ;
+  - sans WebGL : message clair, tout le texte, la comparaison et le mode présentation restent utilisables (vérifié dans Firefox headless, qui n'a pas de WebGL sur cette machine).
+- **Mesures de chargement** (`lib/mesures.ts`, `window.__etaPerf`) : téléchargement, analyse du GLB, montage, compilation des shaders, première image ; nom du renderer et rapport de pixels. Sous SwiftShader allégé (ms depuis la navigation) : téléchargement 515 → 582, analyse 746, montage 772, shaders 951, première image 1 162. Ces chiffres ne disent RIEN de la fluidité sur une vraie carte graphique.
+- **Caméra** : la caméra est une fonction pure de la progression affichée ; une transition interrompue repart de l'état affiché (position, cible et décalage de projection ensemble). Sortie de l'exploration : saut de caméra masqué par un fondu bref.
+- **Ombres** : PCF conservé ; aucune strie observée, mais les captures logicielles sont sans ombres : à regarder sur la vraie carte (si stries : VSM, rayon 3 à 4).
+- **Présentation hors ligne** : `npm run paquet` crée `presentation-eta2824/` (≈ 10 Mo : site, `serveur.mjs` sans dépendance, lanceurs macOS et Windows qui se replient sur Python 3, LISEZMOI) ; testé avec Node et avec `python3 -m http.server` (types MIME corrects pour le GLB et les scripts). `serve-out.mjs` accepte un dossier en argument et signale un port occupé.
+- **Vérification** : `npm run check` parties 1 à 5 (5 = essai de base pour Firefox / WebKit).
+
 ### Fichiers et modules importants
 
 - Contenu : `data/chapters.ts`, `data/chapterIds.ts`, `data/sources.ts`, `data/specifications.ts`.
@@ -136,16 +152,20 @@ Identifiant dans `data/chapterIds.ts` → contenu dans `data/chapters.ts` → un
 
 ### Vérifications
 
-Phase 4, 2026-11-07, sur l'export statique (Chromium headless SwiftShader, réseau externe bloqué, aucune requête vers un autre hôte, console sans erreur ni avertissement) :
-- `tsc --noEmit` et `npm run build` réussissent.
-- `npm run check` partie 1 (mouvement réduit, 1440 × 900) : les 32 étapes atteintes au défilement vers le bas puis vers le haut, empreinte des positions et de la caméra identique à l'aller et au retour (64/64) ; GLB rendu (vue éclatée : 311 082 triangles, 280 appels avec ombres).
-- Partie 2 (mouvement normal) : transition continue ; présentation (étape conservée, appuis rapides → état stable, ← , page immobile) ; animation de l'échappement en lecture puis pause par la touche P, étiquette « Animation illustrative » visible ; sortie de présentation sans saut ; flèches non interceptées hors présentation ; saut direct par le menu ; exploration (récit masqué, panneau affiché, fiche d'une pièce choisie au clavier, Échap → même étape) : 17/17.
-- Partie 3 (mobile 390 × 844, mouvement réduit) : 6 étapes dont la grande date, aucun débordement horizontal.
-- `scripts/_anim.mjs` : fins des scénarios 09 → 10, 31 → 01 et 01 → 05 atteintes, guichet lu sur capture (« 10 », « 01 », « 05 ») ; lecture fait tourner, pause immobilise.
-- Captures relues : 7 étapes de la grande date (dates 01, 09, 31, 08 dans le guichet, anneau de la dent tronquée), exploration (bureau ; mobile vérifié par l'agent exploration).
-- Non vérifié : GPU réel, Safari, Firefox, tactile réel, redimensionnement pendant l'exploration, enchaînement complet en un seul passage du script (les parties ont été lancées séparément : `PARTIES=2,3 npm run check`).
+Phase 5, 2026-11-07, export statique servi en local, réseau externe bloqué :
+- `tsc --noEmit`, `npm run build`, `npm run paquet` réussissent ; le dossier de présentation est servi par Node et par Python.
+- `npm run check` (Chromium 158, SwiftShader allégé), parties 1 à 4 en un seul passage : **98/98**.
+  - Partie 1 : 32 étapes aller et retour, états identiques (64/64) ; mouvement réduit sans état intermédiaire ni commande d'animation hors étape animée.
+  - Partie 2 : transition continue ; présentation (étape conservée, appuis rapides stables, ←, page immobile, sortie sans saut) ; animation de l'échappement : lecture, pause par P, étiquette visible ; flèches non interceptées hors présentation ; saut par le menu ; exploration (entrée, fiche au clavier, Échap → même étape).
+  - Partie 3 : mobile 390 × 844 (6 étapes dont la grande date), aucun débordement horizontal.
+  - Partie 4 : mesures de chargement, rendu logiciel détecté et allégé, redimensionnement en cours d'étape, focus visible au clavier, menu des chapitres au clavier, perte puis restauration du contexte WebGL.
+  - Aucune requête vers un autre hôte ; console sans erreur ni avertissement.
+- `NAVIGATEUR=firefox PARTIES=5` (Firefox 159 headless, sans WebGL ici) : 6/6 sur l'alternative sans 3D.
+- `scripts/_anim.mjs` (phase 4) : fins des scénarios 10 / 01 / 05 lues dans le guichet.
+- Captures relues : 32 étapes en 1280 × 800 et en 390 × 844.
+- **Restent à vérifier** (voir README > À vérifier soi-même) : vraie carte graphique (fluidité, reflets, ombres, temps de chargement réel), Safari et WebKit (les bibliothèques système de WebKit demandent `sudo apt-get install`, non fait), Firefox avec WebGL, Edge, tactile réel, iPhone / iPad (contexte WebGL et rapport de pixels), projecteur et résolution de la salle, télécommande de présentation, mise en veille.
 
-Historique : en phase 3, le script s'était bloqué après la descente des 27 étapes ; il est désormais découpé en parties et la descente se fait en mouvement réduit.
+Historique : en phase 3, le script s'était bloqué après la descente des 27 étapes (rendu logiciel non allégé, ≈ 1,5 s par image) ; en phase 4, il a été découpé en parties.
 
 ### Points à confirmer
 
@@ -156,10 +176,9 @@ Historique : en phase 3, le script s'était bloqué après la descente des 27 é
 ### Limites connues
 
 - Animations illustratives : rapports et amplitudes reconstitués ; spiral fixe ; impulsion élargie ; automatique en sens unique (cliquets d'inversion non modélisés) ; doigt escamotable, levier de verrouillage, sautoirs et déplacement linéaire du mobile de correction non animés (indiqué dans les textes).
-- Le sens de rotation de la roue de quantième et des étoiles est un choix du modèle (le livre montre des flèches sur ses figures, pas dans le texte).
-- Cadrages réglés sur 1200 × 760 et 1440 × 900 ; mobile contrôlé par le script.
-- Pas de parallaxe. Sans WebGL : un message, pas d'image de repli. Les ombres doublent les appels de rendu.
-- Vérifications en Chromium headless (SwiftShader, environ 1,5 s par image sur cette machine) : pas encore sur GPU réel, ni Safari ou Firefox, ni tactile réel.
+- Pas de parallaxe. Sans WebGL : message et texte complet, pas d'image de repli.
+- Les ombres doublent les appels de rendu (≈ 280 en vue éclatée avec ombres, 140 sans).
+- Sur téléphone, le barillet ouvert (étape « Le barillet ») reste cadré un peu haut ; légendes serrées sur la vue éclatée du module grande date.
 
 ### Demandes d'export
 
@@ -167,5 +186,5 @@ Historique : en phase 3, le script s'était bloqué après la descente des 27 é
 
 ### Prochaines étapes
 
-- Revue d'Elfik de la phase 4 (rythme des animations, lisibilité des passages de date, comparaison).
-- Phase 5 : finition et vérification complète (GPU réel, navigateurs, tactile, redimensionnement, performances, usage hors ligne sur l'ordinateur de présentation).
+- Essais d'Elfik sur l'ordinateur de présentation (liste dans le README) et retours.
+- Facultatif : corriger le couple doigt / butée dans Blender (Demandes d'export), puis animer le doigt escamotable.

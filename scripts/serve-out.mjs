@@ -3,10 +3,13 @@
 //         PORT=8080 npm run serve
 import { createReadStream, existsSync, statSync } from 'node:fs';
 import { createServer } from 'node:http';
-import { extname, join, normalize, sep } from 'node:path';
+import { extname, join, normalize, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const dir = fileURLToPath(new URL('../out', import.meta.url));
+// Dossier servi : argument (ex. « node serve-out.mjs site »), sinon ../out.
+const dir = process.argv[2]
+  ? resolve(process.argv[2])
+  : fileURLToPath(new URL('../out', import.meta.url));
 const port = Number(process.env.PORT ?? 4173);
 const host = process.env.HOST ?? '127.0.0.1';
 const types = {
@@ -26,7 +29,7 @@ const types = {
 };
 
 if (!existsSync(dir)) {
-  console.error('✗ Dossier out/ absent : lancer d’abord « npm run build ».');
+  console.error(`✗ Dossier ${dir} absent : lancer d’abord « npm run build ».`);
   process.exit(1);
 }
 
@@ -50,6 +53,12 @@ createServer((req, res) => {
     'Cache-Control': 'no-cache',
   });
   createReadStream(path).pipe(res);
-}).listen(port, host, () => {
-  console.log(`Exposé ETA 2824-2 servi sur http://${host}:${port}  (Ctrl+C pour arrêter)`);
-});
+})
+  .on('error', (e) => {
+    if (e.code === 'EADDRINUSE') console.error(`✗ Le port ${port} est déjà utilisé : le site tourne peut-être déjà (ouvrir http://${host}:${port}), sinon relancer avec PORT=4174.`);
+    else console.error(e);
+    process.exit(1);
+  })
+  .listen(port, host, () => {
+    console.log(`Exposé ETA 2824-2 servi sur http://${host}:${port}  (Ctrl+C pour arrêter)`);
+  });

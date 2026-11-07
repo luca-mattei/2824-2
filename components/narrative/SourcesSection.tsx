@@ -30,16 +30,12 @@ export function SourcesSection() {
                 <td className="fiche-source">{formatSourceRef(s.source)}</td>
               </tr>
             ))}
-            <tr>
-              <th scope="row">Fonctions</th>
-              <td>
-                Heures, minutes, secondes au centre, date ; remontage automatique
-                <span className="fiche-note"> — déduites de la nomenclature, non listées comme telles par la CT</span>
-              </td>
-              <td className="fiche-source">Communication technique ETA 2824-2, p. 3–4</td>
-            </tr>
           </tbody>
         </table>
+        <p className="fiche-remarque">
+          Fonctions (heures, minutes, secondes au centre, date, remontage automatique) : déduites de la nomenclature de
+          la CT (p. 3–4), qui ne les liste pas comme telles.
+        </p>
         <p className="fiche-remarque">
           Le dernier chapitre présente le calibre ETA C07651 de la Mido Commander Big Date, dérivé du 2824-2 : ses
           caractéristiques propres (3 Hz, 80 h de réserve de marche selon le livre cité) ne figurent pas dans cette
@@ -70,7 +66,7 @@ export function SourcesSection() {
         <h3>Ordre pédagogique et ordre de montage</h3>
         <p>
           L’exposé présente les pièces dans un ordre choisi pour la compréhension : structure, énergie, transmission,
-          régulation, ponts, remontage, affichage, remontage automatique. L’ordre d’assemblage réel est celui de la
+          régulation, ponts, remontage, affichage, remontage automatique, puis la grande date du C07651. L’ordre d’assemblage réel est celui de la
           communication technique ETA (p. 8–19) : mise à l’heure (1–8), rouage (9–13), barillet et remontage (14–20),
           échappement et balancier (21–24), mécanisme automatique (25–31), côté cadran (32–43). Les animations ne
           constituent pas une procédure de montage.
@@ -99,8 +95,16 @@ export function SourcesSection() {
           </li>
           <li>
             <strong>Module grande date du C07651</strong> : reconstitué d’après la fig. 3-49 du livre cité ; cotes,
-            nombres de dents, positions et épaisseur approchés ; levier de verrouillage et sautoirs représentés
-            immobiles.
+            nombres de dents, positions et épaisseur approchés ; levier de verrouillage, sautoirs et doigt escamotable
+            représentés immobiles (dans le modèle, la butée du doigt est placée en avant du doigt, contrairement à la
+            fig. 3-52).
+          </li>
+          <li>
+            <strong>Animations illustratives</strong> : vitesses et rapports reconstitués ; balancier ralenti, amplitude
+            de 250° choisie, impulsion élargie pour être visible, spiral fixe ; masse oscillante dans un seul sens, à
+            vitesse arbitraire. Les sens de rotation du module grande date sont vérifiés sur les flèches des fig. 3-52,
+            3-53 et 3-56 du livre ; ceux du rouage du 2824-2 sont déduits de l’aiguille des secondes, qui tourne dans
+            le sens horaire côté cadran.
           </li>
           <li>
             <strong>Couronne</strong> : absente, elle appartient au boîtier et non au mouvement. Aucune décoration
@@ -123,8 +127,9 @@ export function SourcesSection() {
           Fiber, drei, GSAP.
         </p>
         <p className="note-sequence">
-          Le chapitre sur la grande date de la Mido Commander Big Date est en préparation ; l’exploration libre du modèle
-          et les démonstrations animées viendront dans une prochaine version.
+          L’exposé couvre le 2824-2 de la platine au mouvement complet, puis la grande date de la Mido Commander Big
+          Date. Les animations illustratives se mettent en pause à tout moment, et le bouton « Explorer librement »
+          permet de manipuler le modèle et de consulter la fiche de chaque pièce.
         </p>
       </div>
     </section>

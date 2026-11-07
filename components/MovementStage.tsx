@@ -16,6 +16,14 @@ export function MovementStage() {
   const [webgl, setWebgl] = useState<boolean | null>(null);
 
   const [retiree, setRetiree] = useState(false);
+  // Contexte WebGL perdu : message ; reprise automatique quand le navigateur restaure le contexte
+  // (même canvas), ou relance complète du canvas à la demande. Jamais d'écran noir sans explication.
+  const [perte, setPerte] = useState(false);
+  const [cle, setCle] = useState(0);
+  const relancer = () => {
+    setPerte(false);
+    setCle((c) => c + 1);
+  };
 
   useEffect(() => setWebgl(webglDisponible()), []);
 
@@ -29,10 +37,10 @@ export function MovementStage() {
   }, []);
 
   return (
-    <div className={`scene ${retiree && mode === 'defilement' ? 'scene-retiree' : ''}`} aria-hidden={!erreur && webgl !== false}>
+    <div className={`scene ${retiree && mode === 'defilement' ? 'scene-retiree' : ''}`} aria-hidden={!erreur && !perte && webgl !== false}>
       {webgl && (
-        <div className="scene-canvas">
-          <MovementCanvas />
+        <div className="scene-canvas" key={cle}>
+          <MovementCanvas onPerte={() => setPerte(true)} onReprise={() => setPerte(false)} />
         </div>
       )}
       <LabelLayer />
@@ -51,6 +59,18 @@ export function MovementStage() {
           >
             <span style={{ transform: `scaleX(${chargement})` }} />
           </div>
+        </div>
+      )}
+      {perte && (
+        <div className="scene-message" role="alert">
+          <p className="scene-message-titre">Affichage 3D interrompu</p>
+          <p>
+            Le navigateur a suspendu la carte graphique (mémoire, mise en veille ou pilote). La reprise est automatique
+            dès qu’il la rend ; sinon :
+          </p>
+          <button type="button" className="bouton" onClick={relancer}>
+            Relancer la 3D
+          </button>
         </div>
       )}
       {(webgl === false || erreur) && (

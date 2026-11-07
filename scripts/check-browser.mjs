@@ -14,7 +14,7 @@
 import { spawn } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { chromium } from 'playwright';
+import { chromium, firefox, webkit } from 'playwright';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const sortie = `${root}verification`;
@@ -31,7 +31,15 @@ const verifier = (nom, ok, detail = '') => {
   console.log(`${ok ? '✓' : '✗'} ${nom}${detail ? ` — ${detail}` : ''}`);
 };
 
-const navigateur = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
+// NAVIGATEUR=firefox (ou webkit) PARTIES=5 npm run check : essai de base dans un autre moteur.
+const moteur = process.env.NAVIGATEUR ?? 'chromium';
+const navigateur =
+  moteur === 'firefox'
+    ? await firefox.launch({ firefoxUserPrefs: { 'webgl.force-enabled': true, 'webgl.disabled': false } })
+    : moteur === 'webkit'
+      ? await webkit.launch()
+      : await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
+console.log(`Navigateur : ${moteur} ${navigateur.version()}`);
 
 async function nouvellePage(options) {
   const contexte = await navigateur.newContext(options);
@@ -47,7 +55,7 @@ async function nouvellePage(options) {
   });
   page.on('pageerror', (e) => rapport.erreursConsole.push(`[exception] ${e.message}`));
   await page.goto(BASE, { waitUntil: 'load' });
-  await page.waitForFunction(() => document.querySelector('.etat-pret') !== null, null, { timeout: 120_000 });
+  await page.waitForFunction(() => document.querySelector('.etat-pret, .etat-erreur, .scene-message') !== null, null, { timeout: 120_000 });
   return { contexte, page };
 }
 
@@ -87,7 +95,7 @@ try {
   // ── 1. Toutes les étapes, aller et retour (mouvement réduit : états fixes exacts) ──────────
   // PARTIES=2,3 npm run check : ne lance que certaines parties (la partie 1 fournit sinon les
   // empreintes de référence ; sans elle, les comparaisons d'empreintes sont sautées).
-  const parties = (process.env.PARTIES ?? '1,2,3').split(',');
+  const parties = (process.env.PARTIES ?? '1,2,3,4').split(',');
   const aller = [];
   if (parties.includes('1')) {
     const { contexte, page } = await nouvellePage({ viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce' });
@@ -205,6 +213,96 @@ try {
     }
     const debord = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
     verifier('Mobile : pas de débordement horizontal', debord <= 0, `${debord}px`);
+    await contexte.close();
+  }
+  // ── 5. Essai de base (pour Firefox / WebKit) : chargement, étapes clés, présentation ───────
+  if (parties.includes('5')) {
+    const { contexte, page } = await nouvellePage({ viewport: { width: 1280, height: 800 }, reducedMotion: 'reduce' });
+    const sansWebgl = await page.locator('.scene-message').isVisible();
+    if (sansWebgl) {
+      // Moteur sans WebGL (ex. Firefox sans pilote graphique) : l'alternative doit rester complète.
+      verifier(`${moteur} sans WebGL : message clair`, (await page.locator('.scene-message').textContent()).includes('Vue 3D indisponible'));
+      const titres = await page.locator('.recit h2, .recit h1').count();
+      verifier(`${moteur} sans WebGL : tout le texte présent`, titres >= (await nombreEtapes(page)), `${titres} titres`);
+      const k = await indexEtape(page, 'gd-comparaison');
+      await page.locator(`#etape-gd-comparaison`).scrollIntoViewIfNeeded();
+      verifier(`${moteur} sans WebGL : tableau de comparaison lisible`, await page.locator('#etape-gd-comparaison table').isVisible());
+      await page.screenshot({ path: `${sortie}/${moteur}-sans-webgl.png`, timeout: 300_000 });
+      await page.evaluate(() => window.scrollTo(0, 0));
+      await page.getByRole('button', { name: /^(Mode présentation|Présenter)$/ }).first().click();
+      await page.keyboard.press('ArrowRight');
+      await page.waitForTimeout(800);
+      verifier(`${moteur} sans WebGL : mode présentation (texte)`, (await page.locator('.presentation-panneau h2').textContent()).length > 0 && k > 0);
+      await page.keyboard.press('Escape');
+      await contexte.close();
+      rapport.erreursConsole = rapport.erreursConsole.filter((m) => !/Failed to create WebGL context|WebGL creation failed|Exhausted GL driver/i.test(m));
+    } else {
+    const perf = await page.evaluate(() => ({ ...window.__etaPerf }));
+    verifier(`${moteur} : modèle chargé et affiché`, perf['premiere-image'] > 0, `${perf.renderer} · première image ${perf['premiere-image']} ms`);
+    for (const id of ['eclate', 'rouage-chemin', 'echappement', 'quantieme', 'gd-fin-de-mois', 'gd-comparaison']) {
+      const k = await indexEtape(page, id);
+      const e = await allerEtapeParDefilement(page, k);
+      verifier(`${moteur} : étape ${id}`, Math.abs(e.progression - k) < 1e-3);
+      await page.screenshot({ path: `${sortie}/${moteur}-${id}.png`, timeout: 300_000 });
+    }
+    await page.getByRole('button', { name: /^(Mode présentation|Présenter)$/ }).first().click();
+    await page.keyboard.press('ArrowRight');
+    await page.waitForTimeout(1500);
+    verifier(`${moteur} : mode présentation`, await page.locator('.presentation-panneau').isVisible());
+    await page.keyboard.press('Escape');
+    await contexte.close();
+    }
+  }
+
+  // ── 4. Robustesse : mesures de chargement, perte de contexte, redimensionnement, clavier ─────
+  if (parties.includes('4')) {
+    const { contexte, page } = await nouvellePage({ viewport: { width: 1280, height: 800 }, reducedMotion: 'reduce' });
+    const perf = await page.evaluate(() => ({ ...window.__etaPerf }));
+    rapport.mesures.chargement = perf;
+    verifier('Mesures de chargement disponibles', perf['premiere-image'] > 0, JSON.stringify(perf));
+    verifier('Rendu logiciel détecté et allégé', perf.rendu !== 'logiciel' || perf.dpr <= 0.5, `${perf.renderer} · rapport de pixels ${perf.dpr}`);
+
+    // Redimensionnement en cours d'étape : même étape, aucune erreur
+    const kPont = await indexEtape(page, 'pont-de-rouage');
+    await allerEtapeParDefilement(page, kPont);
+    await page.setViewportSize({ width: 900, height: 1100 });
+    await page.waitForTimeout(1500);
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.waitForTimeout(1500);
+    const r = await allerEtapeParDefilement(page, kPont);
+    verifier('Redimensionnement : la même étape reste affichée', Math.abs(r.progression - kPont) < 1e-3);
+
+    // Clavier : focus visible et menu des chapitres utilisable sans souris
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.keyboard.press('Tab');
+    await page.keyboard.press('Tab');
+    const focus = await page.evaluate(() => {
+      const el = document.activeElement;
+      const st = el ? getComputedStyle(el) : null;
+      return { texte: el?.textContent?.trim().slice(0, 30), contour: st ? `${st.outlineStyle} ${st.outlineWidth}` : '' };
+    });
+    verifier('Clavier : focus visible', /solid/.test(focus.contour) && !/ 0px/.test(focus.contour), `${focus.texte} · ${focus.contour}`);
+    await page.getByRole('button', { name: 'Chapitres' }).focus();
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(300);
+    verifier('Clavier : le menu des chapitres s’ouvre', await page.locator('#menu-chapitres').isVisible());
+    await page.keyboard.press('Escape');
+
+    // Perte du contexte WebGL : message clair, puis reprise
+    await page.evaluate(() => {
+      const c = document.querySelector('.scene-canvas canvas');
+      const gl = c.getContext('webgl2') ?? c.getContext('webgl');
+      window.__perte = gl.getExtension('WEBGL_lose_context');
+      window.__perte.loseContext();
+    });
+    await page.waitForTimeout(800);
+    verifier('Perte de contexte : message affiché', await page.getByText('Affichage 3D interrompu').isVisible());
+    await page.evaluate(() => window.__perte.restoreContext());
+    await page.waitForFunction(() => !document.body.textContent.includes('Affichage 3D interrompu'), null, { timeout: 60_000 });
+    await page.waitForFunction(() => document.querySelector('.scene-canvas canvas') !== null, null, { timeout: 60_000 });
+    const images = await page.evaluate(() => window.__eta?.images ?? 0);
+    await page.waitForFunction((n) => (window.__eta?.images ?? 0) > n || document.querySelector('.etat-pret'), images, { timeout: 120_000 });
+    verifier('Perte de contexte : reprise de l’affichage', await page.locator('.etat-pret').isVisible());
     await contexte.close();
   }
 } catch (e) {

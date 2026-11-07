@@ -12,7 +12,8 @@
     "serve": "node scripts/serve-out.mjs",
     "typecheck": "tsc --noEmit",
     "inspect:model": "node scripts/inspect-glb.mjs",
-    "check": "node scripts/check-browser.mjs"
+    "check": "node scripts/check-browser.mjs",
+    "paquet": "node scripts/paquet.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.9",

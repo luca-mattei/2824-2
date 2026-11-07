@@ -240,7 +240,7 @@ export const etatsScene: Record<string, EtatScene> = {
   // ── Réguler le temps ──────────────────────────────────────────────────────────────────
   echappement: {
     marche: { type: 'echappement', ralenti: 8 },
-    camera: { cible: [3.6, 3, 2.4], rayon: 10, azimut: 24, elevation: 52 },
+    camera: { cible: [3.6, 3, 2.4], rayon: 11, azimut: 24, elevation: 52 },
     presentes: ANCRE,
     assemblees: ANCRE,
     surlignees: P("9 Roue d'échappement", '21 Ancre'),
@@ -252,7 +252,7 @@ export const etatsScene: Record<string, EtatScene> = {
   },
   balancier: {
     marche: { type: 'echappement', ralenti: 8 },
-    camera: { cible: [6.2, 3.4, 0.8], rayon: 10.5, azimut: 30, elevation: 46 },
+    camera: { cible: [6.2, 3.4, 0.8], rayon: 11.5, azimut: 30, elevation: 46 },
     presentes: BALANCIER,
     assemblees: BALANCIER,
     legendes: [
@@ -264,7 +264,7 @@ export const etatsScene: Record<string, EtatScene> = {
     ],
   },
   antichoc: {
-    camera: { cible: [6.5, 3.8, 0.5], rayon: 7.5, azimut: 36, elevation: 42 },
+    camera: { cible: [6.5, 3.8, 0.5], rayon: 9.5, azimut: 36, elevation: 42 },
     presentes: BALANCIER,
     assemblees: BALANCIER,
     surlignees: P('24-6 Amortisseur supérieur (Incabloc)'),
@@ -481,7 +481,7 @@ export const etatsScene: Record<string, EtatScene> = {
   'gd-verrouillage': {
     calibre: 'C07651',
     date: 31,
-    camera: { cible: [5, -0.4, 2.6], rayon: 9, azimut: 92, elevation: -62 },
+    camera: { cible: [4.5, -0.4, 2.4], rayon: 11.5, azimut: 92, elevation: -62 },
     presentes: ['*'],
     assemblees: ['*'],
     surlignees: P('GD-10 Levier de verrouillage', 'GD-9 Étoile intermédiaire des unités'),
@@ -495,7 +495,7 @@ export const etatsScene: Record<string, EtatScene> = {
     date: 1,
     marche: { type: 'correction', de: 1, a: 5 },
     marqueurs: ['guichet'],
-    camera: { cible: [-2.5, -0.2, -4], rayon: 10, azimut: 100, elevation: -60 },
+    camera: { cible: [-2.2, -0.2, -3.5], rayon: 12.5, azimut: 100, elevation: -60 },
     presentes: ['*'],
     assemblees: ['*'],
     surlignees: P('GD-16 Mobile de correction rapide', '2 Pignon coulant', '32 Renvoi'),

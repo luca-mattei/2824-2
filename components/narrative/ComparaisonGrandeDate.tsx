@@ -84,7 +84,7 @@ export function ComparaisonGrandeDate() {
           ))}
         </tbody>
       </table>
-      <p className="comparaison-titre-deductions">Ce que nous en déduisons (pas écrit dans le livre)</p>
+      <p className="comparaison-titre-deductions">Déductions de l’exposé (pas écrites dans le livre)</p>
       <ul className="comparaison-deductions">
         {DEDUCTIONS.map((d) => (
           <li key={d}>

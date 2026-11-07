@@ -55,17 +55,25 @@ function construireEnvironnement(pmrem: PMREMGenerator): Texture {
   return cible.texture;
 }
 
+/**
+ * Vrai entre une perte de contexte WebGL et la reconstruction de l'environnement : les ressources
+ * GPU de l'ancien contexte n'existent plus, il ne faut pas tenter de les supprimer.
+ */
+export const etatContexte = { perimees: false };
+
 export function Lighting({ ombres }: { ombres: boolean }) {
   const { gl, scene, invalidate } = useThree();
 
   useEffect(() => {
     const pmrem = new PMREMGenerator(gl);
     const texture = construireEnvironnement(pmrem);
+    etatContexte.perimees = false;
     scene.environment = texture;
     scene.environmentIntensity = 1;
     invalidate();
     return () => {
       scene.environment = null;
+      if (etatContexte.perimees) return;
       texture.dispose();
       pmrem.dispose();
     };

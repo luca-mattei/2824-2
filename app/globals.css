@@ -335,6 +335,18 @@ main {
 .recit[inert] {
   visibility: hidden;
 }
+/* Les sections couvrent toute la largeur : seules les cartes de texte captent le pointeur, pour que
+   les messages et boutons de la scène (ex. « Relancer la 3D ») restent cliquables. */
+.recit .etape {
+  pointer-events: none;
+}
+.recit .carte,
+.recit .hero-contenu {
+  pointer-events: auto;
+}
+.scene-message {
+  z-index: 3;
+}
 .etape {
   position: relative;
   min-height: 150vh;
@@ -815,6 +827,11 @@ main {
 @media not ((min-width: 900px) and (min-aspect-ratio: 11/10)) {
   .commande-animation {
     right: 0.75rem;
-    top: calc(50svh - 3.6rem);
+    top: calc(var(--barre) + 0.4rem);
+    padding: 0.35rem 0.4rem 0.35rem 0.6rem;
+    gap: 0.5rem;
+  }
+  .commande-animation-detail {
+    display: none;
   }
 }

@@ -23,6 +23,7 @@ import { avancerAffichage, moteur, narratif } from '@/animation/narrativeControl
 import { elementsLegendes } from '@/components/annotations/labelRegistry';
 import { placerLegende, repartirLegendes, type Cadre, type LegendePlacee } from '@/components/annotations/placementLegendes';
 import { associerPieces, trouverRacine } from '@/lib/modelMapping';
+import { marquer } from '@/lib/mesures';
 import { appliquerCadrage } from './CameraRig';
 import { monterPiece, poserPiece, type PieceMontee } from './MovementPart';
 import { construireReperes, type Reperes } from './ReperesSchematiques';
@@ -127,7 +128,12 @@ declare global {
 
 export function MovementModel({ url, timeline, ombres }: { url: string; timeline: Timeline; ombres: boolean }) {
   const gltf = useGLTF(url, false, false);
-  const montage = useMemo(() => monter(gltf.scene, timeline, ombres), [gltf.scene, timeline, ombres]);
+  marquer('gltf-analyse');
+  const montage = useMemo(() => {
+    const m = monter(gltf.scene, timeline, ombres);
+    marquer('montage');
+    return m;
+  }, [gltf.scene, timeline, ombres]);
   const { gl, scene, camera, invalidate } = useThree();
   const pret = useRef(false);
 
@@ -146,6 +152,7 @@ export function MovementModel({ url, timeline, ombres }: { url: string; timeline
   useLayoutEffect(() => {
     montage.pieces.forEach((m) => (m.assemblage.visible = true));
     gl.compile(scene, camera);
+    marquer('shaders-compiles');
     moteur.saut = true;
     invalidate();
   }, [gl, scene, camera, montage, invalidate]);
@@ -201,7 +208,8 @@ export function MovementModel({ url, timeline, ombres }: { url: string; timeline
       rayon: rayonPx,
       gaucheMin: Math.max(0, (zone.cx - zone.largeur / 2) * width),
       droiteMax: Math.min(width, (zone.cx + zone.largeur / 2) * width),
-      hautMin: Math.max(56, (zone.cy - zone.hauteur / 2) * height),
+      // Sous la barre et la commande d'animation (en haut à droite sur écran large).
+      hautMin: Math.max(112, (zone.cy - zone.hauteur / 2) * height),
       basMax: Math.min(height, (zone.cy + zone.hauteur / 2) * height),
     };
     const placees: (LegendePlacee & { el: HTMLElement; texte: HTMLElement; opacite: number; id: string })[] = [];
@@ -258,7 +266,10 @@ export function MovementModel({ url, timeline, ombres }: { url: string; timeline
     if (encore || encoreMeca) invalidate();
     if (!pret.current) {
       pret.current = true;
-      requestAnimationFrame(() => narratif.signalerPret());
+      requestAnimationFrame(() => {
+        marquer('premiere-image');
+        narratif.signalerPret();
+      });
     }
     // Mesures exposées pour la vérification automatique (scripts/check-browser.mjs).
     const info = { calls: gl.info.render.calls, triangles: gl.info.render.triangles };

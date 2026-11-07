@@ -331,7 +331,7 @@ export const extensionPieces: Partial<Record<string, ExtensionPiece>> = {
   '14 Ressort moteur': p(
     {
       nom: 'Ressort moteur',
-      fonction: 'Lame d’acier enroulée qui stocke l’énergie.',
+      fonction: 'Lame métallique enroulée qui stocke l’énergie.',
       explication: 'Remonter la montre, c’est enrouler ce ressort ; il restitue l’énergie en se détendant.',
       statut: 'schématique',
       noteModele: 'Lame spirale schématique (11,5 tours) : ni sa forme ni son comportement ne simulent le ressort réel.',
@@ -640,7 +640,7 @@ export const extensionPieces: Partial<Record<string, ExtensionPiece>> = {
   "28 Roue d'inversion": p(
     {
       nom: 'Roue d’inversion',
-      fonction: 'Redresse le sens de rotation venant de la masse.',
+      fonction: 'Participe au redressement du sens de rotation venant de la masse.',
       explication: 'Principe général : grâce à des cliquets internes, elle ne transmet le mouvement que dans un sens.',
       statut: 'reconstitué',
       noteModele: 'Position et engrènement approximatifs ; cliquets d’inversion non modélisés.',
@@ -719,7 +719,7 @@ export const extensionPieces: Partial<Record<string, ExtensionPiece>> = {
   ),
   '33 Chaussée avec roue entraîneuse': p(
     {
-      nom: 'Chaussée',
+      nom: 'Chaussée avec roue entraîneuse',
       fonction: 'Porte l’aiguille des minutes ; un tour par heure.',
       explication: 'La CT la nomme « chaussée avec roue entraîneuse ».',
       statut: 'reconstitué',
@@ -825,7 +825,7 @@ export const extensionPieces: Partial<Record<string, ExtensionPiece>> = {
   ),
   '41 Plaque de maintien du sautoir': p(
     {
-      nom: 'Plaque de maintien du sautoir',
+      nom: 'Plaque de maintien du sautoir de quantième',
       fonction: 'Tient le sautoir de quantième.',
       explication: 'Livrée « montée » selon la CT ; fixée par une vis 900.',
       statut: 'reconstitué',
@@ -894,7 +894,7 @@ export const extensionPieces: Partial<Record<string, ExtensionPiece>> = {
       explication:
         'Numéro 4 du livre, appelé aussi « doigt escamotable de la roue de quantième » (p. 172). Son ressort est plus faible que le sautoir : il s’arme d’abord contre une dent du disque inférieur, puis, arrivé contre sa butée, entraîne la dent (p. 170). Lors d’une correction rapide près de minuit, il se rétracte pour laisser passer la dent (p. 172).',
       statut: 'reconstitué',
-      noteModele: MODULE_GD,
+      noteModele: `${MODULE_GD} Représenté immobile sur sa roue : dans le modèle, sa butée est placée en avant du doigt, contrairement à la fig. 3-52.`,
     },
     LIVRE,
   ),

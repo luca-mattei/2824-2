@@ -146,7 +146,7 @@ export const chapitres: Partial<Record<ChapterId, Chapitre>> = {
         titre: 'Le barillet',
         idee: 'L’énergie de la montre est un ressort enroulé.',
         texte: [
-          'Le **barillet** (14) est un tambour fermé par un couvercle. Il contient le **ressort moteur**, une longue lame d’acier enroulée en spirale autour d’un axe central, l’**arbre de barillet**.',
+          'Le **barillet** (14) est un tambour fermé par un couvercle. Il contient le **ressort moteur**, une longue lame métallique enroulée en spirale autour d’un axe central, l’**arbre de barillet**.',
           'Remonter la montre, c’est enrouler ce ressort : il stocke l’énergie qui fera marcher le mouvement. Le couvercle est ici soulevé pour montrer le ressort et l’arbre.',
         ],
         mentions: [
@@ -438,7 +438,7 @@ export const chapitres: Partial<Record<ChapterId, Chapitre>> = {
         titre: 'Le quantième',
         idee: 'Un disque de 31 chiffres avance d’un cran par jour.',
         texte: [
-          'L’**indicateur de quantième** (36) est un anneau denté qui porte les chiffres de 1 à 31 ; un seul apparaît dans le guichet du cadran. La **roue entraîneuse de l’indicateur de quantième** (38), menée par la roue des heures, le fait avancer d’une dent par jour ; le **sautoir de quantième** (40), tenu par sa plaque (41), le maintient en place entre deux sauts.',
+          'L’**indicateur de quantième** (36) est un anneau denté qui porte les chiffres de 1 à 31 ; une seule date apparaît dans le guichet du cadran. La **roue entraîneuse de l’indicateur de quantième** (38), menée dans le modèle par la roue des heures, le fait avancer d’une dent par jour ; le **sautoir de quantième** (40), tenu par sa plaque (41), le maintient en place entre deux sauts.',
           'Le **correcteur de quantième** (35) appartient à la correction rapide de la date : la CT la mentionne en demandant de tourner l’indicateur « d’environ 10 dents avec la correction rapide » pendant la lubrification du sautoir (p. 19). Le support de cadran (42) et la clavette (43) terminent le côté cadran.',
         ],
         mentions: [
@@ -462,8 +462,8 @@ export const chapitres: Partial<Record<ChapterId, Chapitre>> = {
         titre: 'Le dispositif automatique',
         idee: 'Un petit rouage transforme les mouvements du poignet en remontage.',
         texte: [
-          'Le **dispositif automatique** est monté sur son propre bâti (25), fixé par deux vis 904. Il porte un petit rouage : deux **roues d’inversion** (28 et 27), une **roue de réduction** (29) et une **roue entraîneuse de rochet** (26), tenues par le pont inférieur (30) et sa vis 905.',
-          'Les roues d’inversion permettent de remonter quel que soit le sens de rotation de la masse ; la roue de réduction démultiplie le mouvement ; la roue entraîneuse fait tourner le rochet (20), qui enroule le ressort moteur : le même rochet que celui de la tige.',
+          'Le **dispositif automatique** est monté sur son propre bâti (25), fixé par deux vis 904. Il porte un petit rouage : la **roue d’inversion** (28) et la **roue auxiliaire d’inversion** (27), une **roue de réduction** (29) et une **roue entraîneuse de rochet** (26), tenues par le pont inférieur (30) et sa vis 905.',
+          'Principe général : les deux roues d’inversion permettent de remonter quel que soit le sens de rotation de la masse ; la roue de réduction démultiplie le mouvement ; la roue entraîneuse fait tourner le rochet (20), qui enroule le ressort moteur : le même rochet que celui de la tige.',
         ],
         mentions: [
           {
@@ -633,13 +633,15 @@ export const chapitres: Partial<Record<ChapterId, Chapitre>> = {
         idee: 'Une dent manquante laisse les unités sur « 1 ».',
         texte: [
           'La couronne des unités a 31 emplacements mais **30 dents** : l’une est tronquée (p. 169). Au passage du 31 au 1er, cette **dent tronquée** se trouve face à l’étoile intermédiaire : le disque des dizaines tourne, mais l’étoile des unités n’est pas entraînée et le disque des unités reste immobile (p. 171).',
-          'Les dizaines passent ainsi de 3 à 0, les unités restent sur 1 : le guichet affiche « 01 ». Notre calcul : en un mois de 31 jours, le disque des unités avance 30 fois, soit exactement trois tours, et retrouve le « 1 ».',
+          'Les dizaines passent ainsi de 3 à 0, les unités restent sur 1 : le guichet affiche « 01 ». Déduction : en un mois de 31 jours, le disque des unités avance 30 fois, soit exactement trois tours, et retrouve le « 1 ».',
         ],
         mentions: [
           { type: 'schématique', texte: 'Le repère lumineux sur la couronne indique la dent tronquée : il ne fait pas partie du mécanisme.' },
           {
             type: 'illustratif',
-            texte: 'Passage ralenti ; le calcul des trois tours est une déduction, pas une phrase du livre.' + PAUSE,
+            texte:
+              'Passage ralenti ; sens de rotation conformes aux flèches des fig. 3-53 et 3-54 du livre, vitesses et rapports reconstitués. Le calcul des trois tours est une déduction, pas une phrase du livre.' +
+              PAUSE,
           },
         ],
         sources: [livre('3.2.4, fig. 3-51, p. 169'), livre('3.2.4, fig. 3-54, p. 171'), MODELE],
@@ -659,7 +661,7 @@ export const chapitres: Partial<Record<ChapterId, Chapitre>> = {
           },
           {
             type: 'reconstitué',
-            texte: 'Forme et position du levier relevées sur la fig. 3-49 ; le lien entre la dent tronquée et le besoin de verrouillage est notre lecture.',
+            texte: 'Forme et position du levier relevées sur la fig. 3-49 ; le lien entre la dent tronquée et le besoin de verrouillage est une déduction.',
           },
         ],
         sources: [livre('3.2.4, fig. 3-55, p. 171'), MODELE],
@@ -674,8 +676,14 @@ export const chapitres: Partial<Record<ChapterId, Chapitre>> = {
         ],
         mentions: [
           {
+            type: 'illustratif',
+            texte:
+              'Correction accélérée de 01 à 05 ; sens de rotation du mobile conforme à la fig. 3-56 du livre, rapports reconstitués.' +
+              PAUSE,
+          },
+          {
             type: 'schématique',
-            texte: 'L’animation montre seulement la rotation du mobile et l’avance de la date de 01 à 05 ; son déplacement linéaire n’est pas représenté.' + PAUSE,
+            texte: 'Seule la rotation du mobile est montrée : son déplacement linéaire vers le disque inférieur n’est pas représenté.',
           },
           { type: 'reconstitué', texte: 'Position et dentures du mobile de correction rapide reconstituées.' },
         ],
@@ -704,8 +712,8 @@ export const chapitres: Partial<Record<ChapterId, Chapitre>> = {
 
 /**
  * Ordre des chapitres affichés. Tous portent sur l'ETA 2824-2, sauf le dernier (grande date du
- * calibre ETA C07651, dérivé du 2824-2). Les chapitres prévus mais pas encore rédigés
- * (exploration libre, fiche technique) s'insèrent ici quand leur contenu existe.
+ * calibre ETA C07651, dérivé du 2824-2). L'exploration libre est un mode à part (bouton
+ * « Explorer librement ») et la fiche technique est dans l'annexe (SourcesSection).
  */
 export const chapterOrder: ChapterId[] = [
   'introduction',
