@@ -23,6 +23,7 @@ import { avancerAffichage, moteur, narratif } from '@/animation/narrativeControl
 import { elementsLegendes } from '@/components/annotations/labelRegistry';
 import { placerLegende, repartirLegendes, type Cadre, type LegendePlacee } from '@/components/annotations/placementLegendes';
 import { associerPieces, trouverRacine } from '@/lib/modelMapping';
+import { decors } from '@/lib/decors';
 import { marquer } from '@/lib/mesures';
 import { appliquerCadrage } from './CameraRig';
 import { monterPiece, poserPiece, type PieceMontee } from './MovementPart';
@@ -59,7 +60,7 @@ interface Montage {
 // Le GLB mis en cache par useGLTF n'est monté qu'une fois (double rendu du mode strict compris).
 const montages = new WeakMap<Object3D, Montage>();
 
-function monter(scene: Object3D, timeline: Timeline, ombres: boolean): Montage {
+function monter(scene: Object3D, timeline: Timeline, ombres: boolean, finitions: boolean): Montage {
   const existant = montages.get(scene);
   if (existant) return existant;
   const racine = trouverRacine(scene);
@@ -69,7 +70,7 @@ function monter(scene: Object3D, timeline: Timeline, ombres: boolean): Montage {
   const pieces = timeline.pieces.map((p) => {
     const objet = correspondances.get(p.id);
     if (!objet) throw new Error(`Nœud manquant : ${p.id}`);
-    const m = monterPiece(p, objet, ombres);
+    const m = monterPiece(p, objet, ombres, finitions);
     conteneur.add(m.assemblage);
     return m;
   });
@@ -126,14 +127,24 @@ declare global {
   }
 }
 
-export function MovementModel({ url, timeline, ombres }: { url: string; timeline: Timeline; ombres: boolean }) {
+export function MovementModel({
+  url,
+  timeline,
+  ombres,
+  finitions,
+}: {
+  url: string;
+  timeline: Timeline;
+  ombres: boolean;
+  finitions: boolean;
+}) {
   const gltf = useGLTF(url, false, false);
   marquer('gltf-analyse');
   const montage = useMemo(() => {
-    const m = monter(gltf.scene, timeline, ombres);
+    const m = monter(gltf.scene, timeline, ombres, finitions);
     marquer('montage');
     return m;
-  }, [gltf.scene, timeline, ombres]);
+  }, [gltf.scene, timeline, ombres, finitions]);
   const { gl, scene, camera, invalidate } = useThree();
   const pret = useRef(false);
 
@@ -143,6 +154,10 @@ export function MovementModel({ url, timeline, ombres }: { url: string; timeline
   useEffect(() => {
     mecanique.enregistrerReveil(() => invalidate());
     return () => mecanique.enregistrerReveil(null);
+  }, [invalidate]);
+  useEffect(() => {
+    decors.enregistrerReveil(() => invalidate());
+    return () => decors.enregistrerReveil(null);
   }, [invalidate]);
   const marches = useMemo(() => timeline.etats.map((e) => e.marche), [timeline]);
   const dates = useMemo(() => timeline.etats.map((e) => e.date ?? 1), [timeline]);

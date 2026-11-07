@@ -14,6 +14,7 @@ import { choisirQualite } from '@/lib/quality';
 import { marquer, noterRendu } from '@/lib/mesures';
 import { Lighting, etatContexte } from './Lighting';
 import { MovementModel } from './MovementModel';
+import { Occlusion } from './Occlusion';
 import { ExplorerControls } from '@/components/explorer/ExplorerControls';
 
 async function telecharger(url: string, progression: (f: number) => void): Promise<ArrayBuffer> {
@@ -105,8 +106,8 @@ export default function MovementCanvas({ onPerte, onReprise }: ProprietesCanvas)
           etatContexte.perimees = true;
           onPerte?.();
         });
-        // Restauration : three.js recrée lui-même les ressources GPU ; seule la carte
-        // d'environnement (rendue une fois) doit être recalculée.
+        // Restauration : three.js recrée lui-même les ressources GPU ; seules la carte
+        // d'environnement (rendue une fois) et la chaîne d'occlusion sont reconstruites.
         gl.domElement.addEventListener('webglcontextrestored', () => {
           setGeneration((g) => g + 1);
           invalider.current?.();
@@ -124,9 +125,10 @@ export default function MovementCanvas({ onPerte, onReprise }: ProprietesCanvas)
       <LimiteErreur>
         <Lighting key={generation} ombres={qualite.ombres} />
         <Suspense fallback={null}>
-          {url && <MovementModel url={url} timeline={timeline} ombres={qualite.ombres} />}
+          {url && <MovementModel url={url} timeline={timeline} ombres={qualite.ombres} finitions={qualite.finitions} />}
         </Suspense>
         <ExplorerControls />
+        {qualite.occlusion && <Occlusion key={generation} antialias={qualite.antialias} />}
       </LimiteErreur>
     </Canvas>
   );

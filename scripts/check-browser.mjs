@@ -54,7 +54,8 @@ async function nouvellePage(options) {
     if (m.type() === 'error' || m.type() === 'warning') rapport.erreursConsole.push(`[${m.type()}] ${m.text()}`);
   });
   page.on('pageerror', (e) => rapport.erreursConsole.push(`[exception] ${e.message}`));
-  await page.goto(BASE, { waitUntil: 'load' });
+  // REQUETE='?qualite=haute' : réglages d'un ordinateur équipé (finitions, ombres, occlusion).
+  await page.goto(BASE + (process.env.REQUETE ?? ''), { waitUntil: 'load' });
   await page.waitForFunction(() => document.querySelector('.etat-pret, .etat-erreur, .scene-message') !== null, null, { timeout: 120_000 });
   return { contexte, page };
 }

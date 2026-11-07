@@ -56,7 +56,8 @@ Reconstitué, donc à présenter comme illustratif :
 - mécanisme automatique : positions et engrènements approximatifs, cliquets d'inversion non modélisés ;
 - ressort moteur : lame spirale schématique (11,5 tours), sans bride ;
 - amplitude du balancier, angle de l'ancre, position du piton et des goupilles de raquette : choisis pour la lisibilité ;
-- pas de couronne (elle fait partie du boîtier, pas du mouvement) ; pas de décoration (perlage, côtes), dont la présence dépend de l'exécution du calibre.
+- pas de couronne (elle fait partie du boîtier, pas du mouvement) ;
+- finitions de surface (site web uniquement, pas dans le modèle) : le grain, le satiné et le tournage sont génériques (état de surface non documenté par la CT) ; les décors (côtes de Genève, perlage, soleillage) sont une option « Décors illustratifs », désactivée par défaut, parce que leur présence dépend de l'exécution du calibre.
 
 ### Points à vérifier (contradictions ou affirmations non sourcées)
 
@@ -96,12 +97,23 @@ Source : `docs/sources/theorie-montres-compliquees.pdf` (942 Mo, exclu de git), 
 - 2026-11-07 : phase 3 (narration complète du 2824-2) faite ; commit `65bbe70`.
 - 2026-11-07 : phase 4 faite et validée (commit `c188ea8`) ; sens de rotation de la grande date vérifiés sur le livre (`4404802`).
 - 2026-11-07 : phase 5 faite (finition et vérification) ; reste les essais sur l'ordinateur de présentation (README > À vérifier soi-même).
+- 2026-11-07 : finitions de surface et occlusion ambiante (retour : « trop uniforme, manque de grain et de relief »), dans le pipeline web, sans toucher au `.blend` ni au GLB. Voir « Finitions et relief ».
 
 ### Stack et principes (phases 2 et 3)
 
 - Next.js 16 (App Router, `output: 'export'`), React 19, React Three Fiber 9, drei, GSAP + ScrollTrigger, Tailwind 4, TypeScript. three.js épinglé en 0.182.0 : R3F 9.8 instancie `THREE.Clock`, déprécié (avertissement console) à partir de r183.
 - Une seule progression narrative (`animation/narrativeController.ts`) écrite par le défilement OU par le mode présentation ; la scène en est une fonction pure (aucune accumulation, retour arrière exact).
 - Rendu à la demande, environnement PMREM procédural (aucun HDR), rubis sans transmission, polices locales (`app/fonts`, OFL), aucun CDN. Le GLB du site est copié octet pour octet dans `public/models/` par `npm run assets` (lancé avant `dev` et `build`, non versionné).
+
+### Finitions et relief (2026-11-07)
+
+- Pourquoi pas dans Blender : le GLB n'a pas de coordonnées UV (1 primitive sur 140) et les textures procédurales de Blender ne s'exportent pas en glTF ; il aurait fallu déplier et « cuire » chaque pièce (GLB bien plus lourd).
+- **Finitions** (`components/three/Finitions.ts`) : motifs calculés dans le shader (`onBeforeCompile` des matériaux déjà clonés par pièce), sur la rugosité et la normale (relief apparent par dérivées écran), jamais sur la couleur. Coordonnées : attribut `aFin` = position des sommets dans le repère du mouvement assemblé, calculé au montage ; le motif suit la pièce (rotation, éclatement). Faces perpendiculaires à l'axe seulement ; flancs : grain de rugosité. Motifs plus fins que ≈ 2 pixels estompés (sinon moiré) ; pente plafonnée.
+  - Neutre (toujours) : platine grenée ; ponts, plaques et masse satinés ; roues dorées, balancier, barillet tournés (cercles autour de l'axe) ; rochet et roue de couronne tournés ; autres aciers grain fin ; disques de quantième mats. Inchangés : anglages polis, rubis, gravures, fentes, chiffres.
+  - Option « Décors illustratifs » (bouton de la barre, `lib/decors.ts`, uniforme partagé, choix retenu dans le navigateur) : perlage sur la platine, côtes de Genève sur les ponts côté ponts et la masse (bandes continues d'un pont à l'autre), soleillage sur le rochet et la roue de couronne. Le libellé visible contient « illustratifs » ; la section Sources le précise.
+- **Occlusion ambiante** (`components/three/Occlusion.tsx`) : GTAO de three.js (aucune dépendance ajoutée), chaîne rendu MSAA → GTAO → sortie ACES/sRGB, fond transparent conservé. Rayon 2,2 mm.
+- **Perte de contexte** : comme la carte d'environnement, la chaîne d'occlusion est reconstruite à la restauration (clé `generation`), sans supprimer les ressources de l'ancien contexte.
+- **Qualité** (`lib/quality.ts`) : finitions partout sauf rendu logiciel ; occlusion seulement sur ordinateur équipé (comme les ombres). `?qualite=haute` force les réglages d'un ordinateur équipé (vérification en rendu logiciel) ; `REQUETE='?qualite=haute' npm run check` passe toute la batterie dans ce mode.
 
 ### Fait en phase 3
 
@@ -163,6 +175,7 @@ Phase 5, 2026-11-07, export statique servi en local, réseau externe bloqué :
 - `NAVIGATEUR=firefox PARTIES=5` (Firefox 159 headless, sans WebGL ici) : 6/6 sur l'alternative sans 3D.
 - `scripts/_anim.mjs` (phase 4) : fins des scénarios 10 / 01 / 05 lues dans le guichet.
 - Captures relues : 32 étapes en 1280 × 800 et en 390 × 844.
+- Finitions et occlusion (2026-11-07) : captures comparées avant / neutre / décors (ponts, platine des deux côtés, roues, balancier, masse, remontage), en `?qualite=haute` et en rendu logiciel ; corrigés en cours de route : motifs trop contrastés, moiré des cercles du barillet, points brillants aux jonctions du perlage (fondu entre cercles). `npm run check` : 98/98. `REQUETE='?qualite=haute' npm run check` : 96/98 au premier passage (avertissements WebGL après perte de contexte, corrigés ; partie 4 relancée : console propre) ; l'échec « Rendu logiciel détecté et allégé » est attendu dans ce mode, qui force justement le rendu non allégé.
 - **Restent à vérifier** (voir README > À vérifier soi-même) : vraie carte graphique (fluidité, reflets, ombres, temps de chargement réel), Safari et WebKit (les bibliothèques système de WebKit demandent `sudo apt-get install`, non fait), Firefox avec WebGL, Edge, tactile réel, iPhone / iPad (contexte WebGL et rapport de pixels), projecteur et résolution de la salle, télécommande de présentation, mise en veille.
 
 Historique : en phase 3, le script s'était bloqué après la descente des 27 étapes (rendu logiciel non allégé, ≈ 1,5 s par image) ; en phase 4, il a été découpé en parties.
@@ -177,7 +190,8 @@ Historique : en phase 3, le script s'était bloqué après la descente des 27 é
 
 - Animations illustratives : rapports et amplitudes reconstitués ; spiral fixe ; impulsion élargie ; automatique en sens unique (cliquets d'inversion non modélisés) ; doigt escamotable, levier de verrouillage, sautoirs et déplacement linéaire du mobile de correction non animés (indiqué dans les textes).
 - Pas de parallaxe. Sans WebGL : message et texte complet, pas d'image de repli.
-- Les ombres doublent les appels de rendu (≈ 280 en vue éclatée avec ombres, 140 sans).
+- Les ombres doublent les appels de rendu (≈ 280 en vue éclatée avec ombres, 140 sans). L'occlusion ambiante ajoute une passe de normales et de profondeur : 565 appels mesurés en vue éclatée avec ombres et occlusion, et un coût par pixel. À surveiller sur l'ordinateur de présentation.
+- Finitions : relief apparent seulement (la géométrie ne change pas) ; les décors sont illustratifs et ne reproduisent pas une exécution précise.
 - Sur téléphone, le barillet ouvert (étape « Le barillet ») reste cadré un peu haut ; légendes serrées sur la vue éclatée du module grande date.
 
 ### Demandes d'export

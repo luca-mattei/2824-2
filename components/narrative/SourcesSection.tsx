@@ -107,8 +107,13 @@ export function SourcesSection() {
             le sens horaire côté cadran.
           </li>
           <li>
-            <strong>Couronne</strong> : absente, elle appartient au boîtier et non au mouvement. Aucune décoration
-            (perlage, côtes) n’est représentée.
+            <strong>Couronne</strong> : absente, elle appartient au boîtier et non au mouvement.
+          </li>
+          <li>
+            <strong>Finitions de surface</strong> : grain, satiné et tournage génériques, calculés à l’affichage ;
+            l’état de surface réel n’est pas documenté par la CT. L’option « Décors illustratifs » ajoute des côtes de
+            Genève, un perlage et un soleillage : leur présence et leur dessin dépendent de l’exécution du calibre, ils
+            ne représentent pas une exécution précise.
           </li>
         </ul>
         <p>

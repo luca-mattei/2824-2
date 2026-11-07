@@ -2,10 +2,39 @@
 
 // Barre supérieure : titre, accès aux chapitres, mode présentation, état de préparation.
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { narratif } from '@/animation/narrativeController';
+import { decors } from '@/lib/decors';
+import { choisirQualite } from '@/lib/quality';
 import { chapitresAffiches, etapes, numeroAffiche, premiereEtapeDuChapitre } from '@/data/chapters';
 import { useNarratif } from '@/components/useNarratif';
+
+/**
+ * Option « Décors illustratifs » (côtes, perlage, soleillage). Le mot « illustratifs » reste dans
+ * le libellé visible : ces décors ne sont pas documentés par ETA.
+ */
+function BoutonDecors() {
+  const { pret } = useNarratif();
+  const actif = useSyncExternalStore(decors.abonner, decors.instantane, () => false);
+  const [disponible, setDisponible] = useState(false);
+  useEffect(() => {
+    decors.initialiser();
+    setDisponible(choisirQualite().finitions);
+  }, []);
+  if (!disponible || !pret) return null;
+  return (
+    <button
+      type="button"
+      className="bouton bouton-discret bouton-decors"
+      aria-pressed={actif}
+      title="Côtes de Genève, perlage, soleillage : décors illustratifs, non documentés par ETA. Leur présence dépend de l’exécution du calibre."
+      onClick={() => decors.basculer()}
+    >
+      <span className="libelle-long">Décors illustratifs</span>
+      <span className="libelle-court">Décors</span>
+    </button>
+  );
+}
 
 function EtatPreparation() {
   const { pret, chargement, erreur } = useNarratif();
@@ -92,6 +121,7 @@ export function TopBar() {
         </div>
       </nav>
       <EtatPreparation />
+      <BoutonDecors />
       {mode === 'exploration' ? (
         <button type="button" className="bouton bouton-discret" onClick={() => narratif.quitterExploration()}>
           Quitter l’exploration

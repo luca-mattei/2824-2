@@ -186,6 +186,21 @@ body {
   font-size: 0.8rem;
   border-color: rgb(237 230 214 / 0.22);
 }
+/* Option des décors illustratifs : témoin allumé quand l'option est active. */
+.bouton-decors::before {
+  content: '';
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  border: 1px solid var(--color-ivoire-doux);
+}
+.bouton-decors[aria-pressed='true'] {
+  border-color: var(--color-laiton);
+}
+.bouton-decors[aria-pressed='true']::before {
+  background: var(--color-laiton);
+  border-color: var(--color-laiton);
+}
 
 /* ───────────────────────── Scène 3D ───────────────────────── */
 .scene {

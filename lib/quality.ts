@@ -5,12 +5,18 @@
 // - Petit écran (téléphone) : rapport de pixels limité à 1. Au-delà, Safari iOS peut perdre le
 //   contexte WebGL (mémoire GPU), ce qui donnerait un écran noir.
 // - Appareil modeste (tactile, peu de mémoire) : rapport ≤ 1,5, pas d'ombres.
+// - Finitions de surface (shader) : partout sauf en rendu logiciel ; occlusion ambiante :
+//   seulement là où les ombres sont actives.
 
 export interface Qualite {
   /** Bornes du rapport de pixels du canvas. */
   dpr: [number, number];
   ombres: boolean;
   antialias: boolean;
+  /** Finitions de surface calculées dans le shader (components/three/Finitions.ts). */
+  finitions: boolean;
+  /** Occlusion ambiante en post-traitement (components/three/Occlusion.tsx). */
+  occlusion: boolean;
   /** Nom du processeur graphique, s'il est lisible (diagnostic). */
   renderer: string;
   rendu: 'materiel' | 'logiciel';
@@ -36,21 +42,27 @@ function lireRenderer(): string {
 let cache: Qualite | null = null;
 
 export function choisirQualite(): Qualite {
-  if (typeof window === 'undefined') return { dpr: [1, 1], ombres: false, antialias: true, renderer: '', rendu: 'materiel' };
+  if (typeof window === 'undefined') return { dpr: [1, 1], ombres: false, antialias: true, finitions: true, occlusion: false, renderer: '', rendu: 'materiel' };
   if (cache) return cache;
   const renderer = lireRenderer();
-  const logiciel = RENDU_LOGICIEL.test(renderer);
+  // `?qualite=haute` : réglages d'un ordinateur équipé, même en rendu logiciel (vérification visuelle).
+  const forcee = new URLSearchParams(window.location.search).get('qualite') === 'haute';
+  const logiciel = !forcee && RENDU_LOGICIEL.test(renderer);
   const tactile = window.matchMedia('(pointer: coarse)').matches;
   const petitEcran = Math.min(window.screen?.width ?? window.innerWidth, window.innerWidth, window.innerHeight) < 600;
   const memoire = (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 8;
-  const modeste = tactile || petitEcran || memoire <= 4;
+  const modeste = !forcee && (tactile || petitEcran || memoire <= 4);
   const dprMax = logiciel ? 0.5 : petitEcran ? 1 : modeste ? 1.5 : 2;
   cache = {
     dpr: [Math.min(1, dprMax), dprMax],
     ombres: !logiciel && !modeste,
     antialias: !logiciel,
+    // Rendu logiciel : coût par pixel trop élevé.
+    finitions: !logiciel,
+    // Passe de rendu supplémentaire : ordinateurs équipés seulement, comme les ombres.
+    occlusion: !logiciel && !modeste,
     renderer,
-    rendu: logiciel ? 'logiciel' : 'materiel',
+    rendu: RENDU_LOGICIEL.test(renderer) ? 'logiciel' : 'materiel',
   };
   return cache;
 }

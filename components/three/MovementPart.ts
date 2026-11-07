@@ -12,6 +12,7 @@ import { Box3, Color, Group, Mesh, MeshPhysicalMaterial, MeshStandardMaterial, V
 import type { PieceWeb } from '@/data/parts';
 import { DECALAGE_ABSENT } from '@/data/explodeLayout';
 import type { EtatPiece } from '@/animation/assemblyTimeline';
+import { appliquerFinitions } from './Finitions';
 
 export interface PieceMontee {
   piece: PieceWeb;
@@ -45,7 +46,7 @@ function adapterMateriau(m: Material): Material {
   return m;
 }
 
-export function monterPiece(piece: PieceWeb, objet: Object3D, ombres: boolean): PieceMontee {
+export function monterPiece(piece: PieceWeb, objet: Object3D, ombres: boolean, finitions: boolean): PieceMontee {
   const assemblage = new Group();
   const mecanique = new Group();
   assemblage.name = `assemblage:${piece.id}`;
@@ -74,6 +75,8 @@ export function monterPiece(piece: PieceWeb, objet: Object3D, ombres: boolean): 
     };
     o.material = Array.isArray(o.material) ? o.material.map(remplacer) : remplacer(o.material);
   });
+  // Grain, satiné, tournage (et décors en option) : shader seul, géométrie inchangée.
+  if (finitions) appliquerFinitions(piece, assemblage, objet);
 
   const boite = new Box3().setFromObject(assemblage);
   const centreLocal = boite.getCenter(new Vector3());

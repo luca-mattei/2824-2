@@ -50,6 +50,7 @@ Les vérifications automatiques tournent sans carte graphique (rendu logiciel) :
 - [ ] **Projecteur et résolution** : lisibilité des textes et des légendes au fond de la salle ; cadrages à la résolution du projecteur (miroir ou écran étendu) ; plein écran du navigateur (F11 ou Ctrl+Cmd+F).
 - [ ] **Mode présentation de bout en bout** : les 32 étapes au clavier (ou avec une télécommande qui envoie les flèches), animations (P), retour en arrière, Échap.
 - [ ] **Fluidité** : transitions et animations (échappement, grande date) sans saccade ; reflets métalliques et ombres corrects.
+- [ ] **Finitions et relief** : grain des ponts et de la platine visible sans scintillement en mouvement ; bouton « Décors illustratifs » (côtes, perlage, soleillage) ; fluidité avec l'occlusion ambiante (dans la console, `__eta.appels` ≈ 565 en vue éclatée avec ombres et occlusion).
 - [ ] **Exploration libre** : rotation et zoom à la souris (et au doigt si écran tactile).
 - [ ] **Tactile éventuel** : défilement, boutons, exploration.
 - [ ] **Hors ligne** : Wi-Fi coupé, tout fonctionne de la même façon.
