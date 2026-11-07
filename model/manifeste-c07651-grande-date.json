@@ -1,0 +1,1536 @@
+{
+ "calibre": "ETA 2824-2 et variante ETA C07651 (Mido Commander Big Date)",
+ "unites": "mm (1 unité Blender = 1 mm ; glTF exporté en Y vers le haut)",
+ "variantes": {
+  "commun": "pièces communes",
+  "2824-2": "quantième simple du 2824-2 (à masquer en version C07651)",
+  "C07651": "module grande date (à masquer en version 2824-2)"
+ },
+ "source": [
+  "ETA CT 2824-2 FDE 481688 25 (06.10.2022)",
+  "Théorie des montres compliquées, 3.2.4 Grande date ETA (p. 166-172)"
+ ],
+ "pose": "assemblée, date 01 affichée",
+ "pieces": [
+  {
+   "noeud": "1 Platine",
+   "pos_eta": "1",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 1,
+   "cote": "platine",
+   "sous_ensemble": "1 Platine et mise à l'heure",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "noeud": "1-1 Fixateur de cadran (1/2)",
+   "pos_eta": "1-1",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 2,
+   "cote": "cadran",
+   "sous_ensemble": "1 Platine et mise à l'heure",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    -9.384,
+    7.874,
+    0.0
+   ]
+  },
+  {
+   "noeud": "1-1 Fixateur de cadran (2/2)",
+   "pos_eta": "1-1",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 3,
+   "cote": "cadran",
+   "sous_ensemble": "1 Platine et mise à l'heure",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    9.384,
+    -7.874,
+    0.0
+   ]
+  },
+  {
+   "noeud": "1-2 Amortisseur inférieur de balancier",
+   "pos_eta": "1-2",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 4,
+   "cote": "cadran",
+   "sous_ensemble": "1 Platine et mise à l'heure",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    7.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "noeud": "2 Pignon coulant",
+   "pos_eta": "2",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 5,
+   "cote": "cadran",
+   "sous_ensemble": "1 Platine et mise à l'heure",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    0.0,
+    8.9,
+    0.55
+   ]
+  },
+  {
+   "noeud": "3 Pignon de remontoir",
+   "pos_eta": "3",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 6,
+   "cote": "cadran",
+   "sous_ensemble": "1 Platine et mise à l'heure",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    0.0,
+    10.4,
+    0.55
+   ]
+  },
+  {
+   "noeud": "4 Tige de remontoir",
+   "pos_eta": "4",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 7,
+   "cote": "cadran",
+   "sous_ensemble": "1 Platine et mise à l'heure",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    0.0,
+    6.0,
+    0.55
+   ]
+  },
+  {
+   "noeud": "5 Levier de correcteur",
+   "pos_eta": "5",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 8,
+   "cote": "cadran",
+   "sous_ensemble": "1 Platine et mise à l'heure",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    2.7,
+    7.6,
+    0.0
+   ]
+  },
+  {
+   "noeud": "6 Tirette",
+   "pos_eta": "6",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 9,
+   "cote": "cadran",
+   "sous_ensemble": "1 Platine et mise à l'heure",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    3.1,
+    6.7,
+    0.0
+   ]
+  },
+  {
+   "noeud": "7 Bascule de pignon coulant",
+   "pos_eta": "7",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 10,
+   "cote": "cadran",
+   "sous_ensemble": "1 Platine et mise à l'heure",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    -1.75,
+    6.25,
+    0.0
+   ]
+  },
+  {
+   "noeud": "8 Sautoir de tirette",
+   "pos_eta": "8",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 11,
+   "cote": "cadran",
+   "sous_ensemble": "1 Platine et mise à l'heure",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    6.0,
+    4.3,
+    0.0
+   ]
+  },
+  {
+   "noeud": "900 Vis du sautoir de tirette",
+   "pos_eta": "900",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 12,
+   "cote": "cadran",
+   "sous_ensemble": "1 Platine et mise à l'heure",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    6.6,
+    3.7,
+    0.0
+   ]
+  },
+  {
+   "noeud": "9 Roue d'échappement",
+   "pos_eta": "9",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 13,
+   "cote": "ponts",
+   "sous_ensemble": "2 Rouage",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    2.41,
+    -3.52,
+    0.0
+   ]
+  },
+  {
+   "noeud": "10 Roue intermédiaire",
+   "pos_eta": "10",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 14,
+   "cote": "ponts",
+   "sous_ensemble": "2 Rouage",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    -6.03,
+    -4.62,
+    0.0
+   ]
+  },
+  {
+   "noeud": "11 Roue moyenne",
+   "pos_eta": "11",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 15,
+   "cote": "ponts",
+   "sous_ensemble": "2 Rouage",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    -2.5,
+    -3.27,
+    0.0
+   ]
+  },
+  {
+   "noeud": "12 Roue de seconde",
+   "pos_eta": "12",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 16,
+   "cote": "ponts",
+   "sous_ensemble": "2 Rouage",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "noeud": "13 Pont de rouage",
+   "pos_eta": "13",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 17,
+   "cote": "ponts",
+   "sous_ensemble": "2 Rouage",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    -2.981,
+    -5.344,
+    0.0
+   ]
+  },
+  {
+   "noeud": "901 Vis du pont de rouage (1/2)",
+   "pos_eta": "901",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 18,
+   "cote": "ponts",
+   "sous_ensemble": "2 Rouage",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    -9.3,
+    -7.0,
+    0.0
+   ]
+  },
+  {
+   "noeud": "901 Vis du pont de rouage (2/2)",
+   "pos_eta": "901",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 19,
+   "cote": "ponts",
+   "sous_ensemble": "2 Rouage",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    1.0,
+    -7.6,
+    0.0
+   ]
+  },
+  {
+   "noeud": "14 Barillet complet (tambour)",
+   "pos_eta": "14",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 20,
+   "cote": "ponts",
+   "sous_ensemble": "3 Barillet et remontage",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    -5.88,
+    2.76,
+    0.0
+   ]
+  },
+  {
+   "noeud": "15 Levier stop",
+   "pos_eta": "15",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 21,
+   "cote": "ponts",
+   "sous_ensemble": "3 Barillet et remontage",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    -8.419,
+    -2.563,
+    0.0
+   ]
+  },
+  {
+   "noeud": "16 Pont de barillet",
+   "pos_eta": "16",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 22,
+   "cote": "ponts",
+   "sous_ensemble": "3 Barillet et remontage",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    -4.912,
+    4.03,
+    0.0
+   ]
+  },
+  {
+   "noeud": "901 Vis du pont de barillet (1/3)",
+   "pos_eta": "901",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 23,
+   "cote": "ponts",
+   "sous_ensemble": "3 Barillet et remontage",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    -10.4,
+    4.6,
+    0.0
+   ]
+  },
+  {
+   "noeud": "901 Vis du pont de barillet (2/3)",
+   "pos_eta": "901",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 24,
+   "cote": "ponts",
+   "sous_ensemble": "3 Barillet et remontage",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    -3.4,
+    9.2,
+    0.0
+   ]
+  },
+  {
+   "noeud": "901 Vis du pont de barillet (3/3)",
+   "pos_eta": "901",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 25,
+   "cote": "ponts",
+   "sous_ensemble": "3 Barillet et remontage",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    -1.2,
+    1.3,
+    0.0
+   ]
+  },
+  {
+   "noeud": "17 Cliquet",
+   "pos_eta": "17",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 26,
+   "cote": "ponts",
+   "sous_ensemble": "3 Barillet et remontage",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    -0.475,
+    4.875,
+    0.0
+   ]
+  },
+  {
+   "noeud": "18 Ressort de cliquet",
+   "pos_eta": "18",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 27,
+   "cote": "ponts",
+   "sous_ensemble": "3 Barillet et remontage",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    1.052,
+    5.3,
+    0.0
+   ]
+  },
+  {
+   "noeud": "19 Roue de couronne",
+   "pos_eta": "19",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 28,
+   "cote": "ponts",
+   "sous_ensemble": "3 Barillet et remontage",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    -0.25,
+    7.0,
+    0.0
+   ]
+  },
+  {
+   "noeud": "902 Vis de roue de couronne",
+   "pos_eta": "902",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 29,
+   "cote": "ponts",
+   "sous_ensemble": "3 Barillet et remontage",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    -0.25,
+    7.0,
+    0.0
+   ]
+  },
+  {
+   "noeud": "20 Rochet",
+   "pos_eta": "20",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 30,
+   "cote": "ponts",
+   "sous_ensemble": "3 Barillet et remontage",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    -5.88,
+    2.76,
+    0.0
+   ]
+  },
+  {
+   "noeud": "903 Vis de rochet",
+   "pos_eta": "903",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 31,
+   "cote": "ponts",
+   "sous_ensemble": "3 Barillet et remontage",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    -5.88,
+    2.76,
+    0.0
+   ]
+  },
+  {
+   "noeud": "21 Ancre",
+   "pos_eta": "21",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 32,
+   "cote": "ponts",
+   "sous_ensemble": "4 Échappement et balancier",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    4.77,
+    -1.76,
+    0.0
+   ]
+  },
+  {
+   "noeud": "22 Pont d'ancre",
+   "pos_eta": "22",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 33,
+   "cote": "ponts",
+   "sous_ensemble": "4 Échappement et balancier",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    5.285,
+    -2.98,
+    0.0
+   ]
+  },
+  {
+   "noeud": "901 Vis du pont d'ancre (1/2)",
+   "pos_eta": "901",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 34,
+   "cote": "ponts",
+   "sous_ensemble": "4 Échappement et balancier",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    5.9,
+    -4.3,
+    0.0
+   ]
+  },
+  {
+   "noeud": "901 Vis du pont d'ancre (2/2)",
+   "pos_eta": "901",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 35,
+   "cote": "ponts",
+   "sous_ensemble": "4 Échappement et balancier",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    4.15,
+    -2.8,
+    0.0
+   ]
+  },
+  {
+   "noeud": "23 Balancier réglé avec piton",
+   "pos_eta": "23",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 36,
+   "cote": "ponts",
+   "sous_ensemble": "4 Échappement et balancier",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    7.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "noeud": "24-1 Pont de balancier",
+   "pos_eta": "24-1",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 37,
+   "cote": "ponts",
+   "sous_ensemble": "4 Échappement et balancier",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    8.717,
+    -2.851,
+    0.0
+   ]
+  },
+  {
+   "noeud": "901 Vis du pont de balancier",
+   "pos_eta": "901",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 38,
+   "cote": "ponts",
+   "sous_ensemble": "4 Échappement et balancier",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    10.3,
+    -5.6,
+    0.0
+   ]
+  },
+  {
+   "noeud": "24-2 Porte-piton",
+   "pos_eta": "24-2",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 39,
+   "cote": "ponts",
+   "sous_ensemble": "4 Échappement et balancier",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    7.493,
+    -0.877,
+    0.0
+   ]
+  },
+  {
+   "noeud": "24-3 Raquette inférieure",
+   "pos_eta": "24-3",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 40,
+   "cote": "ponts",
+   "sous_ensemble": "4 Échappement et balancier",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    7.251,
+    -0.18,
+    0.0
+   ]
+  },
+  {
+   "noeud": "24-4 Raquette supérieure",
+   "pos_eta": "24-4",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 41,
+   "cote": "ponts",
+   "sous_ensemble": "4 Échappement et balancier",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    6.639,
+    -1.23,
+    0.0
+   ]
+  },
+  {
+   "noeud": "24-5 Correcteur de raquette",
+   "pos_eta": "24-5",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 42,
+   "cote": "ponts",
+   "sous_ensemble": "4 Échappement et balancier",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    5.5,
+    -2.6,
+    0.0
+   ]
+  },
+  {
+   "noeud": "24-6 Amortisseur supérieur (Incabloc)",
+   "pos_eta": "24-6",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 43,
+   "cote": "ponts",
+   "sous_ensemble": "4 Échappement et balancier",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    7.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "noeud": "31-2 Roulement à billes (pignon de masse)",
+   "pos_eta": "31-2",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 44,
+   "cote": "ponts",
+   "sous_ensemble": "5 Mécanisme automatique",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "noeud": "25 Bâti du dispositif automatique",
+   "pos_eta": "25",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 45,
+   "cote": "ponts",
+   "sous_ensemble": "5 Mécanisme automatique",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    -0.2,
+    3.9,
+    0.0
+   ]
+  },
+  {
+   "noeud": "26 Roue entraîneuse de rochet",
+   "pos_eta": "26",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 46,
+   "cote": "ponts",
+   "sous_ensemble": "5 Mécanisme automatique",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    -3.0,
+    7.7,
+    0.0
+   ]
+  },
+  {
+   "noeud": "27 Roue auxiliaire d'inversion",
+   "pos_eta": "27",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 47,
+   "cote": "ponts",
+   "sous_ensemble": "5 Mécanisme automatique",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    2.9,
+    1.0,
+    0.0
+   ]
+  },
+  {
+   "noeud": "28 Roue d'inversion",
+   "pos_eta": "28",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 48,
+   "cote": "ponts",
+   "sous_ensemble": "5 Mécanisme automatique",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    0.2,
+    3.25,
+    0.0
+   ]
+  },
+  {
+   "noeud": "29 Roue de réduction",
+   "pos_eta": "29",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 49,
+   "cote": "ponts",
+   "sous_ensemble": "5 Mécanisme automatique",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    -1.3,
+    5.9,
+    0.0
+   ]
+  },
+  {
+   "noeud": "30 Pont inférieur du dispositif automatique",
+   "pos_eta": "30",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 50,
+   "cote": "ponts",
+   "sous_ensemble": "5 Mécanisme automatique",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    1.55,
+    2.125,
+    0.0
+   ]
+  },
+  {
+   "noeud": "905 Vis du pont inférieur automatique",
+   "pos_eta": "905",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 51,
+   "cote": "ponts",
+   "sous_ensemble": "5 Mécanisme automatique",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    1.6,
+    2.1,
+    0.0
+   ]
+  },
+  {
+   "noeud": "904 Vis du bâti automatique (1/2)",
+   "pos_eta": "904",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 52,
+   "cote": "ponts",
+   "sous_ensemble": "5 Mécanisme automatique",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    -4.6,
+    8.4,
+    0.0
+   ]
+  },
+  {
+   "noeud": "904 Vis du bâti automatique (2/2)",
+   "pos_eta": "904",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 53,
+   "cote": "ponts",
+   "sous_ensemble": "5 Mécanisme automatique",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    3.9,
+    1.9,
+    0.0
+   ]
+  },
+  {
+   "noeud": "31-1 Masse oscillante",
+   "pos_eta": "31-1",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 54,
+   "cote": "ponts",
+   "sous_ensemble": "5 Mécanisme automatique",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "noeud": "906 Vis de masse oscillante",
+   "pos_eta": "906",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 55,
+   "cote": "ponts",
+   "sous_ensemble": "5 Mécanisme automatique",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "noeud": "32 Renvoi",
+   "pos_eta": "32",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 56,
+   "cote": "cadran",
+   "sous_ensemble": "6 Côté cadran (minuterie et quantième)",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    -2.05,
+    6.4,
+    0.0
+   ]
+  },
+  {
+   "noeud": "33 Chaussée avec roue entraîneuse",
+   "pos_eta": "33",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 57,
+   "cote": "cadran",
+   "sous_ensemble": "6 Côté cadran (minuterie et quantième)",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "noeud": "34 Roue de minuterie",
+   "pos_eta": "34",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 58,
+   "cote": "cadran",
+   "sous_ensemble": "6 Côté cadran (minuterie et quantième)",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    0.9,
+    3.5,
+    0.0
+   ]
+  },
+  {
+   "noeud": "35 Correcteur de quantième",
+   "pos_eta": "35",
+   "pos_livre": "",
+   "variante": "2824-2",
+   "ordre_montage_eta": 59,
+   "cote": "cadran",
+   "sous_ensemble": "6b Quantième 2824-2 (remplacé dans la version C07651)",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    -3.3,
+    7.7,
+    0.0
+   ]
+  },
+  {
+   "noeud": "36 Indicateur de quantième",
+   "pos_eta": "36",
+   "pos_livre": "",
+   "variante": "2824-2",
+   "ordre_montage_eta": 60,
+   "cote": "cadran",
+   "sous_ensemble": "6b Quantième 2824-2 (remplacé dans la version C07651)",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "noeud": "37 Roue des heures",
+   "pos_eta": "37",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 61,
+   "cote": "cadran",
+   "sous_ensemble": "6 Côté cadran (minuterie et quantième)",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "noeud": "38 Roue entraîneuse de quantième",
+   "pos_eta": "38",
+   "pos_livre": "",
+   "variante": "2824-2",
+   "ordre_montage_eta": 62,
+   "cote": "cadran",
+   "sous_ensemble": "6b Quantième 2824-2 (remplacé dans la version C07651)",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    4.7,
+    -4.4,
+    0.0
+   ]
+  },
+  {
+   "noeud": "39 Pont de rouage de minuterie",
+   "pos_eta": "39",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 63,
+   "cote": "cadran",
+   "sous_ensemble": "6 Côté cadran (minuterie et quantième)",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    -1.041,
+    2.928,
+    0.0
+   ]
+  },
+  {
+   "noeud": "907 Vis du pont de minuterie",
+   "pos_eta": "907",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 64,
+   "cote": "cadran",
+   "sous_ensemble": "6 Côté cadran (minuterie et quantième)",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    -4.5,
+    4.5,
+    0.0
+   ]
+  },
+  {
+   "noeud": "40 Sautoir de quantième",
+   "pos_eta": "40",
+   "pos_livre": "",
+   "variante": "2824-2",
+   "ordre_montage_eta": 65,
+   "cote": "cadran",
+   "sous_ensemble": "6b Quantième 2824-2 (remplacé dans la version C07651)",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    -1.984,
+    -7.982,
+    0.0
+   ]
+  },
+  {
+   "noeud": "41 Plaque de maintien du sautoir",
+   "pos_eta": "41",
+   "pos_livre": "",
+   "variante": "2824-2",
+   "ordre_montage_eta": 66,
+   "cote": "cadran",
+   "sous_ensemble": "6b Quantième 2824-2 (remplacé dans la version C07651)",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    -2.45,
+    -6.95,
+    0.0
+   ]
+  },
+  {
+   "noeud": "900 Vis de la plaque du sautoir",
+   "pos_eta": "900",
+   "pos_livre": "",
+   "variante": "2824-2",
+   "ordre_montage_eta": 67,
+   "cote": "cadran",
+   "sous_ensemble": "6b Quantième 2824-2 (remplacé dans la version C07651)",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    -3.6,
+    -6.4,
+    0.0
+   ]
+  },
+  {
+   "noeud": "42 Support de cadran",
+   "pos_eta": "42",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 68,
+   "cote": "cadran",
+   "sous_ensemble": "6 Côté cadran (minuterie et quantième)",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "noeud": "43 Clavette",
+   "pos_eta": "43",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": 69,
+   "cote": "cadran",
+   "sous_ensemble": "6 Côté cadran (minuterie et quantième)",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "noeud": "1 Gravure 2824-2",
+   "pos_eta": "1",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": -1,
+   "cote": "ponts",
+   "sous_ensemble": "1 Platine et mise à l'heure",
+   "parent": "1 Platine",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "noeud": "13 Gravure 25 JEWELS SWISS",
+   "pos_eta": "13",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": -1,
+   "cote": "ponts",
+   "sous_ensemble": "2 Rouage",
+   "parent": "13 Pont de rouage",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    -2.981,
+    -5.344,
+    0.0
+   ]
+  },
+  {
+   "noeud": "13 Gravure TWENTY-FIVE",
+   "pos_eta": "13",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": -1,
+   "cote": "ponts",
+   "sous_ensemble": "2 Rouage",
+   "parent": "13 Pont de rouage",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    -2.981,
+    -5.344,
+    0.0
+   ]
+  },
+  {
+   "noeud": "14 Arbre de barillet",
+   "pos_eta": "14",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": -1,
+   "cote": "ponts",
+   "sous_ensemble": "3 Barillet et remontage",
+   "parent": "14 Barillet complet (tambour)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    -5.88,
+    2.76,
+    0.0
+   ]
+  },
+  {
+   "noeud": "14 Couvercle de barillet",
+   "pos_eta": "14",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": -1,
+   "cote": "ponts",
+   "sous_ensemble": "3 Barillet et remontage",
+   "parent": "14 Barillet complet (tambour)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    -5.88,
+    2.76,
+    0.0
+   ]
+  },
+  {
+   "noeud": "14 Ressort moteur",
+   "pos_eta": "14",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": -1,
+   "cote": "ponts",
+   "sous_ensemble": "3 Barillet et remontage",
+   "parent": "14 Barillet complet (tambour)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    -5.88,
+    2.76,
+    0.0
+   ]
+  },
+  {
+   "noeud": "21 Dard",
+   "pos_eta": "21",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": -1,
+   "cote": "ponts",
+   "sous_ensemble": "4 Échappement et balancier",
+   "parent": "21 Ancre",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    4.77,
+    -1.76,
+    0.0
+   ]
+  },
+  {
+   "noeud": "23 Piton",
+   "pos_eta": "23",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": -1,
+   "cote": "ponts",
+   "sous_ensemble": "4 Échappement et balancier",
+   "parent": "23 Balancier réglé avec piton",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    7.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "noeud": "23 Spiral",
+   "pos_eta": "23",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": -1,
+   "cote": "ponts",
+   "sous_ensemble": "4 Échappement et balancier",
+   "parent": "23 Balancier réglé avec piton",
+   "type": "CURVE",
+   "position_assemblee_mm": [
+    7.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "noeud": "23 Virole",
+   "pos_eta": "23",
+   "pos_livre": "",
+   "variante": "commun",
+   "ordre_montage_eta": -1,
+   "cote": "ponts",
+   "sous_ensemble": "4 Échappement et balancier",
+   "parent": "23 Balancier réglé avec piton",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    7.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "noeud": "GD-10 Levier de verrouillage",
+   "pos_eta": "",
+   "pos_livre": "10",
+   "variante": "C07651",
+   "ordre_montage_eta": 0,
+   "cote": "cadran",
+   "sous_ensemble": "7 Module grande date (ETA C07651)",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    7.095,
+    -2.319,
+    0.0
+   ]
+  },
+  {
+   "noeud": "GD-11 Étoile des unités",
+   "pos_eta": "",
+   "pos_livre": "11",
+   "variante": "C07651",
+   "ordre_montage_eta": 0,
+   "cote": "cadran",
+   "sous_ensemble": "7 Module grande date (ETA C07651)",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "noeud": "GD-11' Sautoir de l'étoile des unités",
+   "pos_eta": "",
+   "pos_livre": "11'",
+   "variante": "C07651",
+   "ordre_montage_eta": 0,
+   "cote": "cadran",
+   "sous_ensemble": "7 Module grande date (ETA C07651)",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    -3.185,
+    -4.293,
+    0.0
+   ]
+  },
+  {
+   "noeud": "GD-12 Disque des unités",
+   "pos_eta": "",
+   "pos_livre": "12",
+   "variante": "C07651",
+   "ordre_montage_eta": 0,
+   "cote": "cadran",
+   "sous_ensemble": "7 Module grande date (ETA C07651)",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "noeud": "GD-16 Mobile de correction rapide",
+   "pos_eta": "",
+   "pos_livre": "16",
+   "variante": "C07651",
+   "ordre_montage_eta": 0,
+   "cote": "cadran",
+   "sous_ensemble": "7 Module grande date (ETA C07651)",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    -3.6,
+    5.0,
+    0.0
+   ]
+  },
+  {
+   "noeud": "GD-16'' Ressort de mobile de correction rapide",
+   "pos_eta": "",
+   "pos_livre": "16''",
+   "variante": "C07651",
+   "ordre_montage_eta": -1,
+   "cote": "ponts",
+   "sous_ensemble": "7 Module grande date (ETA C07651)",
+   "parent": "GD-16 Mobile de correction rapide",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    -3.6,
+    5.0,
+    0.0
+   ]
+  },
+  {
+   "noeud": "GD-17 Étoile de mobile de correction rapide",
+   "pos_eta": "",
+   "pos_livre": "17",
+   "variante": "C07651",
+   "ordre_montage_eta": -1,
+   "cote": "ponts",
+   "sous_ensemble": "7 Module grande date (ETA C07651)",
+   "parent": "GD-16 Mobile de correction rapide",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    -3.6,
+    5.0,
+    0.0
+   ]
+  },
+  {
+   "noeud": "GD-2 Mobile intermédiaire",
+   "pos_eta": "",
+   "pos_livre": "2",
+   "variante": "C07651",
+   "ordre_montage_eta": 0,
+   "cote": "cadran",
+   "sous_ensemble": "7 Module grande date (ETA C07651)",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    0.18,
+    -4.68,
+    0.0
+   ]
+  },
+  {
+   "noeud": "GD-3 Roue de quantième",
+   "pos_eta": "",
+   "pos_livre": "3",
+   "variante": "C07651",
+   "ordre_montage_eta": 0,
+   "cote": "cadran",
+   "sous_ensemble": "7 Module grande date (ETA C07651)",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    2.34,
+    -5.94,
+    0.0
+   ]
+  },
+  {
+   "noeud": "GD-4 Doigt escamotable",
+   "pos_eta": "",
+   "pos_livre": "4",
+   "variante": "C07651",
+   "ordre_montage_eta": -1,
+   "cote": "ponts",
+   "sous_ensemble": "7 Module grande date (ETA C07651)",
+   "parent": "GD-3 Roue de quantième",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    2.34,
+    -5.94,
+    0.0
+   ]
+  },
+  {
+   "noeud": "GD-5 Butée du doigt escamotable",
+   "pos_eta": "",
+   "pos_livre": "5",
+   "variante": "C07651",
+   "ordre_montage_eta": -1,
+   "cote": "ponts",
+   "sous_ensemble": "7 Module grande date (ETA C07651)",
+   "parent": "GD-3 Roue de quantième",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    2.34,
+    -5.94,
+    0.0
+   ]
+  },
+  {
+   "noeud": "GD-6 Disque inférieur",
+   "pos_eta": "",
+   "pos_livre": "6",
+   "variante": "C07651",
+   "ordre_montage_eta": -1,
+   "cote": "ponts",
+   "sous_ensemble": "7 Module grande date (ETA C07651)",
+   "parent": "GD-7 Disque des dizaines",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "noeud": "GD-6' Sautoir de disque inférieur",
+   "pos_eta": "",
+   "pos_livre": "6'",
+   "variante": "C07651",
+   "ordre_montage_eta": 0,
+   "cote": "cadran",
+   "sous_ensemble": "7 Module grande date (ETA C07651)",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    -5.649,
+    -3.688,
+    0.0
+   ]
+  },
+  {
+   "noeud": "GD-7 Disque des dizaines",
+   "pos_eta": "",
+   "pos_livre": "7",
+   "variante": "C07651",
+   "ordre_montage_eta": 0,
+   "cote": "cadran",
+   "sous_ensemble": "7 Module grande date (ETA C07651)",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "noeud": "GD-8 Couronne des unités (30 dents, une tronquée)",
+   "pos_eta": "",
+   "pos_livre": "8",
+   "variante": "C07651",
+   "ordre_montage_eta": -1,
+   "cote": "ponts",
+   "sous_ensemble": "7 Module grande date (ETA C07651)",
+   "parent": "GD-7 Disque des dizaines",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "noeud": "GD-9 Étoile intermédiaire des unités",
+   "pos_eta": "",
+   "pos_livre": "9",
+   "variante": "C07651",
+   "ordre_montage_eta": 0,
+   "cote": "cadran",
+   "sous_ensemble": "7 Module grande date (ETA C07651)",
+   "parent": "ETA 2824-2 (racine)",
+   "type": "MESH",
+   "position_assemblee_mm": [
+    4.17,
+    -4.03,
+    0.0
+   ]
+  }
+ ]
+}

@@ -1,0 +1,780 @@
+@import 'tailwindcss';
+
+/* ───────────────────────── Jetons ───────────────────────── */
+@theme {
+  --color-fond: #100f0d;
+  --color-fond-2: #191714;
+  --color-fond-3: #23201b;
+  --color-ivoire: #ede6d6;
+  --color-ivoire-doux: #b8b0a0;
+  --color-laiton: #cfa86b;
+  --color-rubis: #d4475a;
+  --color-trait: rgb(237 230 214 / 0.16);
+  --font-titre: var(--police-titre), 'Iowan Old Style', Georgia, serif;
+  --font-texte: var(--police-texte), system-ui, sans-serif;
+  --font-technique: var(--police-technique), ui-monospace, monospace;
+}
+
+:root {
+  --barre: 3.5rem;
+  --marge: clamp(1rem, 5vw, 5.5rem);
+  --colonne: min(27.5rem, 38vw);
+  scrollbar-gutter: stable;
+  background: var(--color-fond);
+  color: var(--color-ivoire);
+}
+
+html.en-presentation {
+  overflow: hidden;
+}
+
+body {
+  margin: 0;
+  background: var(--color-fond);
+  font-family: var(--font-texte);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-laiton);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+::selection {
+  background: rgb(207 168 107 / 0.35);
+}
+
+.lien-evitement {
+  position: fixed;
+  left: 1rem;
+  top: -4rem;
+  z-index: 50;
+  padding: 0.5rem 0.9rem;
+  background: var(--color-ivoire);
+  color: var(--color-fond);
+}
+.lien-evitement:focus {
+  top: 1rem;
+}
+
+/* ───────────────────────── Barre supérieure ───────────────────────── */
+.barre {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 30;
+  height: var(--barre);
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 0 var(--marge);
+  background: linear-gradient(to bottom, rgb(16 15 13 / 0.92), rgb(16 15 13 / 0));
+}
+.marque {
+  white-space: nowrap;
+  font-family: var(--font-technique);
+  font-size: 0.8rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-ivoire);
+  text-decoration: none;
+  margin-right: auto;
+}
+.barre-nav {
+  position: relative;
+}
+.menu-panneau {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.5rem);
+  min-width: 15rem;
+  padding: 0.5rem;
+  background: var(--color-fond-2);
+  border: 1px solid var(--color-trait);
+  box-shadow: 0 1rem 3rem rgb(0 0 0 / 0.5);
+}
+.menu-chapitres {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.menu-chapitres a {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.55rem 0.75rem;
+  color: var(--color-ivoire);
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+.menu-chapitres a:hover,
+.menu-chapitres a[aria-current] {
+  background: var(--color-fond-3);
+}
+.menu-chapitres a[aria-current] .menu-numero {
+  color: var(--color-laiton);
+}
+.menu-numero {
+  font-family: var(--font-technique);
+  font-size: 0.8em;
+  color: var(--color-ivoire-doux);
+  min-width: 1.6em;
+}
+.etat-3d {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0;
+  font-family: var(--font-technique);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: var(--color-ivoire-doux);
+  white-space: nowrap;
+}
+.etat-point {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: var(--color-ivoire-doux);
+  opacity: 0.6;
+}
+.etat-pret .etat-point {
+  background: #8fc79a;
+  opacity: 1;
+}
+.etat-erreur .etat-point {
+  background: var(--color-rubis);
+  opacity: 1;
+}
+
+/* ───────────────────────── Boutons ───────────────────────── */
+.bouton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.15rem;
+  border: 1px solid rgb(237 230 214 / 0.35);
+  background: transparent;
+  color: var(--color-ivoire);
+  font: 500 0.9rem/1 var(--font-texte);
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s;
+}
+.bouton:hover {
+  border-color: var(--color-ivoire);
+  background: rgb(237 230 214 / 0.06);
+}
+.bouton:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.bouton-principal {
+  background: var(--color-ivoire);
+  border-color: var(--color-ivoire);
+  color: var(--color-fond);
+}
+.bouton-principal:hover {
+  background: #fff8e8;
+}
+.bouton-discret {
+  padding: 0.45rem 0.8rem;
+  font-size: 0.8rem;
+  border-color: rgb(237 230 214 / 0.22);
+}
+
+/* ───────────────────────── Scène 3D ───────────────────────── */
+.scene {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 55% 60% at 68% 52%, rgb(64 52 38 / 0.45), transparent 70%),
+    var(--color-fond);
+  transition: opacity 0.5s;
+}
+.scene::after {
+  /* Voile de lisibilité derrière la colonne de texte */
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgb(16 15 13 / 0.88) 0%, rgb(16 15 13 / 0.6) 30%, rgb(16 15 13 / 0) 52%);
+}
+.scene-retiree {
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.5s,
+    visibility 0s 0.5s;
+}
+.scene-canvas {
+  position: absolute;
+  inset: 0;
+}
+.scene-voile {
+  position: absolute;
+  inset: 0;
+  background: var(--color-fond);
+  pointer-events: none;
+  animation: voile 0.45s ease-out forwards;
+}
+@keyframes voile {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+.scene-chargement,
+.scene-message {
+  position: absolute;
+  left: 68%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(22rem, 80vw);
+  text-align: center;
+  font-family: var(--font-technique);
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  color: var(--color-ivoire-doux);
+}
+.scene-message {
+  font-family: var(--font-texte);
+  font-size: 0.95rem;
+  letter-spacing: 0;
+  padding: 1.25rem;
+  border: 1px solid var(--color-trait);
+  background: var(--color-fond-2);
+}
+.scene-message-titre {
+  font-family: var(--font-titre);
+  font-size: 1.3rem;
+  color: var(--color-ivoire);
+  margin: 0 0 0.4rem;
+}
+.barre-progression {
+  height: 1px;
+  background: var(--color-trait);
+  margin-top: 0.75rem;
+  overflow: hidden;
+}
+.barre-progression span {
+  display: block;
+  height: 100%;
+  background: var(--color-laiton);
+  transform-origin: left;
+  transition: transform 0.2s;
+}
+
+/* Légendes 3D */
+.couche-legendes {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1;
+}
+.legende {
+  --dx: 0px;
+  --dy: 0px;
+  --long: 0px;
+  --angle: 0rad;
+  position: absolute;
+  left: 0;
+  top: 0;
+  will-change: transform, opacity;
+}
+.legende-point {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  margin: -3.5px 0 0 -3.5px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-laiton);
+  background: rgb(16 15 13 / 0.6);
+}
+.legende-trait {
+  position: absolute;
+  height: 1px;
+  width: var(--long);
+  transform: rotate(var(--angle));
+  transform-origin: 0 50%;
+  background: linear-gradient(90deg, rgb(207 168 107 / 0.9), rgb(207 168 107 / 0.35));
+}
+.legende-texte {
+  position: absolute;
+  white-space: nowrap;
+  transform: translate(calc(var(--dx) + 0.4rem), calc(var(--dy) - 50%));
+  font-family: var(--font-technique);
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  color: var(--color-ivoire);
+  padding: 0.2rem 0.45rem;
+  background: rgb(16 15 13 / 0.78);
+  border-radius: 2px;
+}
+.legende-texte.vers-gauche {
+  transform: translate(calc(var(--dx) - 100% - 0.4rem), calc(var(--dy) - 50%));
+}
+.legende-position {
+  color: var(--color-laiton);
+  margin-right: 0.5em;
+}
+
+/* ───────────────────────── Récit ───────────────────────── */
+main {
+  position: relative;
+  z-index: 1;
+}
+.recit[inert] {
+  visibility: hidden;
+}
+.etape {
+  position: relative;
+  min-height: 150vh;
+  padding: 0 var(--marge) 45vh;
+}
+.etape-hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding-top: calc(var(--barre) + 2rem);
+  padding-bottom: 4rem;
+}
+.carte {
+  position: sticky;
+  top: calc(var(--barre) + 9vh);
+  width: var(--colonne);
+  padding: 0;
+}
+.hero-contenu {
+  width: var(--colonne);
+}
+
+.surtitre {
+  display: flex;
+  gap: 0.75rem;
+  margin: 0 0 1rem;
+  font-family: var(--font-technique);
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-laiton);
+}
+.surtitre-numero {
+  color: var(--color-ivoire-doux);
+}
+.titre-hero {
+  margin: 0 0 1rem;
+  font-family: var(--font-titre);
+  font-weight: 340;
+  font-size: clamp(2.9rem, 5.4vw, 4.9rem);
+  line-height: 0.95;
+  white-space: nowrap;
+  letter-spacing: -0.02em;
+  font-variation-settings: 'opsz' 144;
+}
+.titre-etape {
+  margin: 0 0 0.9rem;
+  font-family: var(--font-titre);
+  font-weight: 380;
+  font-size: clamp(2rem, 3.4vw, 2.9rem);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  font-variation-settings: 'opsz' 96;
+}
+.idee {
+  margin: 0 0 1.4rem;
+  font-family: var(--font-titre);
+  font-style: italic;
+  font-weight: 350;
+  font-size: 1.28rem;
+  line-height: 1.4;
+  color: var(--color-ivoire);
+}
+.idee-hero {
+  font-size: clamp(1.25rem, 1.8vw, 1.5rem);
+}
+.paragraphe {
+  margin: 0 0 1rem;
+  color: rgb(237 230 214 / 0.88);
+}
+.paragraphe strong {
+  font-weight: 600;
+  color: var(--color-ivoire);
+}
+
+.mentions {
+  list-style: none;
+  margin: 1.4rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+.mention {
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.55rem 0.8rem;
+  border-left: 2px solid var(--color-ivoire-doux);
+  background: rgb(237 230 214 / 0.04);
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--color-ivoire-doux);
+}
+.mention-ordre {
+  border-left-color: var(--color-laiton);
+}
+.mention-type {
+  font-family: var(--font-technique);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-ivoire);
+}
+.approfondissement {
+  margin-top: 1rem;
+  border-top: 1px solid var(--color-trait);
+  padding-top: 0.75rem;
+  font-size: 0.94rem;
+  color: rgb(237 230 214 / 0.85);
+}
+.approfondissement summary {
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--color-ivoire);
+}
+.approfondissement p {
+  margin: 0.6rem 0 0;
+}
+.sources-etape {
+  margin: 1.2rem 0 0;
+  font-family: var(--font-technique);
+  font-size: 0.72rem;
+  line-height: 1.5;
+  color: var(--color-ivoire-doux);
+}
+.sources-etape-libelle {
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--color-ivoire);
+  margin-right: 0.4rem;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 1.75rem 0 2rem;
+}
+.fiche-courte {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
+  gap: 1rem 1.25rem;
+  margin: 0;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--color-trait);
+}
+.fiche-courte dt {
+  font-family: var(--font-technique);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-ivoire-doux);
+}
+.fiche-courte dd {
+  margin: 0.15rem 0 0;
+  font-family: var(--font-titre);
+  font-size: 1.3rem;
+  line-height: 1.2;
+}
+.fiche-courte small {
+  display: block;
+  font-family: var(--font-texte);
+  font-size: 0.75rem;
+  color: var(--color-ivoire-doux);
+}
+.invitation {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 2.5rem;
+  font-family: var(--font-technique);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-ivoire-doux);
+}
+.invitation-trait {
+  width: 3rem;
+  height: 1px;
+  background: var(--color-ivoire-doux);
+  transform-origin: left;
+  animation: invitation 2.4s ease-in-out infinite;
+}
+@keyframes invitation {
+  0%,
+  100% {
+    transform: scaleX(0.3);
+  }
+  50% {
+    transform: scaleX(1);
+  }
+}
+
+/* ───────────────────────── Sources ───────────────────────── */
+.section-sources {
+  position: relative;
+  z-index: 2;
+  background: var(--color-fond);
+  border-top: 1px solid var(--color-trait);
+  padding: 6rem var(--marge) 8rem;
+}
+.sources-colonne {
+  max-width: 46rem;
+}
+.section-sources h3 {
+  margin: 2.5rem 0 0.75rem;
+  font-family: var(--font-technique);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-laiton);
+}
+.section-sources p,
+.section-sources li {
+  color: rgb(237 230 214 / 0.86);
+  font-size: 0.98rem;
+}
+.liste-sources,
+.liste-limites {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 1rem;
+}
+.liste-limites li {
+  padding-left: 1rem;
+  border-left: 1px solid var(--color-trait);
+}
+.liste-sources p {
+  margin: 0;
+}
+.source-titre {
+  font-family: var(--font-titre);
+  font-size: 1.2rem !important;
+}
+.source-titre a {
+  color: var(--color-ivoire);
+  text-decoration-color: rgb(207 168 107 / 0.6);
+  text-underline-offset: 3px;
+}
+.source-detail {
+  font-size: 0.85rem !important;
+  color: var(--color-ivoire-doux) !important;
+}
+.note-sequence {
+  margin-top: 2.5rem;
+  font-style: italic;
+  color: var(--color-ivoire-doux) !important;
+}
+
+/* ───────────────────────── Mode présentation ───────────────────────── */
+.presentation {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+}
+.presentation-panneau {
+  pointer-events: auto;
+  position: absolute;
+  left: var(--marge);
+  top: calc(var(--barre) + 6vh);
+  width: min(31rem, 40vw);
+  max-height: calc(100vh - var(--barre) - 6vh - 8rem);
+  overflow-y: auto;
+  outline: none;
+}
+.presentation-panneau .paragraphe {
+  font-size: 1.15rem;
+}
+.presentation-panneau .titre-etape {
+  font-size: clamp(2.4rem, 3.8vw, 3.4rem);
+}
+.presentation-commandes {
+  pointer-events: auto;
+  position: absolute;
+  left: 50%;
+  bottom: 1.75rem;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.6rem;
+  background: rgb(25 23 20 / 0.92);
+  border: 1px solid var(--color-trait);
+}
+.presentation-progression {
+  text-align: center;
+  min-width: 15rem;
+}
+.presentation-progression p {
+  margin: 0 0 0.4rem;
+  font-size: 0.85rem;
+}
+.presentation-compteur {
+  color: var(--color-ivoire-doux);
+  font-family: var(--font-technique);
+  font-size: 0.75rem;
+}
+.presentation-points {
+  display: flex;
+  justify-content: center;
+  gap: 0.35rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.presentation-points button {
+  display: block;
+  width: 1.4rem;
+  height: 0.9rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+}
+.presentation-points button::after {
+  content: '';
+  position: absolute;
+  left: 0.15rem;
+  right: 0.15rem;
+  top: 50%;
+  height: 2px;
+  background: rgb(237 230 214 / 0.25);
+}
+.presentation-points button[aria-current]::after {
+  background: var(--color-laiton);
+}
+.presentation-aide {
+  position: absolute;
+  right: var(--marge);
+  bottom: 0.6rem;
+  margin: 0;
+  font-family: var(--font-technique);
+  font-size: 0.68rem;
+  color: var(--color-ivoire-doux);
+}
+
+/* ───────────────────────── Écrans étroits ─────────────────────────
+   Le canvas occupe le haut de l'écran ; le texte défile dessous, sans recouvrir la scène. */
+/* Doit correspondre à REQUETE_LARGE (lib/quality.ts). */
+@media not ((min-width: 900px) and (min-aspect-ratio: 11/10)) {
+  :root {
+    --colonne: 100%;
+  }
+  .scene {
+    inset: 0 0 auto 0;
+    height: 50svh;
+    z-index: 2;
+    background:
+      radial-gradient(ellipse 70% 60% at 50% 55%, rgb(64 52 38 / 0.45), transparent 70%),
+      var(--color-fond);
+    border-bottom: 1px solid var(--color-trait);
+  }
+  .scene::after {
+    background: none;
+  }
+  .scene-chargement,
+  .scene-message {
+    left: 50%;
+  }
+  .etape {
+    min-height: 0;
+    padding-top: 1rem;
+    padding-bottom: 50svh;
+  }
+  .etape-hero {
+    display: block;
+    padding-top: calc(50svh + 1.5rem);
+    padding-bottom: 20svh;
+  }
+  .carte {
+    position: static;
+    padding-top: 1.5rem;
+  }
+  .barre {
+    gap: 0.6rem;
+    background: rgb(16 15 13 / 0.94);
+  }
+  .barre > .bouton {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.72rem;
+  }
+  .marque {
+    letter-spacing: 0.08em;
+  }
+  .etat-texte {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  .section-sources {
+    padding-top: calc(var(--barre) + 3rem);
+  }
+  .presentation-panneau {
+    top: 50svh;
+    left: 0;
+    right: 0;
+    width: auto;
+    max-height: calc(50svh - 5.5rem);
+    padding: 1.25rem var(--marge) 1rem;
+    background: var(--color-fond);
+  }
+  .presentation-panneau .titre-etape {
+    font-size: 1.9rem;
+  }
+  .presentation-panneau .paragraphe {
+    font-size: 1rem;
+  }
+  .presentation-commandes {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transform: none;
+    justify-content: space-between;
+    gap: 0.5rem;
+    border-width: 1px 0 0;
+  }
+  .presentation-progression {
+    min-width: 0;
+  }
+  .presentation-aide {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .invitation-trait,
+  .scene-voile {
+    animation: none;
+  }
+  .scene-voile {
+    display: none;
+  }
+  .scene,
+  .barre-progression span {
+    transition: none;
+  }
+}

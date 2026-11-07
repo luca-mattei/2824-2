@@ -1,0 +1,12 @@
+node_modules/
+.next/
+out/
+.DS_Store
+*.blend1
+next-env.d.ts
+*.tsbuildinfo
+# Copie dérivée de model/eta2824-2.glb (npm run assets)
+public/models/
+# Captures de vérification (npm run check)
+verification/
+docs/sources/theorie-montres-compliquees.pdf
