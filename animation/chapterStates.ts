@@ -163,9 +163,12 @@ export const etatsScene: Record<string, EtatScene> = {
     assemblees: BASE,
     surlignees: G('platine-cadran'),
     legendes: [
-      { id: 'cadran-fixateur', piece: '1-1 Fixateur de cadran (1/2)' },
-      { id: 'cadran-fixateur-2', piece: '1-1 Fixateur de cadran (2/2)' },
       { id: 'cadran-amortisseur', piece: '1-2 Amortisseur inférieur de balancier' },
+      // Points dans le repère web (x, hauteur, −y du modèle), relevés sur la platine v2.
+      { id: 'cadran-rainure', point: [0, 1.28, -7.4], texte: 'Rainure de la tige' },
+      { id: 'cadran-tunnel', point: [0, 0.3, -12.5], texte: 'Tunnel de la tige' },
+      { id: 'cadran-minuterie', point: [0.9, 0.94, -3.5], texte: 'Creusure de la minuterie' },
+      { id: 'cadran-gradins', point: [0, 0.48, 10.5], texte: 'Gradins du bord' },
     ],
   },
 

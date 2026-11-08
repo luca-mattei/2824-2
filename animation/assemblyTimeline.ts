@@ -22,6 +22,8 @@ export interface EtatPiece {
   v: number;
   l: number;
   h: number;
+  /** Fantôme (exploration seulement) : 1 = pièce retirée affichée en transparence. */
+  f?: number;
 }
 
 interface Transition {

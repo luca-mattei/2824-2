@@ -8,7 +8,20 @@
 // La pose assemblée vient du manifeste (`position_assemblee_mm`) : le GLB fourni a été exporté
 // en pose éclatée (décalages verticaux), ses translations ne servent donc pas de référence.
 
-import { Box3, Color, Group, Mesh, MeshPhysicalMaterial, MeshStandardMaterial, Vector3, type Material, type Object3D } from 'three';
+import {
+  Box3,
+  Color,
+  DoubleSide,
+  Group,
+  Mesh,
+  MeshPhysicalMaterial,
+  MeshStandardMaterial,
+  Vector3,
+  type Material,
+  type Object3D,
+  type Plane,
+  type Side,
+} from 'three';
 import type { PieceWeb } from '@/data/parts';
 import { DECALAGE_ABSENT } from '@/data/explodeLayout';
 import type { EtatPiece } from '@/animation/assemblyTimeline';
@@ -27,6 +40,23 @@ export interface PieceMontee {
   enfants: Map<string, Object3D>;
   materiaux: MeshStandardMaterial[];
   dernierSurlignage: number;
+  dernierFantome: number;
+  /** Ombres activées pour cette qualité de rendu (rétablies quand la pièce n'est plus un fantôme). */
+  ombres: boolean;
+}
+
+/** Plan de coupe de l'exploration (null = pas de coupe), partagé par tous les matériaux des pièces. */
+export function appliquerCoupe(pieces: PieceMontee[], plans: Plane[]) {
+  for (const m of pieces)
+    for (const mat of m.materiaux) {
+      const avant = mat.clippingPlanes?.length ?? 0;
+      if (avant === plans.length) continue;
+      mat.clippingPlanes = plans.length ? plans : null;
+      // Faces arrière visibles dans la coupe : on voit l'intérieur des pièces au lieu d'un vide.
+      if (mat.userData.faceOrigine === undefined) mat.userData.faceOrigine = mat.side;
+      mat.side = plans.length ? DoubleSide : (mat.userData.faceOrigine as Side);
+      mat.needsUpdate = true;
+    }
 }
 
 const COULEUR_SURLIGNAGE = new Color('#ffb45c');
@@ -86,7 +116,19 @@ export function monterPiece(piece: PieceWeb, objet: Object3D, ombres: boolean, f
     const nom = o.userData?.name;
     if (o !== objet && typeof nom === 'string') enfants.set(nom, o);
   });
-  return { piece, assemblage, mecanique, centreLocal, rayon, dessus: boite.max.y, enfants, materiaux, dernierSurlignage: -1 };
+  return {
+    piece,
+    assemblage,
+    mecanique,
+    centreLocal,
+    rayon,
+    dessus: boite.max.y,
+    enfants,
+    materiaux,
+    dernierSurlignage: -1,
+    dernierFantome: 0,
+    ombres,
+  };
 }
 
 /** Pose absolue de la pièce pour un état donné (aucune accumulation). */
@@ -101,6 +143,25 @@ export function poserPiece(m: PieceMontee, e: EtatPiece) {
     p[2] + d[2] * eclatement,
   );
   m.assemblage.visible = e.v > 0.003;
+
+  // Fantôme (exploration) : pièce retirée laissée en place, en transparence, sans ombre portée.
+  const f = Math.round((e.f ?? 0) * 50) / 50;
+  if (f !== m.dernierFantome) {
+    const etaitTransparent = m.dernierFantome > 0;
+    m.dernierFantome = f;
+    for (const mat of m.materiaux) {
+      if (mat.userData.opaciteOrigine === undefined) mat.userData.opaciteOrigine = mat.opacity;
+      mat.opacity = (mat.userData.opaciteOrigine as number) * (1 - 0.86 * f);
+      mat.depthWrite = f < 0.5;
+      if ((f > 0) !== etaitTransparent) {
+        mat.transparent = f > 0;
+        mat.needsUpdate = true;
+      }
+    }
+    m.assemblage.traverse((o) => {
+      if (o instanceof Mesh) o.castShadow = m.ombres && f === 0;
+    });
+  }
 
   const h = Math.round(e.h * 100) / 100;
   if (h !== m.dernierSurlignage) {

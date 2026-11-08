@@ -34,13 +34,13 @@
    "pos_livre": "",
    "variante": "commun",
    "ordre_montage_eta": 2,
-   "cote": "cadran",
+   "cote": "ponts",
    "sous_ensemble": "1 Platine et mise à l'heure",
    "parent": "ETA 2824-2 (racine)",
    "type": "MESH",
    "position_assemblee_mm": [
-    -9.384,
-    7.874,
+    5.634,
+    10.595,
     0.0
    ]
   },
@@ -50,13 +50,13 @@
    "pos_livre": "",
    "variante": "commun",
    "ordre_montage_eta": 3,
-   "cote": "cadran",
+   "cote": "ponts",
    "sous_ensemble": "1 Platine et mise à l'heure",
    "parent": "ETA 2824-2 (racine)",
    "type": "MESH",
    "position_assemblee_mm": [
-    9.384,
-    -7.874,
+    -5.634,
+    -10.595,
     0.0
    ]
   },
@@ -88,8 +88,8 @@
    "type": "MESH",
    "position_assemblee_mm": [
     0.0,
-    8.9,
-    0.55
+    8.8,
+    1.05
    ]
   },
   {
@@ -104,8 +104,8 @@
    "type": "MESH",
    "position_assemblee_mm": [
     0.0,
-    10.4,
-    0.55
+    9.95,
+    1.05
    ]
   },
   {
@@ -121,7 +121,7 @@
    "position_assemblee_mm": [
     0.0,
     6.0,
-    0.55
+    1.05
    ]
   },
   {
@@ -135,8 +135,8 @@
    "parent": "ETA 2824-2 (racine)",
    "type": "MESH",
    "position_assemblee_mm": [
-    2.7,
-    7.6,
+    6.33,
+    8.504,
     0.0
    ]
   },
@@ -151,8 +151,8 @@
    "parent": "ETA 2824-2 (racine)",
    "type": "MESH",
    "position_assemblee_mm": [
-    3.1,
-    6.7,
+    -1.206,
+    10.401,
     0.0
    ]
   },
@@ -167,8 +167,8 @@
    "parent": "ETA 2824-2 (racine)",
    "type": "MESH",
    "position_assemblee_mm": [
-    -1.75,
-    6.25,
+    1.164,
+    8.554,
     0.0
    ]
   },
@@ -183,8 +183,8 @@
    "parent": "ETA 2824-2 (racine)",
    "type": "MESH",
    "position_assemblee_mm": [
-    6.0,
-    4.3,
+    3.998,
+    7.599,
     0.0
    ]
   },
@@ -199,8 +199,8 @@
    "parent": "ETA 2824-2 (racine)",
    "type": "MESH",
    "position_assemblee_mm": [
-    6.6,
-    3.7,
+    5.458,
+    7.298,
     0.0
    ]
   },

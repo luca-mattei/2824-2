@@ -184,3 +184,49 @@ html.en-exploration .scene-canvas:active {
 .lien-texte:hover {
   color: var(--color-ivoire);
 }
+
+/* Voir à l'intérieur : étages, retrait couche par couche, transparence, coupe. */
+.explo-sous-titre {
+  margin: 0.2rem 0 0.1rem;
+  font-size: 0.82rem;
+  color: var(--color-ivoire-doux);
+}
+.explo-note-courte {
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+.explo-etages {
+  display: grid;
+  gap: 0.15rem;
+}
+.explo-case {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 1.9rem;
+  font-size: 0.86rem;
+  color: var(--color-ivoire);
+  cursor: pointer;
+}
+.explo-case input {
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  accent-color: var(--color-laiton);
+  flex: none;
+}
+.explo-case input:disabled + span {
+  opacity: 0.45;
+  text-decoration: line-through;
+}
+.explo-champ input[type='range'] {
+  width: 100%;
+  accent-color: var(--color-laiton);
+}
+.explo-valeur {
+  display: block;
+  margin-top: 0.1rem;
+  font-family: var(--font-technique);
+  font-size: 0.74rem;
+  color: var(--color-ivoire);
+}

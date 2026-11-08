@@ -10,29 +10,49 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useRef } from 'react';
 import { Spherical, Vector3, type PerspectiveCamera } from 'three';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
-import { exploration, type CommandeCamera } from '@/animation/explorationState';
+import { eligible, exploration, type CommandeCamera } from '@/animation/explorationState';
+import { pieces } from '@/data/parts';
 import { narratif } from '@/animation/narrativeController';
 import { useNarratif } from '@/components/useNarratif';
 import { clamp, easeInOut, lerp, lerpAngleDeg } from '@/lib/transforms';
 import { REQUETE_LARGE } from '@/lib/quality';
 
-const DISTANCE_MIN = 25;
+const DISTANCE_MIN = 9;
 const DISTANCE_MAX = 320;
 const DISTANCE_VUE = 70;
 /** Zone libre (hors panneau), en fraction du canvas ; mise à jour avec le décalage de projection. */
 const zoneLibre = { largeur: 1, hauteur: 1, aspect: 1, fov: 30 };
+
+/** Encombrement (mm, repère web) du mouvement assemblé ou de la pile éclatée, pour le calibre affiché. */
+function encombrement(eclate: boolean) {
+  const { calibre } = exploration.etat();
+  let yMin = Infinity;
+  let yMax = -Infinity;
+  let r = 13;
+  for (const p of pieces) {
+    if (!p.estPieceMobile || !eligible(p, calibre)) continue;
+    const [x, y, z] = p.positionAssemblee;
+    const [dx, dy, dz] = eclate ? p.decalageEclate : [0, 0, 0];
+    yMin = Math.min(yMin, y + dy);
+    yMax = Math.max(yMax, y + dy);
+    r = Math.max(r, Math.hypot(x + dx, z + dz) + 2);
+  }
+  if (!Number.isFinite(yMin)) return { centreY: 1.5, demi: 14 };
+  // Épaisseur propre des pièces (≈ 1 mm) et marge : la pile éclatée tient entièrement dans la zone.
+  return { centreY: (yMin + yMax) / 2, demi: Math.max(r, (yMax - yMin) / 2 + 3) };
+}
+
 /**
- * Centre et distance de cadrage : mouvement assemblé (demi-taille ≈ 14 mm) ou pile éclatée
- * (≈ −25 à +50 mm, demi-taille ≈ 36 mm), pour que le sujet tienne dans la zone libre.
+ * Centre et distance de cadrage : mouvement assemblé ou pile éclatée, pour que le sujet tienne
+ * dans la zone libre (calculés sur les positions réelles des pièces du calibre affiché).
  */
 const cadrage = () => {
-  const eclate = exploration.etat().eclate;
-  const demiTaille = eclate ? 36 : 14;
+  const { centreY, demi } = encombrement(exploration.etat().eclate);
   const t = Math.tan((zoneLibre.fov * DEG) / 2);
-  const demi = Math.min(Math.atan(t * zoneLibre.hauteur), Math.atan(t * zoneLibre.aspect * zoneLibre.largeur));
+  const angle = Math.min(Math.atan(t * zoneLibre.hauteur), Math.atan(t * zoneLibre.aspect * zoneLibre.largeur));
   return {
-    centre: new Vector3(0, eclate ? 11 : 1.5, 0),
-    rayon: clamp(demiTaille / Math.sin(demi), DISTANCE_MIN, DISTANCE_MAX),
+    centre: new Vector3(0, centreY, 0),
+    rayon: clamp(demi / Math.sin(angle), 25, DISTANCE_MAX),
   };
 };
 const CENTRE = new Vector3(0, 1.5, 0);
@@ -217,7 +237,8 @@ function ControlesActifs() {
       makeDefault={false}
       enableDamping
       dampingFactor={0.12}
-      enablePan={false}
+      enablePan
+      screenSpacePanning
       minDistance={DISTANCE_MIN}
       maxDistance={DISTANCE_MAX}
       rotateSpeed={0.7}

@@ -6,10 +6,10 @@
 
 import { useGLTF } from '@react-three/drei';
 import { useFrame, useThree, type ThreeEvent } from '@react-three/fiber';
-import { evaluerExploration, selectionnerObjet } from '@/animation/explorationState';
+import { evaluerExploration, exploration, selectionnerObjet } from '@/animation/explorationState';
 import { avancerMecanique, mecanique, type Angles } from '@/animation/mechanicalMotion';
 import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
-import { Box3, Group, PerspectiveCamera, Vector3, type Object3D } from 'three';
+import { Box3, Group, PerspectiveCamera, Plane, Vector3, type Object3D } from 'three';
 import {
   evaluerCamera,
   evaluerEnfants,
@@ -26,7 +26,7 @@ import { associerPieces, trouverRacine } from '@/lib/modelMapping';
 import { decors } from '@/lib/decors';
 import { marquer } from '@/lib/mesures';
 import { appliquerCadrage } from './CameraRig';
-import { monterPiece, poserPiece, type PieceMontee } from './MovementPart';
+import { appliquerCoupe, monterPiece, poserPiece, type PieceMontee } from './MovementPart';
 import { construireReperes, type Reperes } from './ReperesSchematiques';
 
 /** Nœud enfant déplacé par la narration (ex. couvercle du barillet). */
@@ -120,6 +120,11 @@ function monter(scene: Object3D, timeline: Timeline, ombres: boolean, finitions:
 
 const ancre = new Vector3();
 const visibles = new Set<string>();
+/** Plan de coupe de l'exploration : parallèle à la tige (axe X du repère web), position en mm. */
+const planCoupe = new Plane(new Vector3(-1, 0, 0), 0);
+const PLANS_COUPE = [planCoupe];
+const AUCUN_PLAN: Plane[] = [];
+let coupeAppliquee: number | null = null;
 
 declare global {
   interface Window {
@@ -165,6 +170,7 @@ export function MovementModel({
   // Compilation anticipée des shaders (toutes les pièces visibles) : pas d'à-coup au premier
   // changement de chapitre pendant une présentation.
   useLayoutEffect(() => {
+    gl.localClippingEnabled = true;
     montage.pieces.forEach((m) => (m.assemblage.visible = true));
     gl.compile(scene, camera);
     marquer('shaders-compiles');
@@ -180,6 +186,15 @@ export function MovementModel({
     if (narratif.instantane().mode === 'exploration') {
       const encoreX = evaluerExploration(timeline.pieces, montage.etats, dt);
       montage.pieces.forEach((m, i) => poserPiece(m, montage.etats[i]));
+      const coupe = exploration.etat().coupe;
+      if (coupe !== coupeAppliquee) {
+        coupeAppliquee = coupe;
+        if (coupe !== null) {
+          montage.conteneur.updateMatrixWorld();
+          planCoupe.set(new Vector3(-1, 0, 0), coupe).applyMatrix4(montage.conteneur.matrixWorld);
+        }
+        appliquerCoupe(montage.pieces, coupe === null ? AUCUN_PLAN : PLANS_COUPE);
+      }
       montage.enfants.forEach((e) => e.objet.position.copy(e.repos));
       montage.reperes.maj(-1000);
       for (const el of elementsLegendes.values()) {
@@ -189,6 +204,13 @@ export function MovementModel({
       if (encoreX) invalidate();
       return;
     }
+
+    // Retour au récit : ni fantôme ni coupe hérités de l'exploration.
+    if (coupeAppliquee !== null) {
+      coupeAppliquee = null;
+      appliquerCoupe(montage.pieces, AUCUN_PLAN);
+    }
+    for (const e of montage.etats) e.f = 0;
 
     const encore = avancerAffichage(dt);
     const p = moteur.affichee;
@@ -310,8 +332,9 @@ export function MovementModel({
       object={montage.conteneur}
       onClick={(e: ThreeEvent<MouseEvent>) => {
         if (narratif.instantane().mode !== 'exploration') return;
+        // Une pièce retirée (fantôme) laisse passer le clic vers la pièce située derrière.
+        if (!selectionnerObjet(e.object)) return;
         e.stopPropagation();
-        selectionnerObjet(e.object);
         invalidate();
       }}
     />

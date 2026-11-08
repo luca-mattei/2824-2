@@ -1,7 +1,7 @@
 // Mode exploration libre : état des pièces indépendant de la narration.
 // CONTRAT (fixé par la scène, components/three/MovementModel.tsx) :
 // - `evaluerExploration(pieces, sortie, dt)` remplit l'état de chaque pièce mobile (mêmes champs
-//   que la narration : a, v, l, h) et renvoie vrai tant qu'une transition est en cours ;
+//   que la narration : a, v, l, h, plus f = fantôme) et renvoie vrai tant qu'une transition est en cours ;
 // - `selectionnerObjet(objet)` est appelé au clic sur une pièce du canvas en mode exploration.
 // La caméra est pilotée par components/explorer/ExplorerControls.tsx (rendu dans le canvas).
 //
@@ -18,10 +18,58 @@ import { damp } from '@/lib/transforms';
 export interface EtatExploration {
   calibre: Calibre;
   eclate: boolean;
-  /** Sous-ensemble isolé (la platine reste visible comme référence) ; null = tout le mouvement. */
+  /** Sous-ensemble isolé (la platine reste visible comme repère) ; null = tout le mouvement. */
   isolation: GroupeId | null;
   /** Pièce sélectionnée : `noeud` d'une pièce mobile ou d'un nœud enfant. */
   selection: string | null;
+  /** Étages masqués un par un (cases à cocher). */
+  etagesMasques: EtageId[];
+  /** Nombre d'étages retirés depuis le côté `retraitDepuis` (curseur « couche par couche »). */
+  retrait: number;
+  retraitDepuis: 'cadran' | 'ponts';
+  /** Pièces masquées individuellement (`noeud` de la pièce mobile). */
+  piecesMasquees: string[];
+  /** Vrai : les pièces retirées restent visibles en transparence ; faux : elles sortent de la vue. */
+  fantome: boolean;
+  /** Plan de coupe parallèle à la tige (axe X du mouvement) ; null = pas de coupe. Position en mm. */
+  coupe: number | null;
+}
+
+/**
+ * Étages du mouvement, du cadran vers la masse oscillante. Regroupement pédagogique des groupes
+ * de data/groups.ts selon leur position dans l'épaisseur (hauteurs reconstituées, voir CONTEXTE).
+ */
+export const ETAGES = [
+  { id: 'cadran', nom: 'Cadran et quantième', groupes: ['cadran', 'quantieme', 'gd-entrainement', 'gd-dizaines', 'gd-unites', 'gd-correction'] },
+  { id: 'minuterie', nom: 'Minuterie', groupes: ['minuterie'] },
+  { id: 'mise-a-l-heure', nom: 'Tige et mise à l’heure', groupes: ['remontoir', 'mise-a-l-heure'] },
+  { id: 'platine', nom: 'Platine', groupes: ['platine', 'platine-cadran'] },
+  { id: 'rouage', nom: 'Rouage et barillet', groupes: ['rouage', 'barillet'] },
+  { id: 'regulation', nom: 'Échappement et balancier', groupes: ['ancre', 'balancier'] },
+  { id: 'ponts', nom: 'Ponts', groupes: ['pont-rouage', 'pont-barillet', 'pont-ancre', 'pont-balancier'] },
+  { id: 'remontage', nom: 'Remontage', groupes: ['remontage'] },
+  { id: 'automatique', nom: 'Dispositif automatique', groupes: ['automatique'] },
+  { id: 'masse', nom: 'Masse oscillante', groupes: ['masse'] },
+] as const satisfies readonly { id: string; nom: string; groupes: readonly GroupeId[] }[];
+
+export type EtageId = (typeof ETAGES)[number]['id'];
+
+const ETAGE_DU_GROUPE = new Map<GroupeId, EtageId>(ETAGES.flatMap((e) => e.groupes.map((g) => [g as GroupeId, e.id] as const)));
+export const etageDe = (g: GroupeId): EtageId | undefined => ETAGE_DU_GROUPE.get(g);
+
+/** Étages retirés par le curseur, dans l'ordre où ils partent. */
+export function etagesRetires(e: Pick<EtatExploration, 'retrait' | 'retraitDepuis'>): EtageId[] {
+  const ordre = e.retraitDepuis === 'cadran' ? ETAGES : [...ETAGES].reverse();
+  return ordre.slice(0, e.retrait).map((x) => x.id);
+}
+
+/** Vrai si la pièce mobile est retirée de la vue par un réglage d'exploration (hors calibre exclu). */
+export function estRetiree(p: PieceWeb, e: EtatExploration = etat): boolean {
+  if (e.isolation && p.groupe !== e.isolation && p.groupe !== 'platine') return true;
+  if (e.piecesMasquees.includes(p.id)) return true;
+  const et = etageDe(p.groupe);
+  if (!et) return false;
+  return e.etagesMasques.includes(et) || etagesRetires(e).includes(et);
 }
 
 export type CommandeCamera =
@@ -36,7 +84,22 @@ export type CommandeCamera =
   /** Garde l'angle de vue, recentre et règle la distance pour l'état assemblé ou éclaté. */
   | 'recadrer';
 
-let etat: EtatExploration = { calibre: '2824-2', eclate: false, isolation: null, selection: null };
+const REGLAGES_VISIBILITE = {
+  isolation: null,
+  etagesMasques: [] as EtageId[],
+  retrait: 0,
+  piecesMasquees: [] as string[],
+  coupe: null,
+} satisfies Partial<EtatExploration>;
+
+let etat: EtatExploration = {
+  calibre: '2824-2',
+  eclate: false,
+  selection: null,
+  retraitDepuis: 'cadran',
+  fantome: false,
+  ...REGLAGES_VISIBILITE,
+};
 const abonnes = new Set<() => void>();
 const abonnesCommandes = new Set<(c: CommandeCamera) => void>();
 /** Vrai si le dernier geste du pointeur sur le canvas était un glissement (rotation), pas un clic. */
@@ -85,10 +148,24 @@ export const exploration = {
     exploration.definir({ eclate });
     exploration.commande('recadrer');
   },
-  /** Vue d'ensemble : assemblé, sans isolation, caméra de trois quarts (sélection conservée). */
+  /** Vue d'ensemble : assemblé, tout affiché, sans coupe, caméra de trois quarts (sélection conservée). */
   reinitialiser() {
-    exploration.definir({ eclate: false, isolation: null });
+    exploration.definir({ eclate: false, ...REGLAGES_VISIBILITE });
     exploration.commande('reinitialiser');
+  },
+  basculerEtage(id: EtageId) {
+    const m = etat.etagesMasques;
+    exploration.definir({ etagesMasques: m.includes(id) ? m.filter((x) => x !== id) : [...m, id] });
+  },
+  /** Masque la pièce mobile qui porte `id` (sélection effacée : on ne voit plus la pièce). */
+  masquerPiece(id: string) {
+    const p = pieceMobileDe(id);
+    if (!p || etat.piecesMasquees.includes(p.id)) return;
+    exploration.definir({ piecesMasquees: [...etat.piecesMasquees, p.id], selection: null });
+  },
+  /** Réaffiche tout le mouvement (étages, pièces, curseur, isolation), coupe conservée. */
+  afficherTout() {
+    exploration.definir({ isolation: null, etagesMasques: [], retrait: 0, piecesMasquees: [] });
   },
   signalerGlissement(glisse: boolean) {
     dernierGesteGlisse = glisse;
@@ -106,15 +183,23 @@ const TAU = 0.18;
 const SEUIL = 1e-3;
 
 export function evaluerExploration(pieces: PieceWeb[], sortie: EtatPiece[], dt: number): boolean {
-  const { calibre, eclate, isolation, selection } = etat;
+  const { calibre, eclate, selection, fantome } = etat;
   const instantane = narratif.instantane().mouvementReduit;
   const mobileSelectionne = selection ? pieceMobileDe(selection)?.id : undefined;
   let encore = false;
   pieces.forEach((p, i) => {
-    const present = eligible(p, calibre) && (!isolation || p.groupe === isolation || p.groupe === 'platine');
-    const cible = { a: eclate ? 0 : 1, v: present ? 1 : 0, l: 0, h: p.id === mobileSelectionne ? 1 : 0 };
-    const s = sortie[i];
-    for (const k of ['a', 'v', 'l', 'h'] as const) {
+    const retiree = estRetiree(p);
+    const present = eligible(p, calibre) && (!retiree || fantome);
+    const cible = {
+      a: eclate ? 0 : 1,
+      v: present ? 1 : 0,
+      l: 0,
+      h: p.id === mobileSelectionne ? 1 : 0,
+      f: present && retiree ? 1 : 0,
+    };
+    const s = sortie[i] as Required<EtatPiece>;
+    s.f ??= 0;
+    for (const k of ['a', 'v', 'l', 'h', 'f'] as const) {
       if (instantane || Math.abs(s[k] - cible[k]) < SEUIL) s[k] = cible[k];
       else {
         s[k] = damp(s[k], cible[k], TAU, dt);
@@ -125,14 +210,21 @@ export function evaluerExploration(pieces: PieceWeb[], sortie: EtatPiece[], dt: 
   return encore;
 }
 
-export function selectionnerObjet(objet: Object3D): void {
-  if (dernierGesteGlisse) return; // fin d'une rotation de la vue, pas un clic
+/**
+ * Sélection au clic. Renvoie faux si l'objet touché est une pièce retirée (fantôme) ou hors calibre :
+ * le clic traverse alors vers l'objet suivant.
+ */
+export function selectionnerObjet(objet: Object3D): boolean {
+  if (dernierGesteGlisse) return true; // fin d'une rotation de la vue, pas un clic
   for (let o: Object3D | null = objet; o; o = o.parent) {
     const nom = o.userData?.name;
     if (typeof nom !== 'string') continue;
     const p = piecesParId.get(nom);
     if (!p) continue;
-    if (eligible(p, etat.calibre)) exploration.definir({ selection: nom });
-    return;
+    const mobile = pieceMobileDe(nom);
+    if (!eligible(p, etat.calibre) || (mobile && estRetiree(mobile))) return false;
+    exploration.definir({ selection: nom });
+    return true;
   }
+  return false;
 }

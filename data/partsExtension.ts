@@ -63,9 +63,10 @@ const fixateur = p(
   {
     nom: 'Fixateur de cadran',
     fonction: 'Retient le cadran sur le mouvement.',
-    explication: 'La CT en compte deux, livrés avec la platine montée.',
+    explication:
+      'La CT en compte deux, livrés avec la platine montée. Sur le dessin de montage (p. 8), ils se logent dans le bord de la platine, côté ponts.',
     statut: 'reconstitué',
-    noteModele: 'Nombre conforme à la CT (2×). Forme et emplacement approchés.',
+    noteModele: 'Nombre conforme à la CT (2×). Emplacement relevé sur le dessin de montage ; forme en crochet approchée.',
   },
   CT_NOMENCLATURE,
 );
@@ -117,7 +118,7 @@ export const extensionPieces: Partial<Record<string, ExtensionPiece>> = {
         'Toutes les autres pièces s’y positionnent, directement ou par l’intermédiaire des ponts. Elle est percée et creusée pour loger les organes, et porte une partie des pierres où pivotent les axes.',
       statut: 'reconstitué',
       noteModele:
-        'Diamètre conforme à la CT (25,60 mm). Contour, creusures (barillet, balancier, roues intermédiaire et moyenne) et épaisseur approchés.',
+        'Diamètre conforme à la CT (25,60 mm). Côté cadran : gradins, creusures, ajours, rainure et tunnel de la tige relevés sur la vue côté cadran (p. 8), creusures complétées là où les pièces modélisées le demandent. Côté ponts : creusures du barillet, du balancier et des roues, piliers sous les ponts. Hauteurs et épaisseur reconstituées.',
     },
     CT_NOMENCLATURE,
     { id: 'ct-eta', ou: 'p. 1' },
@@ -143,7 +144,8 @@ export const extensionPieces: Partial<Record<string, ExtensionPiece>> = {
       explication:
         'Principe général : selon la position de la tige, il engrène avec le pignon de remontoir (remontage) ou avec le renvoi (mise à l’heure).',
       statut: 'reconstitué',
-      noteModele: FORME_APPROCHEE,
+      noteModele:
+        'Dentures sur ses deux faces et gorge de la bascule, comme sur le détail A de la CT (p. 8) ; position relevée sur la vue côté cadran, dimensions reconstituées.',
       axeRotation: AXE,
     },
     CT_NOMENCLATURE,
@@ -155,7 +157,8 @@ export const extensionPieces: Partial<Record<string, ExtensionPiece>> = {
       fonction: 'Transmet la rotation de la tige vers la roue de couronne.',
       explication: 'Principe général du remontage manuel : tige, pignon de remontoir, roue de couronne, rochet.',
       statut: 'reconstitué',
-      noteModele: FORME_APPROCHEE,
+      noteModele:
+        'Denture radiale comme sur le détail B de la CT (p. 8) ; denture frontale face au pignon coulant d’après le principe général. Position relevée sur la vue côté cadran, dimensions reconstituées.',
       axeRotation: AXE,
     },
     CT_NOMENCLATURE,
@@ -166,9 +169,10 @@ export const extensionPieces: Partial<Record<string, ExtensionPiece>> = {
       nom: 'Tige de remontoir',
       fonction: 'Axe qui relie la couronne au mouvement.',
       explication:
-        'La couronne, vissée à son extrémité, appartient au boîtier et n’est pas modélisée. La CT ne décrit pas les positions de la tige.',
+        'La couronne, vissée à son extrémité, appartient au boîtier et n’est pas modélisée. La CT ne décrit pas les positions de la tige. Dans la platine, la tige court dans une rainure et entre par un tunnel percé dans le bord (vue côté cadran, p. 8).',
       statut: 'reconstitué',
-      noteModele: 'Pièce de la nomenclature ETA ; longueur et profil approchés.',
+      noteModele:
+        'Sections illustratives (pivot, carré du pignon coulant, portée du pignon de remontoir, gorge de la tirette, corps, filetage) : principe général, longueurs et diamètres reconstitués.',
     },
     CT_NOMENCLATURE,
     CT_MISE_A_L_HEURE,
@@ -179,7 +183,7 @@ export const extensionPieces: Partial<Record<string, ExtensionPiece>> = {
       fonction: 'Levier du mécanisme de mise à l’heure.',
       explication: 'Monté avec la tirette et la bascule ; la CT n’en détaille pas le rôle.',
       statut: 'reconstitué',
-      noteModele: FORME_APPROCHEE,
+      noteModele: 'Contour relevé sur la vue côté cadran de la CT (p. 8) ; attribution de ce contour à la pièce déduite du dessin, épaisseur reconstituée.',
     },
     CT_NOMENCLATURE,
     CT_MISE_A_L_HEURE,
@@ -190,7 +194,7 @@ export const extensionPieces: Partial<Record<string, ExtensionPiece>> = {
       fonction: 'Suit la tige lorsqu’on la tire ou la pousse.',
       explication: 'Principe général : elle commande la bascule du pignon coulant. Livrée « montée » selon la CT.',
       statut: 'reconstitué',
-      noteModele: FORME_APPROCHEE,
+      noteModele: 'Contour relevé sur la vue côté cadran de la CT (p. 8) ; attribution de ce contour à la pièce déduite du dessin, épaisseur reconstituée.',
     },
     CT_NOMENCLATURE,
     CT_MISE_A_L_HEURE,
@@ -201,7 +205,7 @@ export const extensionPieces: Partial<Record<string, ExtensionPiece>> = {
       fonction: 'Déplace le pignon coulant le long de la tige.',
       explication: 'Principe général : actionnée par la tirette, elle fait passer le pignon coulant d’un engrènement à l’autre.',
       statut: 'reconstitué',
-      noteModele: FORME_APPROCHEE,
+      noteModele: 'Forme reconstituée : la bascule est en partie cachée par le sautoir sur la vue ETA (p. 8). Sa fourchette dans la gorge du pignon coulant suit le principe général.',
     },
     CT_NOMENCLATURE,
     CT_MISE_A_L_HEURE,
@@ -212,7 +216,7 @@ export const extensionPieces: Partial<Record<string, ExtensionPiece>> = {
       fonction: 'Maintient la tirette dans chacune de ses positions.',
       explication: 'Un sautoir est un ressort qui retient une pièce dans des positions définies. Fixé par une vis 900.',
       statut: 'reconstitué',
-      noteModele: FORME_APPROCHEE,
+      noteModele: 'Contour relevé sur la vue côté cadran de la CT (p. 8) ; attribution de ce contour à la pièce déduite du dessin, épaisseur reconstituée.',
     },
     CT_NOMENCLATURE,
     CT_MISE_A_L_HEURE,

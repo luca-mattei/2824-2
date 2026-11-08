@@ -1,0 +1,21 @@
+{
+ "_methode": "Rayons de tête : cercle ajusté sur la silhouette de chaque roue dessinée seule (CT p. 6), échelle de la page = platine dessinée sur la même page (R 47,314 pt = 12,8 mm, soit 0,27053 mm/pt). Vérifié sur la vue montée p. 12 (roue de seconde 3,43 contre 3,42 ; barillet ≈ 6,0-6,1 contre 6,08). Dents : pas angulaire ajusté par moindres carrés sur le dessin (dents.py). Les dessins ETA sont des illustrations : quand deux vues ne concordent pas, on garde la vue montée la plus grande (p. 12) et on note les deux.",
+ "axes_mm": {
+  "_source": "CT p. 12, vue côté ponts (rubis), cercle du mouvement ajusté (cx 417,748 ; cy 509,455 ; r 74,906 pt). Concorde avec p. 8 et p. 18 (côté cadran) à ≈ 0,1 mm.",
+  "SEC": [0.0, 0.0], "INT": [-5.975, -4.088], "MOY": [-2.466, -2.727], "ECH": [2.05, -2.993], "ANC": [4.279, -1.305], "BAL": [6.477, 0.384], "BAR": [-5.733, 2.874]
+ },
+ "roues": {
+  "9":  {"nom": "Roue d'échappement", "r_tete_mm": 2.386, "dents": 20, "mesures": {"p6": 20.0}},
+  "10": {"nom": "Roue intermédiaire", "r_tete_mm": 3.303, "dents": 77, "mesures": {"p6": 76.9, "p12": 77.2}, "note": "arc visible p. 12 court (95°)"},
+  "11": {"nom": "Roue moyenne", "r_tete_mm": 3.419, "dents": 90, "mesures": {"p6": 89.9, "p12": 90.2}},
+  "12": {"nom": "Roue de seconde", "r_tete_mm": 3.419, "dents": 108, "mesures": {"p6": 90.0, "p12": 108.2}, "note": "les deux dessins ne concordent pas ; p. 12 (plus grand) retenu. 108 / pignon d'échappement de 9 = 12 tr/min, cohérent avec 20 dents et 28 800 alt/h, mais le pignon n'est pas compté sur un dessin"},
+  "14": {"nom": "Barillet", "r_tete_mm": 6.08, "dents": 101, "mesures": {"p6": 100.9, "p12": 100.9}},
+  "19": {"nom": "Roue de couronne", "r_tete_mm": 3.101, "dents": 26, "mesures": {"p6": 26.0}},
+  "20": {"nom": "Rochet", "r_tete_mm": 3.677, "dents": 63, "mesures": {"p6": 63.0}},
+  "26": {"nom": "Roue entraîneuse de rochet", "r_tete_mm": 2.878, "dents": 61, "mesures": {"p6": 61.0}},
+  "27": {"nom": "Roue auxiliaire d'inversion", "r_tete_mm": 2.196, "dents": 39, "mesures": {"p6": 39.0}},
+  "28": {"nom": "Roue d'inversion", "r_tete_mm": 2.196, "dents": 39, "mesures": {"p6": 38.9}},
+  "29": {"nom": "Roue de réduction", "r_tete_mm": 2.41, "dents": 47, "mesures": {"p6": 47.0}},
+  "31-2": {"nom": "Roulement à billes (pignon de masse)", "r_tete_mm": 2.735, "dents": 80, "mesures": {"p6": 79.4}, "note": "mesure moins régulière (79,4 à 80,5)"}
+ }
+}

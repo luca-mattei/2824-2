@@ -8,9 +8,13 @@ import '@/app/explorer.css';
 import { useEffect, useMemo, useRef, useSyncExternalStore } from 'react';
 import { etatsScene } from '@/animation/chapterStates';
 import {
+  ETAGES,
   eligible,
+  etageDe,
+  etagesRetires,
   exploration,
   groupesDuCalibre,
+  pieceMobileDe,
   type CommandeCamera,
   type EtatExploration,
 } from '@/animation/explorationState';
@@ -59,9 +63,14 @@ function FichePiece({ id }: { id: string }) {
       ) : (
         <p>Pas encore de fiche rédigée pour cette pièce.</p>
       )}
-      <button type="button" className="bouton bouton-discret" onClick={() => exploration.definir({ selection: null })}>
-        Fermer la fiche
-      </button>
+      <div className="explo-boutons">
+        <button type="button" className="bouton bouton-discret" onClick={() => exploration.masquerPiece(id)}>
+          Masquer cette pièce
+        </button>
+        <button type="button" className="bouton bouton-discret" onClick={() => exploration.definir({ selection: null })}>
+          Fermer la fiche
+        </button>
+      </div>
     </section>
   );
 }
@@ -108,9 +117,23 @@ export function ExplorerPanel() {
     return GROUPE_IDS.filter((g) => m.has(g)).map((g) => ({ groupe: g, items: m.get(g)! }));
   }, [etat.calibre]);
 
+  const etagesDisponibles = useMemo(() => {
+    const presents = new Set(groupesDuCalibre(etat.calibre).map(etageDe));
+    return ETAGES.filter((e) => presents.has(e.id));
+  }, [etat.calibre]);
+
   if (!actif) return null;
 
   const cmd = (c: CommandeCamera) => () => exploration.commande(c);
+  // Les vues côté ponts / côté cadran orientent aussi le retrait couche par couche.
+  const vue = (c: 'vue-ponts' | 'vue-cadran') => () => {
+    if (etat.retrait === 0) exploration.definir({ retraitDepuis: c === 'vue-ponts' ? 'ponts' : 'cadran' });
+    exploration.commande(c);
+  };
+  const retires = etagesRetires(etat);
+  const nomEtage = (id: string) => ETAGES.find((e) => e.id === id)?.nom ?? id;
+  const masquees = etat.piecesMasquees;
+  const quelqueChoseRetire = !!etat.isolation || etat.etagesMasques.length > 0 || etat.retrait > 0 || masquees.length > 0;
 
   return (
     <aside className="explorateur" aria-labelledby="explo-titre">
@@ -123,17 +146,17 @@ export function ExplorerPanel() {
         </button>
       </div>
       <p className="explo-aide">
-        Faites glisser pour tourner, molette ou pincement pour zoomer. Cliquez sur une pièce pour afficher sa fiche.
-        Échap pour revenir à l’exposé.
+        Faites glisser pour tourner, molette ou pincement pour zoomer, clic droit ou deux doigts pour déplacer la vue.
+        Cliquez sur une pièce pour afficher sa fiche. Échap pour revenir à l’exposé.
       </p>
 
       <fieldset className="explo-groupe">
         <legend>Vue</legend>
         <div className="explo-boutons">
-          <button type="button" className="bouton bouton-discret" onClick={cmd('vue-ponts')}>
+          <button type="button" className="bouton bouton-discret" onClick={vue('vue-ponts')}>
             Côté ponts
           </button>
-          <button type="button" className="bouton bouton-discret" onClick={cmd('vue-cadran')}>
+          <button type="button" className="bouton bouton-discret" onClick={vue('vue-cadran')}>
             Côté cadran
           </button>
           <button type="button" className="bouton bouton-discret" onClick={cmd('vue-trois-quarts')}>
@@ -205,7 +228,9 @@ export function ExplorerPanel() {
               ))}
           </select>
         </label>
-        {etat.isolation && <p className="explo-note">La platine reste affichée comme repère.</p>}
+        {etat.isolation && !etat.etagesMasques.includes('platine') && (
+          <p className="explo-note">La platine reste affichée comme repère (décochez-la dans « Étages » pour la retirer).</p>
+        )}
         <label className="explo-champ">
           <span>Choisir une pièce</span>
           <select value={etat.selection ?? ''} onChange={(e) => exploration.definir({ selection: e.target.value || null })}>
@@ -224,6 +249,100 @@ export function ExplorerPanel() {
         <button type="button" className="bouton bouton-discret" onClick={() => exploration.reinitialiser()}>
           Réinitialiser la vue
         </button>
+      </fieldset>
+
+      <fieldset className="explo-groupe">
+        <legend>Voir à l’intérieur</legend>
+        <label className="explo-champ">
+          <span>
+            Retirer couche par couche{' '}
+            <output className="explo-valeur">
+              {retires.length ? retires.map(nomEtage).join(', ') : 'rien de retiré'}
+            </output>
+          </span>
+          <input
+            type="range"
+            min={0}
+            max={ETAGES.length - 1}
+            step={1}
+            value={etat.retrait}
+            onChange={(e) => exploration.definir({ retrait: Number(e.target.value) })}
+            aria-valuetext={retires.length ? `Retirés : ${retires.map(nomEtage).join(', ')}` : 'Rien de retiré'}
+          />
+        </label>
+        <div className="explo-boutons" role="group" aria-label="Côté depuis lequel on retire les couches">
+          {(['cadran', 'ponts'] as const).map((c) => (
+            <button
+              key={c}
+              type="button"
+              className="bouton bouton-discret"
+              aria-pressed={etat.retraitDepuis === c}
+              onClick={() => exploration.definir({ retraitDepuis: c })}
+            >
+              Depuis le côté {c}
+            </button>
+          ))}
+        </div>
+
+        <div className="explo-etages" role="group" aria-labelledby="explo-etages-titre">
+          <p id="explo-etages-titre" className="explo-sous-titre">
+            Étages affichés <span className="explo-note-courte">(du cadran vers la masse)</span>
+          </p>
+          {etagesDisponibles.map((e) => {
+            const retireParCurseur = retires.includes(e.id);
+            return (
+              <label key={e.id} className="explo-case">
+                <input
+                  type="checkbox"
+                  checked={!etat.etagesMasques.includes(e.id) && !retireParCurseur}
+                  disabled={retireParCurseur}
+                  onChange={() => exploration.basculerEtage(e.id)}
+                />
+                <span>{e.nom}</span>
+              </label>
+            );
+          })}
+        </div>
+
+        <label className="explo-case">
+          <input type="checkbox" checked={etat.fantome} onChange={(e) => exploration.definir({ fantome: e.target.checked })} />
+          <span>Laisser les pièces retirées en transparence</span>
+        </label>
+
+        <label className="explo-case">
+          <input
+            type="checkbox"
+            checked={etat.coupe !== null}
+            onChange={(e) => exploration.definir({ coupe: e.target.checked ? 0 : null })}
+          />
+          <span>Couper le mouvement (plan parallèle à la tige)</span>
+        </label>
+        {etat.coupe !== null && (
+          <label className="explo-champ">
+            <span>
+              Position de la coupe <output className="explo-valeur">{etat.coupe.toFixed(1).replace('.', ',')} mm</output>
+            </span>
+            <input
+              type="range"
+              min={-12.5}
+              max={12.5}
+              step={0.1}
+              value={etat.coupe}
+              onChange={(e) => exploration.definir({ coupe: Number(e.target.value) })}
+            />
+          </label>
+        )}
+
+        {masquees.length > 0 && (
+          <p className="explo-note">
+            Masquées : {masquees.map((id) => libellePiece(pieceMobileDe(id)?.id ?? id).nom).join(', ')}.
+          </p>
+        )}
+        {quelqueChoseRetire && (
+          <button type="button" className="bouton bouton-discret" onClick={() => exploration.afficherTout()}>
+            Tout réafficher
+          </button>
+        )}
       </fieldset>
 
       {etat.selection && <FichePiece id={etat.selection} />}

@@ -111,7 +111,8 @@ export const chapitres: Partial<Record<ChapterId, Chapitre>> = {
         mentions: [
           {
             type: 'reconstitué',
-            texte: 'Diamètre conforme à la CT (25,60 mm). Contour, creusures et épaisseur reconstitués d’après les vues ETA.',
+            texte:
+              'Diamètre conforme à la CT (25,60 mm). Gradins, creusures, ajours et piliers relevés sur les vues ETA (p. 8 et 12) ; hauteurs et épaisseur reconstituées.',
           },
         ],
         sources: [CT_NOMENCLATURE, CT_P1, MODELE, PRINCIPES],
@@ -121,7 +122,8 @@ export const chapitres: Partial<Record<ChapterId, Chapitre>> = {
         titre: 'Côté cadran',
         idee: 'La platine est livrée « montée » : quelques pièces y sont déjà fixées.',
         texte: [
-          'Retournée, la platine montre sa face côté cadran. ETA la fournit avec deux **fixateurs de cadran** (1-1), qui retiendront le cadran, et l’**amortisseur inférieur du balancier** (1-2) : un palier muni d’une pierre, qui guide le pivot inférieur du balancier et le protège des chocs.',
+          'Retournée, la platine montre sa face côté cadran. Elle n’est pas plate : des **gradins** descendent du bord vers le centre, des **creusures** logent chaque roue de la minuterie et du calendrier, et une **rainure** reçoit la tige de remontoir, qui entre par un tunnel percé dans le bord. Des **ajours** traversent la platine de part en part.',
+          'ETA la livre avec l’**amortisseur inférieur du balancier** (1-2), un palier muni d’une pierre qui guide le pivot inférieur du balancier et le protège des chocs, et deux **fixateurs de cadran** (1-1), qui retiendront le cadran ; sur le dessin de montage, ils se logent dans le bord, côté ponts.',
           'C’est aussi de ce côté qu’ETA monte en premier le mécanisme de mise à l’heure (positions 2 à 8). L’exposé le présentera plus loin, avec le remontage.',
         ],
         mentions: [
@@ -129,7 +131,11 @@ export const chapitres: Partial<Record<ChapterId, Chapitre>> = {
             type: 'ordre',
             texte: 'Ordre pédagogique : la mise à l’heure, montée en premier par ETA, est présentée plus tard.',
           },
-          { type: 'reconstitué', texte: 'Formes des fixateurs et de l’amortisseur simplifiées.' },
+          {
+            type: 'reconstitué',
+            texte:
+              'Relief relevé sur la vue côté cadran de la CT (p. 8) ; hauteurs des gradins et profondeur des creusures reconstituées. Formes des fixateurs et de l’amortisseur simplifiées.',
+          },
         ],
         sources: [CT_NOMENCLATURE, CT_MISE_A_L_HEURE, MODELE],
       },

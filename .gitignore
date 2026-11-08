@@ -16,5 +16,8 @@ scripts/_*.mjs
 docs/sources/ETA_CT_*.pdf
 docs/sources/figures-eta/
 docs/sources/grande-date-fig-3-51.jpg
+docs/sources/releves/
 # Dossier de présentation hors ligne (npm run paquet)
 presentation-eta2824/
+# Cache Python des outils de relevé
+__pycache__/
