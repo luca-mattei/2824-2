@@ -3,3 +3,6 @@
 // sans rendu React à chaque image.
 
 export const elementsLegendes = new Map<string, HTMLElement>();
+
+/** Numéros de nomenclature des vues de mécanisme, par « identifiant de vue|nœud ». */
+export const elementsNumerosVue = new Map<string, HTMLElement>();

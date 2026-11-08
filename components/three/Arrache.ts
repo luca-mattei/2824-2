@@ -1,15 +1,18 @@
-// Vue « arrachée », comme dans les dessins de manuel : les pièces qui cachent un mécanisme sont
-// découpées LOCALEMENT (fenêtres circulaires fixes dans le repère du mouvement, donc fixes à
-// l'écran même quand un disque tourne), avec un liseré sur le bord de la découpe ; les pièces qui
-// ne participent pas au mécanisme sont estompées (désaturées, assombries).
+// Vues de mécanisme, rendues comme une planche de manuel (modèle : fig. 3-49 et 3-53 du livre
+// cité) : aplats clairs, roues couleur laiton, aciers gris-mauve, contours nets.
+//
+// - Pièces du mécanisme : couleur franche (palette par matériau), ombrage doux selon l'orientation
+//   de la face vers l'observateur, indépendant de l'éclairage de la scène (rien de sombre).
+// - Autres pièces : même palette, pâlie (visibles, mais en retrait).
+// - Pièces qui cachent le mécanisme : découpées LOCALEMENT par des fenêtres circulaires fixes dans
+//   le repère du mouvement (fixes à l'écran même quand un disque tourne), avec un liseré de coupe.
 //
 // Aucune géométrie n'est modifiée : tout se fait dans le shader des matériaux (déjà propres à
-// chaque pièce, voir MovementPart.ts), en plus des finitions (Finitions.ts).
-//
-// Uniformes globaux (partagés) : fenêtres et ouverture. Uniformes par matériau : occultant
-// (la pièce est découpée par les fenêtres) et estompe (0 à 1).
+// chaque pièce, voir MovementPart.ts), après les finitions (Finitions.ts). La couleur est écrite
+// en sortie (sRGB) : la scène doit être rendue directement à l'écran pendant une vue (voir
+// Occlusion.tsx, qui contourne alors sa chaîne de post-traitement).
 
-import { Vector4, type MeshStandardMaterial } from 'three';
+import { Vector3, Vector4, type MeshStandardMaterial } from 'three';
 
 export const NB_FENETRES = 4;
 
@@ -18,11 +21,33 @@ export const arrache = {
   fenetres: { value: Array.from({ length: NB_FENETRES }, () => new Vector4()) },
   /** 0 = aucune découpe, 1 = fenêtres ouvertes à leur rayon nominal (transition d'ouverture). */
   ouverture: { value: 0 },
-  /** Nœuds du GLB (pièces ou sous-pièces) qui participent au mécanisme : jamais estompés. */
+  /** Nœuds du GLB (pièces ou sous-pièces) qui participent au mécanisme : couleur franche. */
   mecanisme: new Set<string>(),
   /** Nœuds du GLB découpés par les fenêtres. */
   occultants: new Set<string>(),
 };
+
+/** Palette de la planche (sRGB), d'après les fig. 3-49 et 3-53 du livre, par nom de matériau. */
+const PALETTE: [string, string][] = [
+  ['Doré', '#b98e55'],
+  ['Glucydur', '#b98e55'],
+  ['Acier bleui', '#6d7db2'],
+  ['Acier', '#a6aac6'],
+  ['Ressort', '#a6aac6'],
+  ['Anglage', '#cfcfcb'],
+  ['Rhodié', '#dadad6'],
+  ['Rubis', '#c24a62'],
+  ['Fente', '#3a3a40'],
+  ['Gravure', '#8e8e8e'],
+  ['Disque', '#d3d3d1'],
+  ['Chiffres', '#161616'],
+];
+
+function couleurPlanche(nomMateriau: string): Vector3 {
+  const hex = PALETTE.find(([p]) => nomMateriau.startsWith(p))?.[1] ?? '#c8c8c4';
+  const n = Number.parseInt(hex.slice(1), 16);
+  return new Vector3(((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255);
+}
 
 /** Matériau d'une pièce et nœuds du GLB qui l'utilisent (un clone de matériau par pièce). */
 export interface MateriauArrache {
@@ -32,13 +57,14 @@ export interface MateriauArrache {
 
 /**
  * Applique la vue à une pièce : `actif` (0 ou 1) = une vue est ouverte ; `intensite` (0 à 1) =
- * estompage en cours de transition. Un matériau est estompé si aucun de ses nœuds ne participe
- * au mécanisme, découpé si l'un de ses nœuds est occultant.
+ * passage au rendu de planche, en transition. Un matériau est en couleur franche si l'un de ses
+ * nœuds participe au mécanisme (pâli sinon), découpé si l'un de ses nœuds est occultant.
  */
 export function appliquerVue(materiaux: MateriauArrache[], actif: number, intensite: number) {
   for (const { u, noeuds } of materiaux) {
     u.occultant.value = actif > 0 && noeuds.some((n) => arrache.occultants.has(n)) ? 1 : 0;
-    u.estompe.value = intensite > 0 && !noeuds.some((n) => arrache.mecanisme.has(n)) ? intensite : 0;
+    u.planche.value = intensite;
+    u.pale.value = noeuds.some((n) => arrache.mecanisme.has(n)) ? 0 : 1;
   }
 }
 
@@ -59,7 +85,11 @@ export function dansFenetre(x: number, z: number): boolean {
 
 export interface UniformesPiece {
   occultant: { value: number };
-  estompe: { value: number };
+  /** 0 = rendu normal, 1 = rendu de planche. */
+  planche: { value: number };
+  /** 1 = pièce hors mécanisme (couleur pâlie). */
+  pale: { value: number };
+  couleur: { value: Vector3 };
 }
 
 const GLSL_FRAGMENT_DECL = /* glsl */ `
@@ -67,7 +97,9 @@ varying vec3 vArrMonde;
 uniform vec4 uArrFenetres[${NB_FENETRES}];
 uniform float uArrOuverture;
 uniform float uArrOccultant;
-uniform float uArrEstompe;
+uniform float uArrPlanche;
+uniform float uArrPale;
+uniform vec3 uArrCouleur;
 `;
 
 const GLSL_DECOUPE = /* glsl */ `
@@ -84,24 +116,31 @@ if (uArrOccultant > 0.5 && uArrOuverture > 0.01) {
 }
 `;
 
-// Après la sortie de couleur : estompage puis liseré de coupe (≈ 0,05 mm, lissé sur un pixel).
+// Après la sortie de couleur (sRGB) : planche, puis liseré de coupe (≈ 0,04 mm, lissé sur un pixel).
 const GLSL_SORTIE = /* glsl */ `
-if (uArrEstompe > 0.0) {
-  float lum = dot(gl_FragColor.rgb, vec3(0.2126, 0.7152, 0.0722));
-  gl_FragColor.rgb = mix(gl_FragColor.rgb, vec3(lum) * 0.3 + 0.012, uArrEstompe * 0.9);
+if (uArrPlanche > 0.0) {
+  float ndv = abs(dot(normalize(normal), normalize(vViewPosition)));
+  vec3 c = mix(uArrCouleur, vec3(0.925, 0.92, 0.905), uArrPale * 0.6);
+  c *= 0.8 + 0.2 * ndv;
+  gl_FragColor.rgb = mix(gl_FragColor.rgb, c, uArrPlanche);
 }
 if (uArrOccultant > 0.5 && uArrOuverture > 0.01) {
   float px = max(fwidth(arrBord), 1.0e-4);
-  float ligne = 1.0 - smoothstep(0.035, 0.035 + 1.5 * px, arrBord);
-  gl_FragColor.rgb = mix(gl_FragColor.rgb, vec3(0.80, 0.58, 0.32), ligne * 0.7);
+  float ligne = 1.0 - smoothstep(0.04, 0.04 + 1.5 * px, arrBord);
+  gl_FragColor.rgb = mix(gl_FragColor.rgb, vec3(0.62, 0.42, 0.2), ligne * 0.85);
 }
 `;
 
-/** Ajoute la découpe et l'estompage au shader du matériau (après les finitions éventuelles). */
+/** Ajoute la découpe et le rendu de planche au shader du matériau (après les finitions éventuelles). */
 export function equiperArrache(m: MeshStandardMaterial): UniformesPiece {
   const existant = m.userData.arrache as UniformesPiece | undefined;
   if (existant) return existant;
-  const u: UniformesPiece = { occultant: { value: 0 }, estompe: { value: 0 } };
+  const u: UniformesPiece = {
+    occultant: { value: 0 },
+    planche: { value: 0 },
+    pale: { value: 0 },
+    couleur: { value: couleurPlanche(m.name) },
+  };
   m.userData.arrache = u;
   const precedent = m.onBeforeCompile;
   const cle = m.customProgramCacheKey();
@@ -110,7 +149,9 @@ export function equiperArrache(m: MeshStandardMaterial): UniformesPiece {
     shader.uniforms.uArrFenetres = arrache.fenetres;
     shader.uniforms.uArrOuverture = arrache.ouverture;
     shader.uniforms.uArrOccultant = u.occultant;
-    shader.uniforms.uArrEstompe = u.estompe;
+    shader.uniforms.uArrPlanche = u.planche;
+    shader.uniforms.uArrPale = u.pale;
+    shader.uniforms.uArrCouleur = u.couleur;
     shader.vertexShader = shader.vertexShader
       .replace('#include <common>', '#include <common>\nvarying vec3 vArrMonde;')
       .replace('#include <project_vertex>', '#include <project_vertex>\nvArrMonde = (modelMatrix * vec4(transformed, 1.0)).xyz;');
@@ -119,6 +160,6 @@ export function equiperArrache(m: MeshStandardMaterial): UniformesPiece {
       .replace('#include <clipping_planes_fragment>', `#include <clipping_planes_fragment>\n${GLSL_DECOUPE}`)
       .replace('#include <dithering_fragment>', `#include <dithering_fragment>\n${GLSL_SORTIE}`);
   };
-  m.customProgramCacheKey = () => `${cle}|arrache`;
+  m.customProgramCacheKey = () => `${cle}|arrache2`;
   return u;
 }

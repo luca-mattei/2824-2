@@ -9,6 +9,7 @@ import { lecteurVue, type EtatVue } from '@/animation/vueMecanisme';
 import { chiffresGuichet, positionScenario } from '@/animation/mechanicalMotion';
 import { vuesMecanisme } from '@/data/vuesMecanisme';
 import { formatSourceRef } from '@/data/sources';
+import { libellePiece } from '@/data/parts';
 import { NOM_CALIBRE_COURT } from './libelles';
 
 const serveur: EtatVue = { vue: null, t: 0, duree: 1, lecture: false, vitesse: 1 };
@@ -23,8 +24,8 @@ export function MecanismesPanel() {
     <fieldset className="explo-groupe explo-mecanismes">
       <legend>Mécanismes</legend>
       <p className="explo-note">
-        Une fonction à la fois, vue comme dans un manuel : les pièces qui cachent le mécanisme sont découpées, les autres
-        estompées.
+        Une fonction à la fois, dessinée comme une planche de manuel : ce qui bouge en couleur, le reste en pâle, et ce
+        qui cache le mécanisme découpé.
       </p>
       <div className="explo-boutons" role="group" aria-label="Vues de mécanisme">
         {vuesMecanisme.map((v) => (
@@ -90,9 +91,20 @@ export function MecanismesPanel() {
           <p>
             <strong>À observer.</strong> {vue.aObserver}
           </p>
+          <ol className="explo-nomenclature" aria-label="Pièces numérotées sur la vue">
+            {vue.numeros.map((n) => {
+              const { position, nom } = libellePiece(n.noeud);
+              return (
+                <li key={n.noeud}>
+                  <span className="numero-liste">{position}</span> {nom}
+                </li>
+              );
+            })}
+          </ol>
+          <p className="explo-note">Flèches bleues : sens de rotation (schématique).</p>
           <p className="explo-fiche-statut">
-            <span className="mention-type">Illustratif</span> {vue.limites} Les parties découpées (liseré orangé) sont
-            ôtées pour la lecture : elles existent sur la pièce.
+            <span className="mention-type">Illustratif</span> {vue.limites} Le centre du disque des unités (liseré
+            brun) est ôté pour la lecture : il existe sur la pièce. Couleurs de planche, d’après les figures du livre.
           </p>
           <p className="sources-etape">
             <span className="sources-etape-libelle">Sources</span> {vue.sources.map(formatSourceRef).join(' · ')}

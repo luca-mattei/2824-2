@@ -11,6 +11,7 @@ import { anglesDate, avancerMecanique, mecanique, positionScenario, type Angles 
 import { avancerVue, lecteurVue } from '@/animation/vueMecanisme';
 import { arrache, definirFenetres } from './Arrache';
 import { majContours, opaciteContours } from './Contours';
+import { construireFleches, opaciteFleches } from './ReperesVue';
 import { damp } from '@/lib/transforms';
 import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { Box3, Group, PerspectiveCamera, Plane, Vector3, type Object3D, type Scene } from 'three';
@@ -24,7 +25,7 @@ import {
 } from '@/animation/assemblyTimeline';
 import type { Vec3 } from '@/lib/transforms';
 import { avancerAffichage, moteur, narratif } from '@/animation/narrativeController';
-import { elementsLegendes } from '@/components/annotations/labelRegistry';
+import { elementsLegendes, elementsNumerosVue } from '@/components/annotations/labelRegistry';
 import { placerLegende, repartirLegendes, type Cadre, type LegendePlacee } from '@/components/annotations/placementLegendes';
 import { associerPieces, trouverRacine } from '@/lib/modelMapping';
 import { decors } from '@/lib/decors';
@@ -124,6 +125,43 @@ function monter(scene: Object3D, timeline: Timeline, ombres: boolean, finitions:
 
 /** Vue de mécanisme dont les fenêtres sont chargées dans les uniformes d'arraché. */
 let vueChargee: string | null = null;
+let flechesVue: Group | null = null;
+const pointNumero = new Vector3();
+const boiteNumero = new Box3();
+
+/** Numéros de nomenclature de la vue : projetés sur la planche, en fondu avec l'ouverture. */
+function placerNumeros(montage: Montage, camera: PerspectiveCamera, largeur: number, hauteur: number) {
+  const vue = lecteurVue.vue();
+  const o = arrache.ouverture.value;
+  for (const [cle, el] of elementsNumerosVue) {
+    const [id, noeud] = cle.split('|');
+    const n = vue && id === vue.id && o > 0.05 ? vue.numeros.find((x) => x.noeud === noeud) : undefined;
+    let visible = !!n;
+    if (n?.point) pointNumero.set(n.point[0], -0.9, n.point[1]);
+    else if (n) {
+      const piece = montage.parId.get(noeud);
+      const objet = piece?.assemblage ?? montage.pieces.find((m) => m.enfants.has(noeud))?.enfants.get(noeud);
+      if (objet) boiteNumero.setFromObject(objet).getCenter(pointNumero);
+      else visible = false;
+    }
+    if (visible) {
+      pointNumero.project(camera);
+      visible = pointNumero.z < 1;
+    }
+    if (!visible) {
+      if (el.style.visibility !== 'hidden') {
+        el.style.visibility = 'hidden';
+        el.style.opacity = '0';
+      }
+      continue;
+    }
+    const x = ((pointNumero.x + 1) / 2) * largeur;
+    const y = ((1 - pointNumero.y) / 2) * hauteur;
+    el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) translate(-50%, -50%)`;
+    el.style.opacity = String(o);
+    el.style.visibility = 'visible';
+  }
+}
 const anglesVue: Angles = { pieces: new Map(), enfants: new Map() };
 
 /**
@@ -141,9 +179,22 @@ function appliquerVueMecanisme(montage: Montage, dt: number, scene: Scene): bool
     definirFenetres(vue.fenetres);
     arrache.mecanisme = new Set(vue.mecanisme);
     arrache.occultants = new Set(vue.occultantes);
+    flechesVue?.removeFromParent();
+    flechesVue = construireFleches(vue);
+    montage.conteneur.add(flechesVue);
+    // Trait clair sur le reste du côté cadran (module, minuterie, platine) : la planche reste lisible.
+    const faible = new Set<string>();
+    for (const m of montage.pieces) {
+      const g = m.piece.groupe;
+      if (g.startsWith('gd-') || ['cadran', 'quantieme', 'minuterie', 'platine', 'platine-cadran'].includes(g)) {
+        faible.add(m.piece.id);
+        for (const n of m.enfants.keys()) faible.add(n);
+      }
+    }
     majContours(
       montage.pieces.map((m) => m.assemblage),
       arrache.mecanisme,
+      faible,
     );
   }
   const cible = vue ? 1 : 0;
@@ -151,6 +202,7 @@ function appliquerVueMecanisme(montage: Montage, dt: number, scene: Scene): bool
   const reduit = narratif.instantane().mouvementReduit;
   arrache.ouverture.value = reduit || Math.abs(o - cible) < 1e-3 ? cible : damp(o, cible, 0.22, dt);
   opaciteContours(arrache.ouverture.value);
+  opaciteFleches(arrache.ouverture.value);
   let encore = arrache.ouverture.value !== cible;
   if (!vue) return encore;
 
@@ -253,6 +305,7 @@ export function MovementModel({
       montage.enfants.forEach((e) => e.objet.position.copy(e.repos));
       montage.reperes.maj(-1000);
       const encoreVue = appliquerVueMecanisme(montage, dt, state.scene);
+      placerNumeros(montage, state.camera as PerspectiveCamera, state.size.width, state.size.height);
       const vueActive = lecteurVue.vue();
       montage.reperes.dentTronquee(vueActive?.marqueurs?.includes('dent-tronquee') ? arrache.ouverture.value : 0);
       for (const el of elementsLegendes.values()) {
@@ -275,6 +328,8 @@ export function MovementModel({
     }
     arrache.ouverture.value = 0;
     opaciteContours(0);
+    opaciteFleches(0);
+    placerNumeros(montage, state.camera as PerspectiveCamera, state.size.width, state.size.height);
     state.scene.environmentRotation.x = 0;
 
     const encore = avancerAffichage(dt);

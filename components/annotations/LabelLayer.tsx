@@ -6,7 +6,8 @@
 import { etatsScene, type Legende } from '@/animation/chapterStates';
 import { etapes } from '@/data/chapters';
 import { libellePiece } from '@/data/parts';
-import { elementsLegendes } from './labelRegistry';
+import { elementsLegendes, elementsNumerosVue } from './labelRegistry';
+import { vuesMecanisme } from '@/data/vuesMecanisme';
 
 const legendes: Legende[] = etapes.flatMap((e) => etatsScene[e.id]?.legendes ?? []);
 
@@ -39,6 +40,24 @@ export function LabelLayer() {
       {legendes.map((l) => (
         <Etiquette key={l.id} legende={l} />
       ))}
+      {vuesMecanisme.flatMap((v) =>
+        v.numeros.map((n) => {
+          const cle = `${v.id}|${n.noeud}`;
+          return (
+            <span
+              key={cle}
+              ref={(el) => {
+                if (el) elementsNumerosVue.set(cle, el);
+                else elementsNumerosVue.delete(cle);
+              }}
+              className="numero-vue"
+              style={{ visibility: 'hidden', opacity: 0 }}
+            >
+              {libellePiece(n.noeud).position}
+            </span>
+          );
+        }),
+      )}
     </div>
   );
 }

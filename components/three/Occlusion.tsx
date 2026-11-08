@@ -60,9 +60,13 @@ export function Occlusion({ antialias }: { antialias: boolean }) {
   // Priorité 1 : R3F n'effectue plus son propre rendu, la chaîne le remplace (rendu à la demande
   // inchangé : cette fonction ne s'exécute que lorsqu'une image est demandée).
   useFrame(() => {
-    // Vue arrachée : la passe de profondeur du GTAO ne voit pas les découpes (elle assombrirait
-    // l'intérieur des fenêtres) ; l'occlusion est suspendue tant qu'une fenêtre est ouverte.
-    chaine.ao.enabled = arrache.ouverture.value < 0.01;
+    // Vue de mécanisme (rendu de planche, couleurs écrites en sRGB) : rendu direct à l'écran,
+    // sans occlusion ni sortie de la chaîne (qui referait les tons et l'espace colorimétrique).
+    if (arrache.ouverture.value > 0.01) {
+      gl.setRenderTarget(null);
+      gl.render(scene, camera);
+      return;
+    }
     chaine.composer.render();
   }, 1);
   return null;

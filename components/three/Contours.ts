@@ -9,15 +9,21 @@ import { EdgesGeometry, LineBasicMaterial, LineSegments, Mesh, type Object3D } f
 const ANGLE_ARETE = 28;
 const OPACITE = 0.8;
 
-const materiau = new LineBasicMaterial({ color: '#17130e', transparent: true, opacity: OPACITE, depthWrite: false });
-// Les arêtes sont exactement sur les faces : léger rapprochement vers la caméra, sinon le trait
-// est haché par le test de profondeur.
-materiau.onBeforeCompile = (shader) => {
-  shader.vertexShader = shader.vertexShader.replace(
-    '#include <project_vertex>',
-    '#include <project_vertex>\ngl_Position.z -= 0.00002 * gl_Position.w;',
-  );
-};
+function materiauTrait(couleur: string): LineBasicMaterial {
+  const m = new LineBasicMaterial({ color: couleur, transparent: true, opacity: OPACITE, depthWrite: false });
+  // Les arêtes sont exactement sur les faces : léger rapprochement vers la caméra, sinon le trait
+  // est haché par le test de profondeur.
+  m.onBeforeCompile = (shader) => {
+    shader.vertexShader = shader.vertexShader.replace(
+      '#include <project_vertex>',
+      '#include <project_vertex>\ngl_Position.z -= 0.00002 * gl_Position.w;',
+    );
+  };
+  return m;
+}
+/** Trait du mécanisme (foncé) et trait des autres pièces de la planche (clair). */
+const traitFort = materiauTrait('#2b2a33');
+const traitFaible = materiauTrait('#9c9a94');
 
 const lignes = new Map<Mesh, LineSegments>();
 
@@ -26,34 +32,40 @@ function nomDe(o: Object3D): string | undefined {
   return undefined;
 }
 
-/** Affiche les contours des maillages dont le nœud est dans `noeuds` (les autres sont masqués). */
-export function majContours(racines: Object3D[], noeuds: ReadonlySet<string>) {
+/**
+ * Affiche les contours des maillages dont le nœud est dans `fort` (trait foncé) ou `faible` (trait
+ * clair) ; les autres contours sont masqués.
+ */
+export function majContours(racines: Object3D[], fort: ReadonlySet<string>, faible: ReadonlySet<string>) {
   for (const l of lignes.values()) l.visible = false;
-  if (noeuds.size === 0) return;
-  const cibles: Mesh[] = [];
+  const cibles: [Mesh, LineBasicMaterial][] = [];
   for (const r of racines)
     r.traverse((o) => {
       if (o instanceof Mesh && !(o instanceof LineSegments)) {
         const nom = nomDe(o);
-        if (nom && noeuds.has(nom)) cibles.push(o);
+        if (nom && fort.has(nom)) cibles.push([o, traitFort]);
+        else if (nom && faible.has(nom)) cibles.push([o, traitFaible]);
       }
     });
-  for (const m of cibles) {
+  for (const [m, mat] of cibles) {
     let l = lignes.get(m);
     if (!l) {
-      l = new LineSegments(new EdgesGeometry(m.geometry, ANGLE_ARETE), materiau);
+      l = new LineSegments(new EdgesGeometry(m.geometry, ANGLE_ARETE), mat);
       l.raycast = () => {};
       l.castShadow = false;
       l.name = 'contour';
       m.add(l);
       lignes.set(m, l);
     }
+    l.material = mat;
     l.visible = true;
   }
 }
 
 /** Fondu des contours avec l'ouverture de la vue (0 à 1). */
 export function opaciteContours(v: number) {
-  materiau.opacity = OPACITE * v;
-  materiau.visible = v > 0.01;
+  for (const m of [traitFort, traitFaible]) {
+    m.opacity = OPACITE * v;
+    m.visible = v > 0.01;
+  }
 }
