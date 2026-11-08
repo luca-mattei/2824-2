@@ -24,6 +24,10 @@ export interface EtatPiece {
   h: number;
   /** Fantôme (exploration seulement) : 1 = pièce retirée affichée en transparence. */
   f?: number;
+  /** Vue de mécanisme : 1 = pièce découpée par les fenêtres d'arraché (components/three/Arrache.ts). */
+  o?: number;
+  /** Vue de mécanisme : estompage des pièces qui ne participent pas (0 à 1). */
+  x?: number;
 }
 
 interface Transition {

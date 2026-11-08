@@ -230,3 +230,53 @@ html.en-exploration .scene-canvas:active {
   font-size: 0.74rem;
   color: var(--color-ivoire);
 }
+
+/* Vues de mécanisme (section « Mécanismes ») */
+.explo-vue {
+  margin-top: 0.8rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--color-trait);
+}
+.explo-vue h3 {
+  margin: 0 0 0.3rem;
+  font-family: var(--font-titre, inherit);
+  font-size: 1.15rem;
+  font-weight: 500;
+}
+.explo-vue p {
+  margin: 0.5rem 0;
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+.explo-lecture {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  margin: 0.6rem 0;
+}
+.explo-lecture .mention-type {
+  font-family: var(--font-technique);
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-laiton);
+}
+.explo-guichet {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  font-family: var(--font-technique);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-ivoire-doux);
+}
+.explo-guichet output {
+  padding: 0.1rem 0.45rem;
+  border: 1px solid var(--color-trait);
+  background: var(--color-ivoire);
+  color: var(--color-fond);
+  font-size: 1.1rem;
+  letter-spacing: 0.08em;
+}

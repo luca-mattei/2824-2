@@ -16,6 +16,7 @@ import { GTAOPass } from 'three/examples/jsm/postprocessing/GTAOPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { etatContexte } from './Lighting';
+import { arrache } from './Arrache';
 
 export function Occlusion({ antialias }: { antialias: boolean }) {
   const gl = useThree((s) => s.gl);
@@ -37,7 +38,7 @@ export function Occlusion({ antialias }: { antialias: boolean }) {
     composer.addPass(rendu);
     composer.addPass(ao);
     composer.addPass(sortie);
-    return { composer, passes: [rendu, ao, sortie] };
+    return { composer, ao, passes: [rendu, ao, sortie] };
   }, [gl, scene, camera, antialias]);
 
   useEffect(() => {
@@ -58,6 +59,11 @@ export function Occlusion({ antialias }: { antialias: boolean }) {
 
   // Priorité 1 : R3F n'effectue plus son propre rendu, la chaîne le remplace (rendu à la demande
   // inchangé : cette fonction ne s'exécute que lorsqu'une image est demandée).
-  useFrame(() => chaine.composer.render(), 1);
+  useFrame(() => {
+    // Vue arrachée : la passe de profondeur du GTAO ne voit pas les découpes (elle assombrirait
+    // l'intérieur des fenêtres) ; l'occlusion est suspendue tant qu'une fenêtre est ouverte.
+    chaine.ao.enabled = arrache.ouverture.value < 0.01;
+    chaine.composer.render();
+  }, 1);
   return null;
 }

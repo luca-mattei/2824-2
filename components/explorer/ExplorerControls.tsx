@@ -11,6 +11,7 @@ import { useEffect, useRef } from 'react';
 import { Spherical, Vector3, type PerspectiveCamera } from 'three';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import { eligible, exploration, type CommandeCamera } from '@/animation/explorationState';
+import { lecteurVue } from '@/animation/vueMecanisme';
 import { pieces } from '@/data/parts';
 import { narratif } from '@/animation/narrativeController';
 import { useNarratif } from '@/components/useNarratif';
@@ -46,14 +47,16 @@ function encombrement(eclate: boolean) {
  * Centre et distance de cadrage : mouvement assemblé ou pile éclatée, pour que le sujet tienne
  * dans la zone libre (calculés sur les positions réelles des pièces du calibre affiché).
  */
-const cadrage = () => {
-  const { centreY, demi } = encombrement(exploration.etat().eclate);
+/** Distance à laquelle un sujet de demi-taille `demi` (mm) tient dans la zone libre. */
+const distancePour = (demi: number, min = 25) => {
   const t = Math.tan((zoneLibre.fov * DEG) / 2);
   const angle = Math.min(Math.atan(t * zoneLibre.hauteur), Math.atan(t * zoneLibre.aspect * zoneLibre.largeur));
-  return {
-    centre: new Vector3(0, centreY, 0),
-    rayon: clamp(demi / Math.sin(angle), 25, DISTANCE_MAX),
-  };
+  return clamp(demi / Math.sin(angle), min, DISTANCE_MAX);
+};
+
+const cadrage = () => {
+  const { centreY, demi } = encombrement(exploration.etat().eclate);
+  return { centre: new Vector3(0, centreY, 0), rayon: distancePour(demi) };
 };
 const CENTRE = new Vector3(0, 1.5, 0);
 const DUREE = 700; // ms
@@ -176,10 +179,18 @@ function ControlesActifs() {
             vers = { ...VUES[c], rayon: cadrage().rayon };
             cibleVers = cadrage().centre;
             break;
-          case 'recadrer':
-            vers.rayon = cadrage().rayon;
-            cibleVers = cadrage().centre;
+          case 'recadrer': {
+            // Vue de mécanisme ouverte : le recadrage (redimensionnement, panneau) garde son cadrage.
+            const v = lecteurVue.vue();
+            if (v) {
+              vers.rayon = distancePour(v.camera.demi, DISTANCE_MIN);
+              cibleVers = new Vector3(...v.camera.cible);
+            } else {
+              vers.rayon = cadrage().rayon;
+              cibleVers = cadrage().centre;
+            }
             break;
+          }
           case 'tourner-gauche':
             vers.theta = de.theta - 45;
             break;
@@ -192,6 +203,13 @@ function ControlesActifs() {
           case 'zoom-arriere':
             vers.rayon = clamp(de.rayon * 1.25, DISTANCE_MIN, DISTANCE_MAX);
             break;
+          case 'vue-mecanisme': {
+            const v = lecteurVue.vue();
+            if (!v) break;
+            vers = { theta: v.camera.theta, phi: v.camera.phi, rayon: distancePour(v.camera.demi, DISTANCE_MIN) };
+            cibleVers = new Vector3(...v.camera.cible);
+            break;
+          }
           case 'reinitialiser':
             vers = { ...VUES['vue-trois-quarts'], rayon: cadrage().rayon };
             cibleVers = cadrage().centre;

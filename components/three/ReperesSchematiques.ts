@@ -38,6 +38,7 @@ function tube(points: Vector3[], mat: MeshBasicMaterial) {
 export interface Reperes {
   groupe: Group;
   maj(p: number): void;
+  dentTronquee(opacite: number): void;
   liberer(): void;
 }
 
@@ -81,6 +82,8 @@ export function construireReperes(tl: Timeline, pieces: Map<string, PieceMontee>
   }
 
   // ── Grande date : cadre du guichet (fixe) et repère de la dent tronquée (tourne avec le disque) ──
+  /** Repère de la dent tronquée (le premier construit), réutilisé par les vues de mécanisme. */
+  let dentTronquee: { groupe: Group; materiaux: MeshBasicMaterial[] } | null = null;
   const disque = pieces.get('GD-7 Disque des dizaines');
   const etoile = pieces.get('GD-9 Étoile intermédiaire des unités');
   tl.etats.forEach((e, k) => {
@@ -120,6 +123,7 @@ export function construireReperes(tl: Timeline, pieces: Map<string, PieceMontee>
       // Attaché au groupe mécanique du disque des dizaines : il tourne avec la couronne.
       disque.mecanique.add(support);
       parEtape.push({ k, groupe: support, materiaux: [mat] });
+      dentTronquee ??= { groupe: support, materiaux: [mat] };
     }
     if (g.children.length) {
       g.visible = false;
@@ -136,6 +140,12 @@ export function construireReperes(tl: Timeline, pieces: Map<string, PieceMontee>
         e.groupe.visible = o > 0.002;
         for (const m of e.materiaux) m.opacity = 0.95 * o;
       }
+    },
+    /** Vue de mécanisme (exploration) : affiche le repère de la dent tronquée, après `maj`. */
+    dentTronquee(opacite: number) {
+      if (!dentTronquee) return;
+      dentTronquee.groupe.visible = opacite > 0.002;
+      for (const m of dentTronquee.materiaux) m.opacity = 0.95 * opacite;
     },
     liberer() {
       for (const e of parEtape) {

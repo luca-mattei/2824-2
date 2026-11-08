@@ -14,6 +14,8 @@ import { narratif } from './narrativeController';
 import { piecesParId, type Calibre, type PieceWeb } from '@/data/parts';
 import type { GroupeId } from '@/data/groups';
 import { damp } from '@/lib/transforms';
+import { lecteurVue } from './vueMecanisme';
+import { dansFenetre } from '@/components/three/Arrache';
 
 export interface EtatExploration {
   calibre: Calibre;
@@ -82,7 +84,9 @@ export type CommandeCamera =
   | 'zoom-arriere'
   | 'reinitialiser'
   /** Garde l'angle de vue, recentre et règle la distance pour l'état assemblé ou éclaté. */
-  | 'recadrer';
+  | 'recadrer'
+  /** Caméra de la vue de mécanisme active (data/vuesMecanisme.ts). */
+  | 'vue-mecanisme';
 
 const REGLAGES_VISIBILITE = {
   isolation: null,
@@ -170,6 +174,21 @@ export const exploration = {
   signalerGlissement(glisse: boolean) {
     dernierGesteGlisse = glisse;
   },
+  /**
+   * Vue de mécanisme : calibre de la vue, mouvement assemblé et entier (les pièces qui cachent sont
+   * découpées, pas retirées), caméra de lecture, animation lancée sauf en mouvement réduit.
+   */
+  ouvrirVue(id: string) {
+    lecteurVue.ouvrir(id, !narratif.instantane().mouvementReduit);
+    const vue = lecteurVue.vue();
+    if (!vue) return;
+    exploration.definir({ calibre: vue.calibre, eclate: false, ...REGLAGES_VISIBILITE, fantome: false });
+    exploration.commande('vue-mecanisme');
+  },
+  fermerVue() {
+    lecteurVue.fermer();
+    exploration.commande('vue-cadran');
+  },
 };
 
 /** Groupes ayant au moins une pièce mobile du calibre donné. */
@@ -187,6 +206,7 @@ export function evaluerExploration(pieces: PieceWeb[], sortie: EtatPiece[], dt: 
   const instantane = narratif.instantane().mouvementReduit;
   const mobileSelectionne = selection ? pieceMobileDe(selection)?.id : undefined;
   let encore = false;
+  const vue = lecteurVue.vue();
   pieces.forEach((p, i) => {
     const retiree = estRetiree(p);
     const present = eligible(p, calibre) && (!retiree || fantome);
@@ -196,10 +216,16 @@ export function evaluerExploration(pieces: PieceWeb[], sortie: EtatPiece[], dt: 
       l: 0,
       h: p.id === mobileSelectionne ? 1 : 0,
       f: present && retiree ? 1 : 0,
+      // Vue de mécanisme ouverte : le détail (quelle sous-pièce est découpée ou estompée) est réglé
+      // par matériau dans components/three/Arrache.ts.
+      o: vue ? 1 : 0,
+      x: vue ? 1 : 0,
     };
     const s = sortie[i] as Required<EtatPiece>;
     s.f ??= 0;
-    for (const k of ['a', 'v', 'l', 'h', 'f'] as const) {
+    s.x ??= 0;
+    s.o = cible.o;
+    for (const k of ['a', 'v', 'l', 'h', 'f', 'x'] as const) {
       if (instantane || Math.abs(s[k] - cible[k]) < SEUIL) s[k] = cible[k];
       else {
         s[k] = damp(s[k], cible[k], TAU, dt);
@@ -214,8 +240,9 @@ export function evaluerExploration(pieces: PieceWeb[], sortie: EtatPiece[], dt: 
  * Sélection au clic. Renvoie faux si l'objet touché est une pièce retirée (fantôme) ou hors calibre :
  * le clic traverse alors vers l'objet suivant.
  */
-export function selectionnerObjet(objet: Object3D): boolean {
+export function selectionnerObjet(objet: Object3D, point?: { x: number; z: number }): boolean {
   if (dernierGesteGlisse) return true; // fin d'une rotation de la vue, pas un clic
+  const vue = lecteurVue.vue();
   for (let o: Object3D | null = objet; o; o = o.parent) {
     const nom = o.userData?.name;
     if (typeof nom !== 'string') continue;
@@ -223,6 +250,8 @@ export function selectionnerObjet(objet: Object3D): boolean {
     if (!p) continue;
     const mobile = pieceMobileDe(nom);
     if (!eligible(p, etat.calibre) || (mobile && estRetiree(mobile))) return false;
+    // Partie découpée d'une pièce qui cache le mécanisme : le clic la traverse.
+    if (vue && point && vue.occultantes.includes(nom) && dansFenetre(point.x, point.z)) return false;
     exploration.definir({ selection: nom });
     return true;
   }

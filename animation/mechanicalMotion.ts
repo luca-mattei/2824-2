@@ -174,6 +174,16 @@ export function positionScenario(m: Marche, t: number): PositionDate {
 }
 
 const modulo = (x: number, m: number) => ((x % m) + m) % m;
+
+/**
+ * Chiffres lus au guichet pour une position du module (disque des dizaines à 31 positions, disque
+ * des unités à 10 ; position 0 = « 01 »). Arrondi au cran le plus proche pendant un saut.
+ */
+export function chiffresGuichet(p: PositionDate): string {
+  const d = modulo(Math.round(p.diz), 31);
+  const u = modulo(Math.round(p.uni), 10);
+  return `${Math.floor((d + 1) / 10)}${(u + 1) % 10}`;
+}
 /** Interpolation par le plus court chemin sur un cercle de m crans. */
 export function lerpCirculaire(a: number, b: number, u: number, m: number) {
   const d = modulo(b - a + m / 2, m) - m / 2;

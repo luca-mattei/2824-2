@@ -25,6 +25,8 @@ import { libellePiece, pieces, piecesParId, repere } from '@/data/parts';
 import type { Calibre } from '@/data/parts';
 import { formatSourceRef } from '@/data/sources';
 import { useNarratif } from '@/components/useNarratif';
+import { lecteurVue } from '@/animation/vueMecanisme';
+import { MecanismesPanel } from './MecanismesPanel';
 
 const LIBELLE_STATUT = { documenté: 'Documenté', reconstitué: 'Reconstitué', schématique: 'Schématique' } as const;
 const NOM_CALIBRE: Record<Calibre, string> = { '2824-2': 'ETA 2824-2', C07651: 'ETA C07651 (grande date Mido)' };
@@ -97,6 +99,7 @@ export function ExplorerPanel() {
     return () => {
       window.removeEventListener('keydown', touche);
       document.documentElement.classList.remove('en-exploration');
+      lecteurVue.fermer();
     };
     // L'étape n'est lue qu'à l'entrée : elle ne change pas pendant l'exploration.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -149,6 +152,8 @@ export function ExplorerPanel() {
         Faites glisser pour tourner, molette ou pincement pour zoomer, clic droit ou deux doigts pour déplacer la vue.
         Cliquez sur une pièce pour afficher sa fiche. Échap pour revenir à l’exposé.
       </p>
+
+      <MecanismesPanel />
 
       <fieldset className="explo-groupe">
         <legend>Vue</legend>
@@ -206,7 +211,10 @@ export function ExplorerPanel() {
               type="button"
               className="bouton bouton-discret"
               aria-pressed={etat.calibre === c}
-              onClick={() => exploration.definir({ calibre: c })}
+              onClick={() => {
+                if (lecteurVue.vue()?.calibre !== c) lecteurVue.fermer();
+                exploration.definir({ calibre: c });
+              }}
             >
               {NOM_CALIBRE[c]}
             </button>
@@ -246,7 +254,14 @@ export function ExplorerPanel() {
             ))}
           </select>
         </label>
-        <button type="button" className="bouton bouton-discret" onClick={() => exploration.reinitialiser()}>
+        <button
+          type="button"
+          className="bouton bouton-discret"
+          onClick={() => {
+            lecteurVue.fermer();
+            exploration.reinitialiser();
+          }}
+        >
           Réinitialiser la vue
         </button>
       </fieldset>

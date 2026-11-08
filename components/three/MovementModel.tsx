@@ -7,9 +7,13 @@
 import { useGLTF } from '@react-three/drei';
 import { useFrame, useThree, type ThreeEvent } from '@react-three/fiber';
 import { evaluerExploration, exploration, selectionnerObjet } from '@/animation/explorationState';
-import { avancerMecanique, mecanique, type Angles } from '@/animation/mechanicalMotion';
+import { anglesDate, avancerMecanique, mecanique, positionScenario, type Angles } from '@/animation/mechanicalMotion';
+import { avancerVue, lecteurVue } from '@/animation/vueMecanisme';
+import { arrache, definirFenetres } from './Arrache';
+import { majContours, opaciteContours } from './Contours';
+import { damp } from '@/lib/transforms';
 import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
-import { Box3, Group, PerspectiveCamera, Plane, Vector3, type Object3D } from 'three';
+import { Box3, Group, PerspectiveCamera, Plane, Vector3, type Object3D, type Scene } from 'three';
 import {
   evaluerCamera,
   evaluerEnfants,
@@ -118,6 +122,53 @@ function monter(scene: Object3D, timeline: Timeline, ombres: boolean, finitions:
   return montage;
 }
 
+/** Vue de mécanisme dont les fenêtres sont chargées dans les uniformes d'arraché. */
+let vueChargee: string | null = null;
+const anglesVue: Angles = { pieces: new Map(), enfants: new Map() };
+
+/**
+ * Vue de mécanisme (exploration) : fenêtres d'arraché ouvertes en douceur, et rotations du
+ * scénario (mêmes cinématiques que le récit). N'écrit que des rotations et des uniformes.
+ * Retourne vrai s'il faut une autre image.
+ */
+function appliquerVueMecanisme(montage: Montage, dt: number, scene: Scene): boolean {
+  const vue = lecteurVue.vue();
+  // Vue côté cadran : l'environnement de studio est retourné pour que les reflets viennent du côté
+  // de l'observateur (sinon l'acier vu de dessous ne reflète que le sol sombre et paraît mat).
+  scene.environmentRotation.x = vue && vue.camera.phi > 90 ? Math.PI : 0;
+  if (vue && vue.id !== vueChargee) {
+    vueChargee = vue.id;
+    definirFenetres(vue.fenetres);
+    arrache.mecanisme = new Set(vue.mecanisme);
+    arrache.occultants = new Set(vue.occultantes);
+    majContours(
+      montage.pieces.map((m) => m.assemblage),
+      arrache.mecanisme,
+    );
+  }
+  const cible = vue ? 1 : 0;
+  const o = arrache.ouverture.value;
+  const reduit = narratif.instantane().mouvementReduit;
+  arrache.ouverture.value = reduit || Math.abs(o - cible) < 1e-3 ? cible : damp(o, cible, 0.22, dt);
+  opaciteContours(arrache.ouverture.value);
+  let encore = arrache.ouverture.value !== cible;
+  if (!vue) return encore;
+
+  encore = avancerVue(dt) || encore;
+  anglesVue.pieces.clear();
+  anglesVue.enfants.clear();
+  anglesDate(positionScenario(vue.scenario, lecteurVue.etat().t), anglesVue);
+  for (const m of montage.pieces) {
+    const a = anglesVue.pieces.get(m.piece.id);
+    if (a !== undefined) m.mecanique.rotation.y = a;
+  }
+  for (const [id, a] of anglesVue.enfants) {
+    const e = montage.enfantsTournants.get(id);
+    if (e) e.objet.rotation.y = e.repos + a;
+  }
+  return encore;
+}
+
 const ancre = new Vector3();
 const visibles = new Set<string>();
 /** Plan de coupe de l'exploration : parallèle à la tige (axe X du repère web), position en mm. */
@@ -164,6 +215,10 @@ export function MovementModel({
     decors.enregistrerReveil(() => invalidate());
     return () => decors.enregistrerReveil(null);
   }, [invalidate]);
+  useEffect(() => {
+    lecteurVue.enregistrerReveil(() => invalidate());
+    return () => lecteurVue.enregistrerReveil(null);
+  }, [invalidate]);
   const marches = useMemo(() => timeline.etats.map((e) => e.marche), [timeline]);
   const dates = useMemo(() => timeline.etats.map((e) => e.date ?? 1), [timeline]);
 
@@ -197,11 +252,14 @@ export function MovementModel({
       }
       montage.enfants.forEach((e) => e.objet.position.copy(e.repos));
       montage.reperes.maj(-1000);
+      const encoreVue = appliquerVueMecanisme(montage, dt, state.scene);
+      const vueActive = lecteurVue.vue();
+      montage.reperes.dentTronquee(vueActive?.marqueurs?.includes('dent-tronquee') ? arrache.ouverture.value : 0);
       for (const el of elementsLegendes.values()) {
         el.style.visibility = 'hidden';
         el.style.opacity = '0';
       }
-      if (encoreX) invalidate();
+      if (encoreX || encoreVue) invalidate();
       return;
     }
 
@@ -210,7 +268,14 @@ export function MovementModel({
       coupeAppliquee = null;
       appliquerCoupe(montage.pieces, AUCUN_PLAN);
     }
-    for (const e of montage.etats) e.f = 0;
+    for (const e of montage.etats) {
+      e.f = 0;
+      e.o = 0;
+      e.x = 0;
+    }
+    arrache.ouverture.value = 0;
+    opaciteContours(0);
+    state.scene.environmentRotation.x = 0;
 
     const encore = avancerAffichage(dt);
     const p = moteur.affichee;
@@ -333,7 +398,7 @@ export function MovementModel({
       onClick={(e: ThreeEvent<MouseEvent>) => {
         if (narratif.instantane().mode !== 'exploration') return;
         // Une pièce retirée (fantôme) laisse passer le clic vers la pièce située derrière.
-        if (!selectionnerObjet(e.object)) return;
+        if (!selectionnerObjet(e.object, e.point)) return;
         e.stopPropagation();
         invalidate();
       }}

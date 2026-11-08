@@ -26,6 +26,7 @@ import type { PieceWeb } from '@/data/parts';
 import { DECALAGE_ABSENT } from '@/data/explodeLayout';
 import type { EtatPiece } from '@/animation/assemblyTimeline';
 import { appliquerFinitions } from './Finitions';
+import { appliquerVue, equiperArrache, type MateriauArrache } from './Arrache';
 
 export interface PieceMontee {
   piece: PieceWeb;
@@ -43,6 +44,8 @@ export interface PieceMontee {
   dernierFantome: number;
   /** Ombres activées pour cette qualité de rendu (rétablies quand la pièce n'est plus un fantôme). */
   ombres: boolean;
+  /** Uniformes d'arraché de chaque matériau (découpe, estompage) et nœuds qui l'utilisent. */
+  arrache: MateriauArrache[];
 }
 
 /** Plan de coupe de l'exploration (null = pas de coupe), partagé par tous les matériaux des pièces. */
@@ -107,6 +110,21 @@ export function monterPiece(piece: PieceWeb, objet: Object3D, ombres: boolean, f
   });
   // Grain, satiné, tournage (et décors en option) : shader seul, géométrie inchangée.
   if (finitions) appliquerFinitions(piece, assemblage, objet);
+  // Vues de mécanisme : découpe locale et estompage, toujours disponibles (après les finitions).
+  // Chaque matériau retient les nœuds nommés qui l'utilisent (sous-pièces comprises).
+  const noeudsParMateriau = new Map<MeshStandardMaterial, Set<string>>();
+  objet.traverse((o) => {
+    if (!(o instanceof Mesh)) return;
+    let nom: string | undefined;
+    for (let a: Object3D | null = o; a && !nom; a = a.parent) if (typeof a.userData?.name === 'string') nom = a.userData.name;
+    for (const mat of Array.isArray(o.material) ? o.material : [o.material])
+      if (mat instanceof MeshStandardMaterial && nom) {
+        const set = noeudsParMateriau.get(mat) ?? new Set<string>();
+        set.add(nom);
+        noeudsParMateriau.set(mat, set);
+      }
+  });
+  const arrache: MateriauArrache[] = materiaux.map((m) => ({ u: equiperArrache(m), noeuds: [...(noeudsParMateriau.get(m) ?? [])] }));
 
   const boite = new Box3().setFromObject(assemblage);
   const centreLocal = boite.getCenter(new Vector3());
@@ -128,6 +146,7 @@ export function monterPiece(piece: PieceWeb, objet: Object3D, ombres: boolean, f
     dernierSurlignage: -1,
     dernierFantome: 0,
     ombres,
+    arrache,
   };
 }
 
@@ -162,6 +181,8 @@ export function poserPiece(m: PieceMontee, e: EtatPiece) {
       if (o instanceof Mesh) o.castShadow = m.ombres && f === 0;
     });
   }
+
+  appliquerVue(m.arrache, e.o ?? 0, e.x ?? 0);
 
   const h = Math.round(e.h * 100) / 100;
   if (h !== m.dernierSurlignage) {
