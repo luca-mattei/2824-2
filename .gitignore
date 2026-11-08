@@ -21,3 +21,4 @@ docs/sources/releves/
 presentation-eta2824/
 # Cache Python des outils de relevé
 __pycache__/
+docs/sources/brevets/
